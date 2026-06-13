@@ -34,4 +34,43 @@ function contactEnt(){const s=encodeURIComponent('エンタープライズプラ
 function tf(el){el.closest('.fqi').classList.toggle('open');}
 window.addEventListener('scroll',()=>{document.getElementById('nb').style.background=scrollY>40?'rgba(5,7,26,.97)':'rgba(5,7,26,.9)';});
 rnd();
-</script></body></html>
+</script><!-- CAPTCHA API詳細 -->
+<div style="max-width:960px;margin:4rem auto 0;padding:0 1.5rem">
+<p style="text-align:center;font-size:.72rem;letter-spacing:.12em;color:#64748b;text-transform:uppercase;margin-bottom:1.5rem">CAPTCHA API — 機能詳細と料金</p>
+<div style="background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:2rem">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;flex-wrap:wrap">
+<div>
+<h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:#9f5cf7">🧩 提供エンドポイント</h3>
+<div style="display:flex;flex-direction:column;gap:.6rem;font-size:.83rem">
+<div style="padding:.55rem .9rem;background:rgba(255,255,255,.04);border-radius:8px;border-left:2px solid #7c3aed"><code style="color:#06b6d4">POST /api/captcha/verify</code><div style="color:#64748b;font-size:.77rem;margin-top:.2rem">CAPTCHAトークン検証（メイン）</div></div>
+<div style="padding:.55rem .9rem;background:rgba(255,255,255,.04);border-radius:8px;border-left:2px solid #7c3aed"><code style="color:#06b6d4">GET /api/captcha/challenge</code><div style="color:#64748b;font-size:.77rem;margin-top:.2rem">チャレンジを動的生成</div></div>
+<div style="padding:.55rem .9rem;background:rgba(255,255,255,.04);border-radius:8px;border-left:2px solid #06b6d4"><code style="color:#06b6d4">GET /api/math/problem</code><div style="color:#64748b;font-size:.77rem;margin-top:.2rem">数学問題を生成</div></div>
+<div style="padding:.55rem .9rem;background:rgba(255,255,255,.04);border-radius:8px;border-left:2px solid #06b6d4"><code style="color:#06b6d4">POST /api/math/check</code><div style="color:#64748b;font-size:.77rem;margin-top:.2rem">数学問題の答えを検証</div></div>
+</div>
+</div>
+<div>
+<h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:#9f5cf7">💰 従量課金の料金表</h3>
+<div style="font-size:.82rem;margin-bottom:.8rem;color:#64748b">従量課金プランを選んだ場合の単価:</div>
+<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.8rem">
+<div style="display:flex;justify-content:space-between;padding:.45rem .7rem;background:rgba(16,185,129,.08);border-radius:7px;border:1px solid rgba(16,185,129,.2)"><span>1〜10,000 req/月</span><span style="color:#10b981;font-weight:600">無料</span></div>
+<div style="display:flex;justify-content:space-between;padding:.45rem .7rem;background:rgba(255,255,255,.04);border-radius:7px"><span>10,001〜100,000 req/月</span><span style="font-weight:600">¥0.05 / req</span></div>
+<div style="display:flex;justify-content:space-between;padding:.45rem .7rem;background:rgba(255,255,255,.04);border-radius:7px"><span>100,001〜500,000 req/月</span><span style="font-weight:600">¥0.04 / req</span></div>
+<div style="display:flex;justify-content:space-between;padding:.45rem .7rem;background:rgba(255,255,255,.04);border-radius:7px"><span>500,001 req/月以上</span><span style="font-weight:600">¥0.03 / req</span></div>
+<div style="font-size:.74rem;color:#64748b;margin-top:.4rem">※ 月末締め翌月払い。最低請求額 ¥500。</div>
+</div>
+</div>
+</div>
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(124,58,237,.2)">
+<h3 style="font-size:.9rem;font-weight:700;margin-bottom:1rem">📊 プラン別・CAPTCHA API 制限一覧</h3>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.78rem"><thead><tr style="color:#64748b;font-size:.72rem;text-transform:uppercase"><th style="text-align:left;padding:.5rem .7rem">機能</th><th style="padding:.5rem .7rem">フリー</th><th style="padding:.5rem .7rem">従量課金</th><th style="padding:.5rem .7rem;background:rgba(124,58,237,.07)">スタンダード</th><th style="padding:.5rem .7rem">プロ</th></tr></thead><tbody>
+<tr><td style="padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">月間検証リクエスト</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12)">10,000</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12)">無制限</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.05)">200,000</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12)">1,000,000</td></tr>
+<tr><td style="padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">レスポンス速度目標</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12)">&lt;200ms</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12)">&lt;150ms</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.05)">&lt;100ms</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12)">&lt;50ms</td></tr>
+<tr><td style="padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">CAPTCHAウィジェット</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.05);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td></tr>
+<tr><td style="padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">数学問題API</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.05);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td></tr>
+<tr><td style="padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">難易度カスタマイズ</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">—</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">—</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.05);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td></tr>
+<tr><td style="padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">Webhook通知</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">—</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#64748b">—</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.05);color:#10b981;font-weight:700">✓</td><td style="text-align:center;padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.12);color:#10b981;font-weight:700">✓</td></tr>
+</tbody></table></div>
+</div>
+</div>
+</div></body></html>
+

@@ -1,448 +1,413 @@
-﻿<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>人間確認 — sugaku-club.com</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#05071a;--bg2:#080b22;--pu:#7c3aed;--pu2:#9f5cf7;--cy:#06b6d4;--ok:#10b981;--ng:#ef4444;--gd:#f59e0b;--txt:#f1f5f9;--muted:#64748b;--border:rgba(124,58,237,.2)}body{background:var(--bg);color:var(--txt);font-family:'Outfit','Noto Sans JP',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}a{color:inherit;text-decoration:none}.card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2rem;width:100%;max-width:520px;box-shadow:0 24px 80px rgba(0,0,0,.5)}.logo{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;text-align:center;margin-bottom:.2rem}.site{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:.3rem}.title{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:1.5rem}.progress-track{background:rgba(255,255,255,.08);height:4px;border-radius:4px;margin-bottom:1rem;overflow:hidden}.progress-bar{height:100%;background:linear-gradient(90deg,var(--pu),var(--cy));border-radius:4px;transition:.5s}.pips{display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem}.pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);transition:.3s}.pip.done{background:var(--ok)}.pip.active{background:var(--pu)}.timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding:.5rem .8rem;background:rgba(255,255,255,.04);border-radius:10px;font-size:.82rem}.timer-num{font-weight:700;color:var(--cy);font-family:monospace;font-size:1rem}.timer-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pulse 1s infinite}.timer-dot.warn{background:var(--ng)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}.ch-wrap{min-height:200px}.ch-cat{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}.ch-q{font-size:.95rem;font-weight:600;line-height:1.5;margin-bottom:.8rem;white-space:pre-line}.ch-hint{font-size:.75rem;color:var(--muted);margin-bottom:1rem;font-style:italic}.ch-vis{margin:.8rem 0;border-radius:10px;overflow:hidden}.opts{display:flex;flex-direction:column;gap:.5rem}.opt{padding:.65rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:.87rem;transition:.2s;text-align:left}.opt:hover{border-color:var(--pu);background:rgba(124,58,237,.08)}.opt.selected{border-color:var(--pu);background:rgba(124,58,237,.12);font-weight:600}.opt.ok{border-color:var(--ok);background:rgba(16,185,129,.1);pointer-events:none}.opt.ng{border-color:var(--ng);background:rgba(239,68,68,.1);pointer-events:none}.opt:disabled{cursor:default}.sort-list{display:flex;flex-direction:column;gap:.5rem}.sort-item{padding:.65rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-size:.85rem;cursor:grab;display:flex;align-items:center;gap:.6rem;transition:.2s;user-select:none}.sort-item:active{cursor:grabbing}.sort-item .handle{color:var(--muted)}.sort-item.drag-over{border-color:var(--pu);background:rgba(124,58,237,.1)}.fb{min-height:2.2rem;margin:.8rem 0;padding:.5rem .8rem;border-radius:8px;font-size:.82rem;text-align:center;display:none}.fb.ok{display:block;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--ok)}.fb.ng{display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--ng)}.fb.warn{display:block;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--gd)}.sbtn{width:100%;padding:.75rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s;margin-top:.5rem}.sbtn:hover{opacity:.85}.sbtn:disabled{opacity:.4;cursor:not-allowed}.footer-note{text-align:center;font-size:.73rem;color:var(--muted);margin-top:1.2rem}.success-screen{display:none;text-align:center}.success-screen .big{font-size:3rem;margin-bottom:.8rem;animation:pop .5s}.success-screen h2{font-size:1.3rem;font-weight:800;margin-bottom:.5rem}.success-screen p{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}.token-box{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-family:monospace;font-size:.95rem;text-align:center;margin-bottom:1.2rem;color:var(--cy)}.go-btn{padding:.75rem 2rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}.lock-screen{display:none;text-align:center}.lock-screen .icon{font-size:2.5rem;margin-bottom:.8rem}.lock-screen h2{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:var(--ng)}.lock-screen p{font-size:.83rem;color:var(--muted)}.countdown{font-size:2rem;font-weight:800;color:var(--ng);font-family:monospace;margin:1rem 0}@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.2)}100%{transform:scale(1)}}</style></head><body>
+﻿<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>人間確認 — sugaku-club.com</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#05071a;--bg2:#080b22;--pu:#7c3aed;--pu2:#9f5cf7;--cy:#06b6d4;--ok:#10b981;--ng:#ef4444;--gd:#f59e0b;--txt:#f1f5f9;--muted:#64748b;--border:rgba(124,58,237,.2)}body{background:var(--bg);color:var(--txt);font-family:'Outfit','Noto Sans JP',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}a{color:inherit;text-decoration:none}.card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2rem;width:100%;max-width:520px;box-shadow:0 24px 80px rgba(0,0,0,.5)}.logo{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;text-align:center;margin-bottom:.2rem}.site{text-align:center;font-size:.73rem;color:var(--muted);margin-bottom:.3rem}.title{text-align:center;font-size:1rem;font-weight:700;margin-bottom:1.5rem}.prog-track{background:rgba(255,255,255,.07);height:5px;border-radius:5px;margin-bottom:1rem;overflow:hidden}.prog-bar{height:100%;background:linear-gradient(90deg,var(--pu),var(--cy));border-radius:5px;transition:.5s ease}.pips{display:flex;justify-content:center;gap:.5rem;margin-bottom:1.2rem}.pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12);transition:.4s}.pip.done{background:var(--ok)}.pip.active{background:var(--pu);box-shadow:0 0 8px var(--pu)}.timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding:.45rem .8rem;background:rgba(255,255,255,.04);border-radius:9px;font-size:.8rem}.tnum{font-weight:700;font-family:monospace;font-size:1.05rem;min-width:30px;text-align:right}.tnum.ok{color:var(--cy)}.tnum.warn{color:var(--gd)}.tnum.danger{color:var(--ng)}.tdot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;animation:pulse 1.2s infinite}.tdot.warn{background:var(--gd)}.tdot.danger{background:var(--ng)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}.ch-wrap{min-height:190px;animation:fadeIn .35s}.@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}.ch-cat{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}.ch-q{font-size:.93rem;font-weight:600;line-height:1.55;margin-bottom:.7rem;white-space:pre-line}.hint{font-size:.74rem;color:var(--muted);font-style:italic;margin-bottom:.9rem;padding:.4rem .6rem;background:rgba(6,182,212,.06);border-radius:6px;border-left:2px solid var(--cy)}.opts{display:flex;flex-direction:column;gap:.45rem}.opt{padding:.6rem .9rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:.86rem;transition:.18s;text-align:left;color:var(--txt)}.opt:hover:not(:disabled){border-color:rgba(124,58,237,.6);background:rgba(124,58,237,.09)}.opt.sel{border-color:var(--pu);background:rgba(124,58,237,.14);font-weight:600}.opt.ok{border-color:var(--ok)!important;background:rgba(16,185,129,.1)!important;font-weight:600;pointer-events:none}.opt.ng{border-color:var(--ng)!important;background:rgba(239,68,68,.08)!important;pointer-events:none}.opt:disabled{pointer-events:none}.sort-list{display:flex;flex-direction:column;gap:.4rem}.sort-item{padding:.58rem .85rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-size:.84rem;cursor:grab;display:flex;align-items:center;gap:.55rem;transition:.18s;user-select:none}.sort-item:active{cursor:grabbing;opacity:.7}.sort-item .handle{color:rgba(255,255,255,.25);font-size:.9rem}.sort-item.dragover{border-color:var(--pu);background:rgba(124,58,237,.1)}.fb{min-height:0;margin:.7rem 0 0;padding:.55rem .8rem;border-radius:9px;font-size:.81rem;text-align:left;display:none;line-height:1.45}.fb.ok{display:block;background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.25);color:var(--ok)}.fb.ng{display:block;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#fca5a5}.fb.warn{display:block;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:var(--gd)}.sbtn{width:100%;padding:.7rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;margin-top:.8rem;transition:.2s}.sbtn:hover:not(:disabled){opacity:.87;transform:translateY(-1px)}.sbtn:disabled{opacity:.35;cursor:not-allowed;transform:none}.fn{text-align:center;font-size:.71rem;color:var(--muted);margin-top:1.1rem}.success{display:none;text-align:center;animation:fadeIn .4s}.success .big{font-size:2.8rem;margin-bottom:.6rem;animation:pop .45s}@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.15)}100%{transform:scale(1)}}.success h2{font-size:1.2rem;font-weight:800;margin-bottom:.45rem}.success p{font-size:.83rem;color:var(--muted);margin-bottom:1.3rem}.tok{background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.25);border-radius:10px;padding:.7rem 1rem;font-family:monospace;font-size:.95rem;text-align:center;color:var(--cy);margin-bottom:1.1rem;letter-spacing:.04em}.gobtn{width:100%;padding:.7rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;transition:.2s}.gobtn:hover{opacity:.87}.lock{display:none;text-align:center;animation:fadeIn .4s}.lock .licon{font-size:2.3rem;margin-bottom:.6rem}.lock h2{font-size:1rem;font-weight:700;color:var(--ng);margin-bottom:.4rem}.lock p{font-size:.81rem;color:var(--muted)}.lcount{font-size:2rem;font-weight:800;font-family:monospace;color:var(--ng);margin:.8rem 0}</style></head><body>
 <div class="card">
-<span class="logo">∑ sugaku-club.com</span>
-<div class="site">Human Verification / 人間確認</div>
-<div class="title">あなたが人間であることを確認します</div>
-
-<div class="progress-track"><div class="progress-bar" id="pbar" style="width:0%"></div></div>
-<div class="pips" id="pips"></div>
-<div class="timer-row"><span id="timer-label">残り時間</span><span><span class="timer-dot" id="tdot"></span></span><span class="timer-num" id="tnum">30</span></div>
-
-<div id="ch-wrap" class="ch-wrap"></div>
-<div id="fb" class="fb"></div>
-<button id="sbtn" class="sbtn" onclick="handleSubmit()" disabled>回答する</button>
-
-<div id="success" class="success-screen">
-  <div class="big">✅</div>
-  <h2>確認完了！</h2>
-  <p>人間であることが確認されました。<br>以下のトークンを保存してください。</p>
-  <div class="token-box" id="token-box"></div>
-  <button class="go-btn" onclick="location.href='/signup.html'">sugaku-club.comに入る →</button>
+  <span class="logo">∑ sugaku-club.com</span>
+  <div class="site">Human Verification / 人間確認</div>
+  <div class="title">あなたが人間かどうかを確認します</div>
+  <div class="prog-track"><div class="prog-bar" id="pbar" style="width:0%"></div></div>
+  <div class="pips" id="pips"></div>
+  <div class="timer-row"><span style="color:var(--muted)">残り時間</span><span><span class="tdot" id="tdot"></span></span><span class="tnum ok" id="tnum">45</span></div>
+  <div id="ch-wrap" class="ch-wrap"></div>
+  <div id="fb" class="fb"></div>
+  <button id="sbtn" class="sbtn" onclick="submit()" disabled>回答する</button>
+  <div id="success" class="success">
+    <div class="big">✅</div>
+    <h2>確認完了！</h2>
+    <p>人間であることが確認されました。<br>以下のトークンを控えておいてください。</p>
+    <div class="tok" id="tok"></div>
+    <button class="gobtn" onclick="location.href='/signup.html'">sugaku-club.com に入る →</button>
+  </div>
+  <div id="lock" class="lock">
+    <div class="licon">🔒</div>
+    <h2>一時的にブロックされました</h2>
+    <p>不審な動作が検出されました。</p>
+    <div class="lcount" id="lcount">90</div>
+    <p>秒後に再試行できます</p>
+  </div>
+  <div class="fn">AIが突破困難なCAPTCHA v4.1 — sugaku-club.com</div>
 </div>
-
-<div id="lock" class="lock-screen">
-  <div class="icon">🔒</div>
-  <h2>一時的にブロックされました</h2>
-  <p>不審な操作が検出されました。</p>
-  <div class="countdown" id="lockdown">60</div>
-  <p>秒後に再試行できます</p>
-</div>
-
-<div class="footer-note">AIが突破困難なCAPTCHA v4.0 — sugaku-club.com</div>
-</div>
-
 <script>
-// ── チャレンジバンク ───────────────────────────────────
+// ────────────────────────────────────────────────────────────
+// チャレンジバンク（誰でも解ける常識問題のみ）
+// ────────────────────────────────────────────────────────────
 const BANK = [
   {
-    type:'choice', cat:'物理直感', icon:'⚖️', diff:3,
-    q:'同じ大きさの箱に入っています。足の上に落ちたとき、最も痛いのはどれでしょう？',
-    hint:'材質・密度・硬さを考えてください',
-    opts:['🧱 鉄塊','🪵 木材','🧸 綿・ぬいぐるみ','🫧 シャボン玉'],
-    ans:0, exp:'鉄は密度が非常に高く、同じ体積でも断然重い。硬さも相まって衝撃が一点集中します。'
+    type:'choice', cat:'日常の常識', icon:'🏠',
+    q:'次の中で「食べられないもの」はどれですか？',
+    hint:'食べ物ではないものを選んでください',
+    opts:['🍙 おにぎり','🍌 バナナ','📎 クリップ','🍎 りんご'],
+    ans:2, exp:'クリップは金属製の文房具です。食べ物ではありません。'
   },
   {
-    type:'choice', cat:'文脈・皮肉理解', icon:'💬', diff:4,
-    q:'花子「数学のテスト、また10点だった…」\n先生「_素晴らしい！君はきっと無限に伸びしろがあるね_」\n\nこの発言の本当の意味は？',
-    hint:'先生の口調と状況から真意を読み取ってください',
-    opts:['本当に優秀だと思っている','皮肉を言っている（呆れている）','前向きに励ましている','感情を抑えて怒っている'],
-    ans:1, exp:'「伸びしろがある」は皮肉。10点に「素晴らしい」は矛盾しており、遠回しな批判です。'
+    type:'choice', cat:'物の重さ', icon:'⚖️',
+    q:'同じ大きさの箱に入っています。\n持ったとき最も重いのはどれでしょう？',
+    hint:'素材の重さを考えてみてください',
+    opts:['🧱 砂の詰まった箱','🪶 羽毛の詰まった箱','🫧 空気だけの箱','🍃 枯れ葉の詰まった箱'],
+    ans:0, exp:'砂は密度が高く、同じ体積でも断然重くなります。'
   },
   {
-    type:'choice', cat:'反事実推論', icon:'🔬', diff:4,
-    q:'鉄でできた船がなぜ水に浮かぶか、正しい説明はどれ？',
-    hint:'アルキメデスの原理を思い出してください',
-    opts:['鉄は実は水より軽いから','排除した水の重さが船全体の重さを上回るから','エンジンが水を押しているから','鉄が水を吸って密度が下がるから'],
-    ans:1, exp:'アルキメデスの原理：船の内部は空洞で体積が大きく、排除する水の重さが船体の重さを超えます。'
+    type:'choice', cat:'日常の判断', icon:'🌂',
+    q:'友人が「明日、傘を持っていった方がいいかも」と言いました。\nこの発言が意味することは何でしょう？',
+    hint:'友人は何を心配しているか考えてください',
+    opts:['明日は晴れると思っている','明日は雨が降るかもしれない','傘を忘れた','傘を貸してほしい'],
+    ans:1, exp:'「傘を持っていった方がいい」は雨への備えを勧める表現です。'
   },
   {
-    type:'choice', cat:'常識的不可能性', icon:'🚫', diff:5,
-    q:'現実世界で絶対に起こりえないものを選んでください。',
-    hint:'物理法則・熱力学の観点から考えてください',
-    opts:['光が重力で曲がる','時間が速度によって遅れる','−273.15°Cより低い温度になる','音が真空中で伝わらない'],
-    ans:2, exp:'絶対零度（−273.15°C = 0K）は熱力学の下限。他の3つはすべて実際に観測・証明されています。'
+    type:'choice', cat:'温度の感覚', icon:'🌡️',
+    q:'真夏の炎天下に1時間置いた場合、\n素手で触ったとき最も熱いのはどれでしょう？',
+    hint:'黒い物と金属について考えてください',
+    opts:['⬛ 黒い金属板','🪵 白い木の板','📦 ダンボール箱','🎽 白いTシャツ'],
+    ans:0, exp:'黒は熱を吸収しやすく、金属は熱を蓄えやすいため、黒い金属板が最も高温になります。'
   },
   {
-    type:'choice', cat:'数学的直感', icon:'🧮', diff:4,
-    q:'1枚の紙を41回半分に折ったとき、その厚さに最も近いものは？\n（紙1枚≈0.1mm）',
-    hint:'2ⁿ の指数的増加を考えましょう',
-    opts:['東京タワーの高さ（約333m）','富士山の高さ（約3,776m）','地球〜月の距離（約38万km）','スカイツリーの高さ（約634m）'],
-    ans:2, exp:'2⁴¹ × 0.1mm ≈ 220,000km。指数爆発は直感をはるかに超えます。'
+    type:'choice', cat:'状況の読み取り', icon:'💬',
+    q:'テストの点数が低かった友人に対して\n先生が「よく頑張ったね〜」と言いました。\n先生の本音として最もありえるのは？',
+    hint:'状況と口調から真意を読み取ってください',
+    opts:['心から褒めている','呆れながらも慰めている','怒っている','羨ましがっている'],
+    ans:1, exp:'低い点数に対して「頑張ったね」という発言は、失望しつつも傷つけないよう配慮した表現です。'
   },
   {
-    type:'choice', cat:'社会的推論', icon:'🧠', diff:4,
-    q:'同僚に「このコード、すごく…独創的ですね」と言われました。\nこの発言の本当の意味は？',
-    hint:'職場の文脈と三点リーダーのトーンを考えてください',
-    opts:['本当に革新的で素晴らしい','読みにくく問題があると思っている','感動して言葉が出てこない','コードを褒める習慣がある人'],
-    ans:1, exp:'「独創的」＋三点リーダーは婉曲的な否定表現。変わった（=問題のある）コードを遠回しに指摘しています。'
-  },
-  {
-    type:'choice', cat:'感覚的常識', icon:'🌡️', diff:3,
-    q:'真夏（35°C）の屋外に1時間置いたとき、触って最も熱いのはどれ？',
-    hint:'熱容量・熱伝導率・色を考えてください',
-    opts:['⬛ 黒い金属板','⬜ 白い木の板','💧 水のペットボトル','🍵 白い陶器カップ'],
-    ans:0, exp:'黒色は光を最もよく吸収し、金属は熱伝導率が高いため素早く高温になります。'
-  },
-  {
-    type:'sort', cat:'因果・時系列推論', icon:'🔗', diff:5,
-    q:'次の出来事を物理的に正しい順序に並べ替えてください（上が先）',
+    type:'sort', cat:'順番の常識', icon:'🔗',
+    q:'次の出来事を起きた順番に並べ替えてください（上が先）',
     hint:'ドラッグ＆ドロップで並べ替えできます',
-    items:[{id:'a',t:'🤲 手がすべってコップを手放す'},{id:'b',t:'💧 コップが地面に落ちて割れる'},{id:'c',t:'🌊 水がこぼれ床を濡らす'},{id:'d',t:'🧹 床を拭き掃除する'}],
-    correctOrder:['a','b','c','d'],
-    exp:'正しい順：手放す→落下して割れる→水がこぼれる→掃除'
+    items:[
+      {id:'a',t:'☕ コップにお茶を注ぐ'},
+      {id:'b',t:'🚿 やかんでお湯を沸かす'},
+      {id:'c',t:'🍵 お茶を飲む'},
+      {id:'d',t:'🫖 急須に茶葉を入れてお湯を注ぐ'}
+    ],
+    correctOrder:['b','d','a','c'],
+    exp:'正しい順：お湯を沸かす → 急須で蒸らす → コップに注ぐ → 飲む'
   },
   {
-    type:'choice', cat:'視点の理解', icon:'👁️', diff:3,
-    q:'「明日雨が降るかもしれない」という発言で話者は何を伝えたいか？',
-    hint:'話者の確信度とコミュニケーション意図を考えてください',
-    opts:['明日必ず雨が降ると確信している','傘を持っていくよう提案している','天気を話題にして会話を始めたい','雨を降らせることができる'],
-    ans:1, exp:'日本語の「かもしれない」は不確実性を示しますが、文脈上は傘を準備する提案として機能します。'
+    type:'choice', cat:'色と光', icon:'🎨',
+    q:'晴れた日、最も涼しく感じる服の色はどれでしょう？',
+    hint:'光の吸収と反射を考えてください',
+    opts:['⬛ 黒','⬜ 白','🔴 赤','🔵 濃い青'],
+    ans:1, exp:'白は光を反射するので熱を吸収しにくく、最も涼しく感じます。'
+  },
+  {
+    type:'choice', cat:'生活の知恵', icon:'🏠',
+    q:'洗濯物を早く乾かしたい。次の中で最も効果的な方法はどれ？',
+    hint:'風通しと湿度を考えてください',
+    opts:['日当たりの良い場所で風通しよく干す','浴室に干してドアを閉める','夜の室内に干す','厚く重ねて干す'],
+    ans:0, exp:'日光と風があれば蒸発が促進されます。湿った場所や密閉空間では乾きにくくなります。'
+  },
+  {
+    type:'choice', cat:'数のセンス', icon:'🔢',
+    q:'1から10まで順番に足していくと（1+2+3+…+10）、答えはいくつになりますか？',
+    hint:'実際に足してみてください。急がなくていいです！',
+    opts:['45','50','55','100'],
+    ans:2, exp:'1から10の合計は55です。1+10=11、2+9=11…と5組あるので 11×5=55。'
+  },
+  {
+    type:'choice', cat:'言葉の意味', icon:'📖',
+    q:'「猫に小判」ということわざの意味として正しいのはどれ？',
+    hint:'ことわざはたとえ話です',
+    opts:['猫はお金を好む','価値がわからない者には何を与えても意味がない','猫はとても賢い','小さなものでも大切にする'],
+    ans:1, exp:'猫には小判（金貨）の価値がわからない → 価値のわからない相手に貴重なものを与えても無駄、という意味です。'
+  },
+  {
+    type:'choice', cat:'物の特性', icon:'🔬',
+    q:'次の中で「水に溶けやすい」ものはどれでしょう？',
+    hint:'普段の生活を思い出してください',
+    opts:['🧊 氷（固体の水）','🧂 塩','🪨 石','🛢️ 油'],
+    ans:1, exp:'塩（食塩・塩化ナトリウム）は水によく溶けます。油は水とは混ざりません。'
+  },
+  {
+    type:'sort', cat:'作業の順番', icon:'🍳',
+    q:'目玉焼きを作る手順を正しい順番に並べ替えてください',
+    hint:'実際に料理するときの順番を考えてください',
+    items:[
+      {id:'a',t:'🍳 フライパンを熱して油を引く'},
+      {id:'b',t:'🥚 卵を割って入れる'},
+      {id:'c',t:'🔥 コンロに火をつける'},
+      {id:'d',t:'🍽️ お皿に盛り付ける'}
+    ],
+    correctOrder:['c','a','b','d'],
+    exp:'正しい順：火をつける → フライパンを熱して油を引く → 卵を割る → 盛り付ける'
   },
 ];
 
-// ── 状態管理 ─────────────────────────────────────────
-const QUESTIONS = 4;
-const TIME_LIMIT = 30;
-const MIN_ANSWER_MS = 1500; // 1.5秒未満は弾く
-const MAX_FAILS = 3;
-const LOCK_SECS = 90;
-const PASS_THRESHOLD = 3; // 4問中3問正解
+// ────────────────────────────────────────────────────────────
+// 設定
+// ────────────────────────────────────────────────────────────
+const N_Q         = 4;      // 出題数
+const TIME_LIMIT  = 45;     // 秒（余裕を持たせる）
+const MIN_MS      = 400;    // 最低回答時間ms（緩め）
+const MAX_FAILS   = 3;      // 最大失敗数
+const LOCK_SECS   = 90;     // ロック秒数
+const PASS_NEED   = 3;      // 合格に必要な正解数
 
-let st = {
-  q: [],          // 選ばれた問題
-  step: 0,
-  score: 0,
-  fails: 0,
-  results: [],
-  sel: null,      // 選択肢インデックス
-  items: [],      // ソート問題のアイテム
-  timer: null,
-  timeLeft: TIME_LIMIT,
-  chStart: null,
-  done: false,
-  mouseTotal: 0,  // マウス移動距離
-  clickTimes: [], // クリックタイムスタンプ
+let S = {
+  qs:[], step:0, score:0, fails:0,
+  sel:null, items:[],
+  timer:null, left:TIME_LIMIT,
+  chStart:0,
+  mouseD:0, mx:-1, my:-1,
+  clicks:[], done:false,
 };
 
 // マウス追跡
-let lastX = -1, lastY = -1;
-document.addEventListener('mousemove', (e) => {
-  if (lastX >= 0) {
-    const dx = e.clientX - lastX, dy = e.clientY - lastY;
-    st.mouseTotal += Math.sqrt(dx*dx + dy*dy);
-  }
-  lastX = e.clientX; lastY = e.clientY;
+document.addEventListener('mousemove',e=>{
+  if(S.mx>=0) S.mouseD+=Math.hypot(e.clientX-S.mx,e.clientY-S.my);
+  S.mx=e.clientX; S.my=e.clientY;
 });
-document.addEventListener('click', () => {
-  st.clickTimes.push(Date.now());
-});
+document.addEventListener('click',()=>S.clicks.push(Date.now()));
 
-// Canvas fingerprint (ヘッドレス検出)
-function getCanvasFp() {
-  try {
-    const c = document.createElement('canvas');
-    const ctx = c.getContext('2d');
-    ctx.textBaseline = 'top';
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#f60';
-    ctx.fillRect(125, 1, 62, 20);
-    ctx.fillStyle = '#069';
-    ctx.fillText('sugaku🔐', 2, 15);
-    ctx.fillStyle = 'rgba(102,204,0,0.7)';
-    ctx.fillText('sugaku🔐', 4, 17);
+// Canvas fingerprint
+function canvasFp(){
+  try{
+    const c=document.createElement('canvas'), x=c.getContext('2d');
+    x.textBaseline='top'; x.font='14px Arial';
+    x.fillStyle='#f60'; x.fillRect(80,1,40,12);
+    x.fillStyle='#069'; x.fillText('sgk🔐',2,14);
     return c.toDataURL().length;
-  } catch { return 0; }
+  }catch{return 0;}
 }
 
-function detectBot() {
-  const issues = [];
-  // Canvas指紋（ヘッドレスは異常値）
-  const fp = getCanvasFp();
-  if (fp < 100) issues.push('canvas_fail');
-  // ユーザーエージェント
-  const ua = navigator.userAgent;
-  if (/HeadlessChrome|PhantomJS|Selenium|webdriver/i.test(ua)) issues.push('ua_bot');
-  // webdriver プロパティ
-  if (navigator.webdriver) issues.push('webdriver');
-  // クリックリズム（均等すぎる = bot）
-  if (st.clickTimes.length >= 3) {
-    const diffs = st.clickTimes.slice(1).map((t,i)=>t-st.clickTimes[i]);
-    const avg = diffs.reduce((a,b)=>a+b,0)/diffs.length;
-    const variance = diffs.reduce((a,b)=>a+(b-avg)**2,0)/diffs.length;
-    if (variance < 100) issues.push('uniform_clicks');
+// Bot判定（緩め）
+function isBot(){
+  const r=[];
+  if(navigator.webdriver) r.push('webdriver');
+  if(canvasFp()<100) r.push('canvas');
+  const ua=navigator.userAgent;
+  if(/HeadlessChrome|PhantomJS|selenium/i.test(ua)) r.push('ua');
+  // クリックリズム（5回以上で均等すぎたら怪しい）
+  if(S.clicks.length>=5){
+    const d=S.clicks.slice(1).map((t,i)=>t-S.clicks[i]);
+    const avg=d.reduce((a,b)=>a+b,0)/d.length;
+    const sd=Math.sqrt(d.reduce((a,b)=>a+(b-avg)**2,0)/d.length);
+    if(sd<50) r.push('click_rhythm');
   }
-  return { issues, isBot: issues.length >= 2 };
+  return r.length>=2; // 2つ以上でbotと判定
 }
 
-// ── 初期化 ────────────────────────────────────────────
-function init() {
-  // ランダムに4問選択
-  const shuffled = [...BANK].sort(() => Math.random() - 0.5);
-  st.q = shuffled.slice(0, QUESTIONS);
-  renderPips();
-  showStep(0);
+// ────────────────────────────────────────────────────────────
+// 初期化
+// ────────────────────────────────────────────────────────────
+function init(){
+  S.qs=[...BANK].sort(()=>Math.random()-.5).slice(0,N_Q);
+  // pips
+  document.getElementById('pips').innerHTML=
+    S.qs.map((_,i)=>`<div class="pip${i===0?' active':''}" id="pip${i}"></div>`).join('');
+  showQ(0);
 }
 
-function renderPips() {
-  const el = document.getElementById('pips');
-  el.innerHTML = st.q.map((_,i) => `<div class="pip" id="pip${i}"></div>`).join('');
-  document.getElementById('pip0').classList.add('active');
+function setPips(){
+  S.qs.forEach((_,i)=>{
+    const p=document.getElementById('pip'+i);
+    if(!p)return;
+    p.className='pip'+(i<S.step?' done':i===S.step?' active':'');
+  });
 }
 
-function updateProgress() {
-  const pct = (st.step / QUESTIONS) * 100;
-  document.getElementById('pbar').style.width = pct + '%';
-  for (let i = 0; i < QUESTIONS; i++) {
-    const p = document.getElementById('pip'+i);
-    if (!p) continue;
-    p.className = 'pip' + (i < st.step ? ' done' : i === st.step ? ' active' : '');
-  }
-}
-
-// ── 問題表示 ──────────────────────────────────────────
-function showStep(idx) {
-  if (idx >= QUESTIONS) { showResult(); return; }
-  st.done = false;
-  st.sel = null;
-  st.chStart = Date.now();
-  st.timeLeft = TIME_LIMIT;
-  updateProgress();
-  const ch = st.q[idx];
-  const wrap = document.getElementById('ch-wrap');
-  if (ch.type === 'choice') {
-    wrap.innerHTML = `
-      <div class="ch-cat">${ch.icon} ${ch.cat}</div>
-      <div class="ch-q">${escHtml(ch.q)}</div>
-      ${ch.hint ? `<div class="ch-hint">💡 ヒント: ${escHtml(ch.hint)}</div>` : ''}
-      <div class="opts" id="opts">${ch.opts.map((o,i)=>`<button class="opt" id="opt${i}" onclick="selectOpt(${i})">${escHtml(o)}</button>`).join('')}</div>
-    `;
-  } else { // sort
-    st.items = ch.items.map(x=>({...x}));
-    renderSort(ch);
+// ────────────────────────────────────────────────────────────
+// 問題表示
+// ────────────────────────────────────────────────────────────
+function showQ(idx){
+  if(idx>=N_Q){finish();return;}
+  S.done=false; S.sel=null; S.chStart=Date.now();
+  S.left=TIME_LIMIT; S.step=idx;
+  setPips();
+  document.getElementById('pbar').style.width=(idx/N_Q*100)+'%';
+  const ch=S.qs[idx];
+  const w=document.getElementById('ch-wrap');
+  if(ch.type==='choice'){
+    w.innerHTML=
+      `<div class="ch-cat">${ch.icon} ${ch.cat}</div>`+
+      `<div class="ch-q">${esc(ch.q)}</div>`+
+      (ch.hint?`<div class="hint">💡 ${esc(ch.hint)}</div>`:'')+
+      `<div class="opts">${ch.opts.map((o,i)=>`<button class="opt" id="o${i}" onclick="pick(${i})">${esc(o)}</button>`).join('')}</div>`;
+  } else {
+    S.items=ch.items.map(x=>({...x}));
+    w.innerHTML=
+      `<div class="ch-cat">${ch.icon} ${ch.cat}</div>`+
+      `<div class="ch-q">${esc(ch.q)}</div>`+
+      (ch.hint?`<div class="hint">💡 ${esc(ch.hint)}</div>`:'')+
+      `<div class="sort-list" id="sl"></div>`;
+    renderSort();
+    makeDraggable();
+    document.getElementById('sbtn').disabled=false;
   }
   hideFb();
-  document.getElementById('sbtn').disabled = true;
+  document.getElementById('sbtn').disabled=ch.type==='sort'?false:true;
+  document.getElementById('sbtn').textContent='回答する';
+  document.getElementById('sbtn').onclick=submit;
   startTimer();
 }
 
-function renderSort(ch) {
-  const wrap = document.getElementById('ch-wrap');
-  wrap.innerHTML = `
-    <div class="ch-cat">${ch.icon} ${ch.cat}</div>
-    <div class="ch-q">${escHtml(ch.q)}</div>
-    ${ch.hint ? `<div class="ch-hint">💡 ヒント: ${escHtml(ch.hint)}</div>` : ''}
-    <div class="sort-list" id="sortList"></div>
-  `;
-  updateSortUI();
-  document.getElementById('sbtn').disabled = false;
-  // ドラッグアンドドロップ
-  let dragging = null;
-  function makeDraggable() {
-    const list = document.getElementById('sortList');
-    if (!list) return;
-    list.querySelectorAll('.sort-item').forEach(el => {
-      el.draggable = true;
-      el.ondragstart = () => { dragging = el; el.style.opacity = '.5'; };
-      el.ondragend = () => { el.style.opacity = '1'; dragging = null; };
-      el.ondragover = e => { e.preventDefault(); el.classList.add('drag-over'); };
-      el.ondragleave = () => el.classList.remove('drag-over');
-      el.ondrop = e => {
-        e.preventDefault();
-        el.classList.remove('drag-over');
-        if (dragging && dragging !== el) {
-          const items = [...list.children];
-          const fromIdx = items.indexOf(dragging);
-          const toIdx = items.indexOf(el);
-          if (fromIdx > toIdx) list.insertBefore(dragging, el);
-          else list.insertBefore(dragging, el.nextSibling);
-          // st.items更新
-          const newOrder = [...list.children].map(c => c.dataset.id);
-          st.items = newOrder.map(id => st.items.find(x=>x.id===id)||{id,t:''});
-        }
-      };
-    });
-  }
-  setTimeout(makeDraggable, 10);
+function renderSort(){
+  const sl=document.getElementById('sl');
+  if(!sl)return;
+  sl.innerHTML=S.items.map(x=>`<div class="sort-item" data-id="${x.id}"><span class="handle">⠿</span>${esc(x.t)}</div>`).join('');
 }
 
-function updateSortUI() {
-  const list = document.getElementById('sortList');
-  if (!list) return;
-  list.innerHTML = st.items.map(x => `<div class="sort-item" data-id="${x.id}"><span class="handle">⠿</span>${escHtml(x.t)}</div>`).join('');
-}
-
-function selectOpt(i) {
-  st.sel = i;
-  document.querySelectorAll('.opt').forEach((el,j)=>{
-    el.classList.toggle('selected', j===i);
-  });
-  document.getElementById('sbtn').disabled = false;
-}
-
-// ── タイマー ──────────────────────────────────────────
-function startTimer() {
-  clearInterval(st.timer);
-  st.timer = setInterval(() => {
-    st.timeLeft--;
-    document.getElementById('tnum').textContent = st.timeLeft;
-    const dot = document.getElementById('tdot');
-    if (st.timeLeft <= 10) dot.classList.add('warn'); else dot.classList.remove('warn');
-    if (st.timeLeft <= 0) { clearInterval(st.timer); timeOut(); }
-  }, 1000);
-}
-
-function timeOut() {
-  st.fails++;
-  showFb('ng', '⏱ 時間切れです。次の問題に進みます。');
-  if (st.fails >= MAX_FAILS) { doLock(); return; }
-  st.results.push(false);
-  setTimeout(() => { st.step++; showStep(st.step); }, 2000);
-}
-
-// ── 判定・提出 ────────────────────────────────────────
-function handleSubmit() {
-  if (st.done) return;
-
-  // === BOTチェック ===
-  const elapsed = st.chStart ? Date.now() - st.chStart : 9999;
-  // 速すぎる回答（1.5秒以内）
-  if (elapsed < MIN_ANSWER_MS) {
-    showFb('warn', '⚡ 回答が速すぎます。もう少し考えてから回答してください。');
-    return;
-  }
-  // マウス未移動（PCの場合）
-  if (st.step === 0 && st.mouseTotal < 5 && !('ontouchstart' in window)) {
-    showFb('warn', '🖱️ まずマウスを画面上で動かしてください。');
-    return;
-  }
-  // Bot検出
-  const botResult = detectBot();
-  if (botResult.isBot) {
-    st.fails++;
-    if (st.fails >= MAX_FAILS) { doLock(); return; }
-    showFb('ng', '🤖 自動化ツールの使用が検出されました。通常のブラウザでお試しください。');
-    return;
-  }
-  // =====================
-
-  st.done = true;
-  clearInterval(st.timer);
-  const ch = st.q[st.step];
-
-  if (ch.type === 'choice') {
-    if (st.sel === null) { st.done = false; showFb('warn', '選択肢を選んでください'); return; }
-    const ok = st.sel === ch.ans;
-    markChoice(ok, ch);
-    if (ok) doCorrect(ch); else doWrong(ch);
-  } else {
-    const userOrder = [...document.getElementById('sortList').children].map(el=>el.dataset.id);
-    const ok = JSON.stringify(userOrder) === JSON.stringify(ch.correctOrder);
-    markSort(ok, ch);
-    if (ok) doCorrect(ch); else doWrong(ch);
-  }
-}
-
-function markChoice(ok, ch) {
-  ch.opts.forEach((_,i)=>{
-    const el = document.getElementById('opt'+i);
-    if (!el) return;
-    el.disabled = true;
-    if (i === ch.ans) el.classList.add('ok');
-    else if (i === st.sel && !ok) el.classList.add('ng');
+function makeDraggable(){
+  const sl=document.getElementById('sl');
+  if(!sl)return;
+  let drag=null;
+  sl.querySelectorAll('.sort-item').forEach(el=>{
+    el.draggable=true;
+    el.ondragstart=()=>{drag=el;el.style.opacity='.45';};
+    el.ondragend=()=>{el.style.opacity='1';drag=null;};
+    el.ondragover=e=>{e.preventDefault();el.classList.add('dragover');};
+    el.ondragleave=()=>el.classList.remove('dragover');
+    el.ondrop=e=>{
+      e.preventDefault();el.classList.remove('dragover');
+      if(drag&&drag!==el){
+        const all=[...sl.children];
+        const fi=all.indexOf(drag),ti=all.indexOf(el);
+        sl.insertBefore(drag,fi>ti?el:el.nextSibling);
+        S.items=[...sl.children].map(c=>S.items.find(x=>x.id===c.dataset.id)).filter(Boolean);
+      }
+    };
   });
 }
 
-function markSort(ok, ch) {
-  const list = document.getElementById('sortList');
-  if (!list) return;
-  [...list.children].forEach((el,pos)=>{
-    const correct = el.dataset.id === ch.correctOrder[pos];
-    el.style.borderColor = correct ? 'var(--ok)' : 'var(--ng)';
-    el.style.background = correct ? 'rgba(16,185,129,.1)' : 'rgba(239,68,68,.1)';
-  });
-}
-
-function doCorrect(ch) {
-  st.score++;
-  st.results.push(true);
-  showFb('ok', '✓ 正解！ ' + (ch.exp || ''));
-  const btn = document.getElementById('sbtn');
-  btn.textContent = '次へ →'; btn.disabled = false;
-  btn.onclick = nextStep;
-  setTimeout(nextStep, 2800);
-}
-
-function doWrong(ch) {
-  st.fails++;
-  st.results.push(false);
-  showFb('ng', '✗ 不正解。' + (ch.exp || ''));
-  if (st.fails >= MAX_FAILS) { setTimeout(doLock, 1500); return; }
-  const btn = document.getElementById('sbtn');
-  btn.textContent = '次へ →'; btn.disabled = false;
-  btn.onclick = nextStep;
-  setTimeout(nextStep, 3000);
-}
-
-function nextStep() {
-  clearInterval(st.timer);
-  document.getElementById('sbtn').onclick = handleSubmit;
-  document.getElementById('sbtn').textContent = '回答する';
-  st.step++;
-  showStep(st.step);
-}
-
-function doLock() {
-  clearInterval(st.timer);
-  document.getElementById('ch-wrap').style.display='none';
-  document.getElementById('sbtn').style.display='none';
-  document.getElementById('fb').style.display='none';
-  document.getElementById('lock').style.display='block';
-  let secs = LOCK_SECS;
-  const cd = document.getElementById('lockdown');
-  cd.textContent = secs;
-  const t = setInterval(()=>{
-    secs--;
-    cd.textContent=secs;
-    if(secs<=0){
-      clearInterval(t);
-      location.reload();
-    }
+// ────────────────────────────────────────────────────────────
+// タイマー
+// ────────────────────────────────────────────────────────────
+function startTimer(){
+  clearInterval(S.timer);
+  S.timer=setInterval(()=>{
+    S.left--;
+    const el=document.getElementById('tnum');
+    const dot=document.getElementById('tdot');
+    el.textContent=S.left;
+    if(S.left>15){el.className='tnum ok';dot.className='tdot';}
+    else if(S.left>7){el.className='tnum warn';dot.className='tdot warn';}
+    else{el.className='tnum danger';dot.className='tdot danger';}
+    if(S.left<=0){clearInterval(S.timer);timeout();}
   },1000);
 }
 
-function showResult() {
-  clearInterval(st.timer);
-  document.getElementById('timer-row') && (document.querySelector('.timer-row').style.display='none');
-  if (st.score >= PASS_THRESHOLD) {
-    document.getElementById('ch-wrap').style.display='none';
-    document.getElementById('sbtn').style.display='none';
-    document.getElementById('fb').style.display='none';
-    const token = 'SGK-' + Math.random().toString(36).substr(2,4).toUpperCase() + '-' + Math.random().toString(36).substr(2,8).toUpperCase();
-    document.getElementById('token-box').textContent = token;
-    document.getElementById('success').style.display='block';
-    document.querySelector('.progress-bar').style.width='100%';
+function timeout(){
+  S.fails++;
+  showFb('warn','⏱ 時間切れ。次の問題に進みます。');
+  S.qs[S.step]._result=false;
+  if(S.fails>=MAX_FAILS){setTimeout(doLock,1200);return;}
+  setTimeout(()=>{S.step++;showQ(S.step);},1800);
+}
+
+// ────────────────────────────────────────────────────────────
+// 選択・提出
+// ────────────────────────────────────────────────────────────
+function pick(i){
+  S.sel=i;
+  document.querySelectorAll('.opt').forEach((el,j)=>el.classList.toggle('sel',j===i));
+  document.getElementById('sbtn').disabled=false;
+}
+
+function submit(){
+  if(S.done)return;
+  const elapsed=Date.now()-S.chStart;
+  // Bot検出（緩め）
+  if(elapsed<MIN_MS){
+    showFb('warn',`⚡ 少し落ち着いて読んでから回答してください。（残り${S.left}秒）`);
+    return;
+  }
+  if(isBot()){
+    S.fails++;
+    showFb('ng','🤖 自動化ツールの疑いがあります。通常のブラウザでお試しください。');
+    if(S.fails>=MAX_FAILS){setTimeout(doLock,1500);return;}
+    return;
+  }
+  S.done=true;
+  clearInterval(S.timer);
+  const ch=S.qs[S.step];
+  if(ch.type==='choice'){
+    if(S.sel===null){S.done=false;showFb('warn','選択肢を選んでください');return;}
+    const ok=S.sel===ch.ans;
+    ch.opts.forEach((_,i)=>{
+      const el=document.getElementById('o'+i);
+      if(!el)return;
+      el.disabled=true;
+      if(i===ch.ans)el.classList.add('ok');
+      else if(i===S.sel&&!ok)el.classList.add('ng');
+    });
+    proceed(ok,ch);
   } else {
-    showFb('ng', `${QUESTIONS}問中${st.score}問正解でした。あと${PASS_THRESHOLD - st.score}問正解が必要です。`);
-    document.getElementById('sbtn').textContent = '最初からやり直す';
-    document.getElementById('sbtn').disabled = false;
-    document.getElementById('sbtn').onclick = () => location.reload();
+    const sl=document.getElementById('sl');
+    const order=sl?[...sl.children].map(c=>c.dataset.id):[];
+    const ok=JSON.stringify(order)===JSON.stringify(ch.correctOrder);
+    if(sl){
+      [...sl.children].forEach((el,p)=>{
+        const c=el.dataset.id===ch.correctOrder[p];
+        el.style.borderColor=c?'var(--ok)':'var(--ng)';
+        el.style.background=c?'rgba(16,185,129,.1)':'rgba(239,68,68,.08)';
+        el.style.cursor='default';
+      });
+    }
+    proceed(ok,ch);
   }
 }
 
-function showFb(type, msg) {
-  const el = document.getElementById('fb');
-  el.className = 'fb ' + type;
-  el.textContent = msg;
+function proceed(ok,ch){
+  if(ok){
+    S.score++;
+    showFb('ok',`✓ 正解！　${ch.exp||''}`);
+  } else {
+    S.fails++;
+    showFb('ng',`✗ 不正解。　${ch.exp||''}`);
+    if(S.fails>=MAX_FAILS){setTimeout(doLock,1800);return;}
+  }
+  const b=document.getElementById('sbtn');
+  b.textContent='次へ →'; b.disabled=false;
+  b.onclick=()=>{b.onclick=submit;S.step++;showQ(S.step);};
+  setTimeout(()=>b.click(),3000);
 }
 
-function hideFb() {
-  const el = document.getElementById('fb');
-  el.className = 'fb';
-  el.textContent = '';
+// ────────────────────────────────────────────────────────────
+// 完了処理
+// ────────────────────────────────────────────────────────────
+function finish(){
+  clearInterval(S.timer);
+  document.getElementById('pbar').style.width='100%';
+  document.querySelector('.timer-row').style.display='none';
+  setPips();
+  document.getElementById('ch-wrap').style.display='none';
+  document.getElementById('fb').style.display='none';
+  document.getElementById('sbtn').style.display='none';
+  if(S.score>=PASS_NEED){
+    const tok='SGK-'+Math.random().toString(36).slice(2,6).toUpperCase()+'-'+Math.random().toString(36).slice(2,10).toUpperCase();
+    document.getElementById('tok').textContent=tok;
+    document.getElementById('success').style.display='block';
+  } else {
+    // 再チャレンジ
+    document.getElementById('ch-wrap').style.display='block';
+    document.getElementById('ch-wrap').innerHTML=`<div style="text-align:center;padding:1.5rem 0"><div style="font-size:2rem;margin-bottom:.6rem">😔</div><div style="font-size:.95rem;font-weight:600;margin-bottom:.4rem">${N_Q}問中${S.score}問正解でした</div><div style="font-size:.82rem;color:var(--muted)">${PASS_NEED}問以上の正解が必要です</div></div>`;
+    document.getElementById('sbtn').style.display='block';
+    document.getElementById('sbtn').textContent='もう一度チャレンジする';
+    document.getElementById('sbtn').disabled=false;
+    document.getElementById('sbtn').onclick=()=>location.reload();
+  }
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function doLock(){
+  clearInterval(S.timer);
+  ['ch-wrap','sbtn','fb'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display='none';
+  });
+  document.querySelector('.timer-row').style.display='none';
+  document.getElementById('lock').style.display='block';
+  let n=LOCK_SECS;
+  const cd=document.getElementById('lcount');
+  cd.textContent=n;
+  const t=setInterval(()=>{n--;cd.textContent=n;if(n<=0){clearInterval(t);location.reload();}},1000);
+}
+
+function showFb(cls,msg){
+  const el=document.getElementById('fb');
+  el.className='fb '+cls;
+  el.textContent=msg;
+}
+function hideFb(){
+  const el=document.getElementById('fb');
+  el.className='fb'; el.textContent='';
+}
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 init();
