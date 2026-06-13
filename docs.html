@@ -1,746 +1,800 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>API ドキュメント — sugaku-club.com</title>
-<meta name="description" content="sugaku-club.com API の完全なドキュメント。数学問題API・CAPTCHA API の使い方をcurl・JavaScript・Pythonのサンプルコードで解説。"/>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Noto+Sans+JP:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API ドキュメント | sugaku-club.com</title>
+<meta name="description" content="sugaku-club.com の APIドキュメント。CAPTCHA・数学問題・メール送信APIのリファレンスと認証方法を掲載。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#05071a;--surf:rgba(255,255,255,.04);--surf2:rgba(255,255,255,.07);
-  --brd:rgba(255,255,255,.09);--brd-p:rgba(124,58,237,.4);
-  --p:#7c3aed;--pl:#a78bfa;--ac:#06b6d4;--am:#f59e0b;--ok:#10b981;--ng:#ef4444;
-  --tx:#e2e8f0;--mu:#94a3b8;--code:#0f172a;
-  --sb-w:260px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:"Noto Sans JP","Outfit",sans-serif;background:var(--bg);color:var(--tx);
-  display:flex;min-height:100vh;font-size:15px}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── SIDEBAR ── */
-.sidebar{width:var(--sb-w);min-height:100vh;border-right:1px solid var(--brd);
-  position:fixed;top:0;left:0;overflow-y:auto;background:rgba(5,7,26,.95);
-  backdrop-filter:blur(20px);z-index:100;padding:0 0 40px}
-.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;
-  border-bottom:1px solid var(--brd);text-decoration:none}
-.sb-logo-i{width:32px;height:32px;background:linear-gradient(135deg,var(--p),var(--ac));
-  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.sb-logo-txt{font-family:"Outfit",sans-serif;font-weight:900;font-size:.9rem;color:var(--tx)}
-.sb-logo-badge{font-size:.6rem;background:rgba(124,58,237,.2);border:1px solid var(--brd-p);
-  border-radius:4px;padding:1px 5px;color:var(--pl);font-weight:700;margin-top:1px}
+  :root {
+    --bg:          #05071a;
+    --bg2:         #080c24;
+    --bg3:         #0d1130;
+    --purple:      #7c3aed;
+    --purple-lt:   #9d5cf0;
+    --purple-glow: rgba(124,58,237,.35);
+    --cyan:        #06b6d4;
+    --cyan-lt:     #22d3ee;
+    --cyan-glow:   rgba(6,182,212,.25);
+    --text:        #e2e8f0;
+    --text-muted:  #94a3b8;
+    --border:      rgba(124,58,237,.25);
+    --glass:       rgba(13,17,48,.65);
+    --new:         #10b981;
+  }
 
-.sb-section{padding:16px 20px 4px;font-size:.65rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.1em;color:rgba(148,163,184,.5)}
-.sb-link{display:flex;align-items:center;gap:8px;padding:7px 20px;font-size:.82rem;
-  color:var(--mu);text-decoration:none;transition:all .2s;border-left:2px solid transparent}
-.sb-link:hover{color:var(--tx);background:var(--surf)}
-.sb-link.active{color:var(--pl);border-left-color:var(--pl);background:rgba(124,58,237,.07)}
-.sb-method{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:3px;font-family:"Outfit",sans-serif}
-.m-get{background:rgba(16,185,129,.15);color:#6ee7b7}
-.m-post{background:rgba(245,158,11,.15);color:#fcd34d}
-.m-del{background:rgba(239,68,68,.15);color:#fca5a5}
+  html { scroll-behavior: smooth; }
 
-/* ── MAIN ── */
-.main{margin-left:var(--sb-w);flex:1;max-width:calc(100% - var(--sb-w))}
-.top-bar{height:56px;border-bottom:1px solid var(--brd);display:flex;align-items:center;
-  justify-content:space-between;padding:0 40px;position:sticky;top:0;
-  background:rgba(5,7,26,.92);backdrop-filter:blur(20px);z-index:50}
-.tb-right{display:flex;align-items:center;gap:12px}
-.tb-btn{padding:7px 16px;border-radius:8px;font-size:.78rem;font-weight:700;
-  font-family:"Outfit",sans-serif;cursor:pointer;text-decoration:none;transition:all .2s}
-.tb-btn.outline{background:transparent;border:1px solid var(--brd);color:var(--mu)}
-.tb-btn.outline:hover{border-color:var(--brd-p);color:var(--pl)}
-.tb-btn.fill{background:var(--p);color:#fff;border:none;
-  box-shadow:0 2px 10px rgba(124,58,237,.35)}
-.tb-btn.fill:hover{background:#6d28d9;transform:translateY(-1px)}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* ── CONTENT ── */
-.content{padding:48px 40px;max-width:900px}
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124,58,237,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(6,182,212,.12) 0%, transparent 55%),
+      var(--bg);
+  }
 
-/* HERO */
-.doc-hero{margin-bottom:56px}
-.version-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.1);
-  border:1px solid rgba(16,185,129,.25);border-radius:99px;padding:4px 12px;
-  font-size:.72rem;font-weight:700;color:var(--ok);margin-bottom:16px}
-.doc-title{font-family:"Outfit",sans-serif;font-size:2.4rem;font-weight:900;
-  line-height:1.2;margin-bottom:12px}
-.doc-sub{font-size:1rem;color:var(--mu);line-height:1.7;max-width:600px}
+  /* ─── TOP NAV ─── */
+  .topnav {
+    position: sticky; top: 0; z-index: 200;
+    height: 60px;
+    background: rgba(5,7,26,.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1.5rem;
+  }
+  .topnav-logo {
+    font-size: 1.15rem; font-weight: 700;
+    background: linear-gradient(90deg, var(--purple-lt), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-decoration: none; letter-spacing: .02em;
+  }
+  .topnav-right { display: flex; align-items: center; gap: 1rem; }
+  .btn-cta {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .45rem 1.1rem;
+    background: linear-gradient(135deg, var(--purple), var(--purple-lt));
+    color: #fff; font-weight: 600; font-size: .85rem;
+    border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
+    box-shadow: 0 0 18px var(--purple-glow);
+    transition: transform .18s, box-shadow .18s;
+  }
+  .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 0 28px var(--purple-glow); }
 
-/* SECTION */
-.doc-section{margin-bottom:64px;scroll-margin-top:72px}
-.doc-h2{font-family:"Outfit",sans-serif;font-size:1.5rem;font-weight:800;
-  margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.doc-h2::after{content:"";flex:1;height:1px;background:var(--brd);margin-left:12px}
-.doc-h3{font-family:"Outfit",sans-serif;font-size:1.05rem;font-weight:700;margin:28px 0 10px}
-.doc-p{color:var(--mu);line-height:1.8;margin-bottom:14px;font-size:.92rem}
-.doc-p code{background:rgba(255,255,255,.08);padding:2px 7px;border-radius:4px;
-  font-family:"JetBrains Mono",monospace;font-size:.84em;color:var(--pl)}
+  /* ─── MOBILE NAV ─── */
+  .mobile-nav { display: none; position: relative; }
+  .mobile-nav-btn {
+    display: flex; align-items: center; gap: .5rem;
+    background: var(--glass); border: 1px solid var(--border);
+    color: var(--text); font-size: .85rem; font-weight: 500;
+    padding: .45rem .9rem; border-radius: 8px; cursor: pointer;
+    backdrop-filter: blur(10px);
+  }
+  .mobile-nav-btn svg { transition: transform .2s; }
+  .mobile-nav-btn.open svg:last-child { transform: rotate(180deg); }
+  .mobile-dropdown {
+    display: none; position: absolute; top: calc(100% + 8px); left: 0;
+    min-width: 240px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: .5rem; z-index: 300;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  }
+  .mobile-dropdown.open { display: block; animation: fadeIn .15s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .mobile-dropdown a {
+    display: block; padding: .55rem .9rem; border-radius: 8px;
+    color: var(--text-muted); text-decoration: none; font-size: .88rem;
+    transition: background .15s, color .15s;
+  }
+  .mobile-dropdown a:hover { background: rgba(124,58,237,.2); color: var(--text); }
 
-/* ENDPOINT CARD */
-.endpoint-card{background:var(--surf);border:1px solid var(--brd);border-radius:14px;
-  overflow:hidden;margin-bottom:24px}
-.ep-header{display:flex;align-items:center;gap:12px;padding:14px 20px;
-  border-bottom:1px solid var(--brd);background:var(--surf2)}
-.ep-method{font-size:.72rem;font-weight:900;padding:3px 9px;border-radius:5px;
-  font-family:"JetBrains Mono",monospace;letter-spacing:.05em}
-.ep-path{font-family:"JetBrains Mono",monospace;font-size:.9rem;font-weight:700;color:var(--tx)}
-.ep-desc{font-size:.78rem;color:var(--mu);margin-left:auto}
-.ep-body{padding:20px}
-.ep-params{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:16px}
-.ep-params th{text-align:left;padding:8px 12px;font-size:.7rem;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--mu);border-bottom:1px solid var(--brd)}
-.ep-params td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
-.ep-params td:first-child{font-family:"JetBrains Mono",monospace;font-size:.82em;color:var(--pl)}
-.ep-params td:nth-child(2){color:var(--am);font-size:.75em;font-family:"JetBrains Mono",monospace}
-.ep-params td:last-child{color:var(--mu)}
-.required-badge{display:inline-block;background:rgba(239,68,68,.15);color:#fca5a5;
-  font-size:.6rem;padding:1px 5px;border-radius:3px;font-weight:700;margin-left:4px}
-.optional-badge{display:inline-block;background:rgba(148,163,184,.1);color:var(--mu);
-  font-size:.6rem;padding:1px 5px;border-radius:3px;margin-left:4px}
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
 
-/* CODE BLOCK */
-.code-wrap{position:relative;margin:14px 0}
-.code-tabs{display:flex;gap:2px;margin-bottom:0;border-bottom:1px solid var(--brd)}
-.code-tab{padding:7px 16px;font-size:.75rem;font-weight:700;cursor:pointer;
-  font-family:"Outfit",sans-serif;color:var(--mu);background:transparent;
-  border:none;border-bottom:2px solid transparent;transition:all .2s}
-.code-tab.active{color:var(--pl);border-bottom-color:var(--pl)}
-.code-tab:hover:not(.active){color:var(--tx)}
-pre{background:var(--code);border:1px solid var(--brd);border-radius:0 0 10px 10px;
-  padding:20px;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:.82rem;
-  line-height:1.7;margin:0}
-pre.no-tabs{border-radius:10px}
-.copy-btn{position:absolute;top:42px;right:10px;background:rgba(255,255,255,.07);
-  border:1px solid var(--brd);border-radius:6px;padding:4px 10px;font-size:.68rem;
-  color:var(--mu);cursor:pointer;font-family:"Outfit",sans-serif;transition:all .2s}
-.copy-btn:hover{background:rgba(255,255,255,.12);color:var(--tx)}
-.copy-btn.no-tabs{top:10px}
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    position: sticky; top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    padding: 2rem 1.2rem;
+    border-right: 1px solid var(--border);
+    background: rgba(8,12,36,.45);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
+  .sidebar-section > span {
+    display: block; font-size: .7rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-muted); padding: 1rem .6rem .3rem;
+  }
+  .sidebar a {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .52rem .7rem; border-radius: 8px;
+    color: var(--text-muted); text-decoration: none; font-size: .88rem;
+    transition: background .15s, color .15s;
+  }
+  .sidebar a:hover { background: rgba(124,58,237,.18); color: var(--text); }
+  .sidebar a.active { background: rgba(124,58,237,.28); color: var(--purple-lt); font-weight: 600; }
 
-/* SYNTAX COLORS */
-.kw{color:#c792ea}.str{color:#c3e88d}.num{color:#f78c6c}
-.cmt{color:#546e7a}.fn{color:#82aaff}.key{color:#80cbc4}
-.var{color:#eeffff}
+  /* ─── BADGE ─── */
+  .new-badge {
+    display: inline-block; font-size: .65rem; font-weight: 700;
+    letter-spacing: .05em; padding: .1rem .4rem;
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: #022c1a; border-radius: 4px;
+  }
 
-/* RESPONSE EXAMPLE */
-.res-example{background:var(--code);border:1px solid var(--brd);border-radius:10px;padding:18px;
-  font-family:"JetBrains Mono",monospace;font-size:.8rem;line-height:1.7;overflow-x:auto;margin:10px 0}
+  /* ─── MAIN ─── */
+  .main { padding: 3rem 3.5rem 6rem; }
+  .section { margin-bottom: 4rem; }
+  .section-title {
+    font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem;
+    background: linear-gradient(90deg, var(--text) 60%, var(--text-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .section-lead { color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; font-size: .97rem; }
 
-/* ERROR TABLE */
-.error-table{width:100%;border-collapse:collapse;font-size:.82rem}
-.error-table th{text-align:left;padding:10px 14px;background:var(--surf2);font-size:.74rem;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--mu)}
-.error-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
-.error-table td:first-child{font-family:"JetBrains Mono",monospace;font-weight:700}
-.e-4{color:#fca5a5}.e-5{color:var(--am)}
+  /* ─── GLASS CARD ─── */
+  .card {
+    background: var(--glass); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.5rem;
+    backdrop-filter: blur(14px); margin-bottom: 1.25rem;
+    position: relative; overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple-lt), transparent); opacity: .5;
+  }
+  .card:hover { border-color: rgba(124,58,237,.5); box-shadow: 0 0 32px rgba(124,58,237,.12); }
 
-/* LIVE DEMO */
-.demo-wrap{background:var(--surf);border:1px solid var(--brd);border-radius:16px;
-  overflow:hidden;margin-top:16px}
-.demo-bar{display:flex;align-items:center;gap:10px;padding:12px 18px;
-  background:var(--surf2);border-bottom:1px solid var(--brd)}
-.demo-dot{width:8px;height:8px;border-radius:50%}
-.demo-input-row{display:flex;gap:10px;padding:16px 18px;flex-wrap:wrap}
-.demo-input{background:rgba(255,255,255,.06);border:1px solid var(--brd);border-radius:8px;
-  padding:9px 13px;color:var(--tx);font-size:.83rem;font-family:"JetBrains Mono",monospace;
-  outline:none;flex:1;min-width:160px;transition:border-color .2s}
-.demo-input:focus{border-color:var(--brd-p)}
-.demo-select{background:rgba(255,255,255,.06);border:1px solid var(--brd);border-radius:8px;
-  padding:9px 13px;color:var(--tx);font-size:.83rem;outline:none;cursor:pointer}
-.demo-select option{background:#0f0f24}
-.demo-run{padding:9px 20px;background:var(--p);color:#fff;border:none;border-radius:8px;
-  font-weight:700;font-size:.83rem;cursor:pointer;font-family:"Outfit",sans-serif;
-  transition:all .2s;white-space:nowrap}
-.demo-run:hover{background:#6d28d9;transform:translateY(-1px)}
-.demo-output{padding:16px 18px;border-top:1px solid var(--brd)}
-.demo-output pre{background:transparent;border:none;padding:0;font-size:.8rem}
+  /* ─── INFO GRID ─── */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .info-item {
+    background: rgba(6,182,212,.07); border: 1px solid rgba(6,182,212,.2);
+    border-radius: 12px; padding: 1rem 1.2rem;
+  }
+  .info-item .label { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--cyan); margin-bottom: .3rem; }
+  .info-item .value { font-family: 'JetBrains Mono', monospace; font-size: .9rem; color: var(--text); word-break: break-all; }
 
-/* PLAN TABLE */
-.plan-rate-table{width:100%;border-collapse:collapse;font-size:.82rem}
-.plan-rate-table th{text-align:center;padding:10px 12px;background:var(--surf2);
-  font-size:.75rem;font-weight:700;color:var(--mu);border-bottom:2px solid var(--brd)}
-.plan-rate-table th:first-child{text-align:left}
-.plan-rate-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);text-align:center;color:var(--mu)}
-.plan-rate-table td:first-child{text-align:left;color:var(--tx);font-weight:600}
-.hl-col{color:var(--pl);font-weight:700}
+  /* ─── CODE BLOCK ─── */
+  .code-wrap { position: relative; margin: .8rem 0; }
+  .code-block {
+    background: rgba(0,0,0,.55); border: 1px solid rgba(124,58,237,.2);
+    border-radius: 12px; padding: 1.2rem 1.4rem;
+    font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+    line-height: 1.75; overflow-x: auto; white-space: pre; color: #c8d8f0;
+  }
+  .c-method  { color: #9d5cf0; font-weight: 600; }
+  .c-path    { color: #22d3ee; }
+  .c-header  { color: #fbbf24; }
+  .c-key     { color: #34d399; }
+  .c-str     { color: #f87171; }
+  .c-num     { color: #fb923c; }
+  .c-bool    { color: #a78bfa; }
+  .c-comment { color: #475569; font-style: italic; }
+  .copy-btn {
+    position: absolute; top: .7rem; right: .7rem;
+    background: rgba(124,58,237,.3); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: .72rem; font-weight: 600;
+    padding: .3rem .7rem; border-radius: 6px; cursor: pointer;
+    transition: background .15s, color .15s; font-family: 'Outfit', sans-serif;
+  }
+  .copy-btn:hover { background: rgba(124,58,237,.55); color: #fff; }
+  .copy-btn.copied { background: rgba(16,185,129,.35); color: #34d399; border-color: rgba(16,185,129,.4); }
 
-/* ALERT */
-.alert{display:flex;gap:12px;padding:14px 18px;border-radius:10px;margin:14px 0;font-size:.84rem;line-height:1.65}
-.alert-warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
-.alert-info{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.25);color:#67e8f9}
-.alert-ok{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+  /* ─── ENDPOINT CARD ─── */
+  .endpoint-card { margin-bottom: 1.2rem; }
+  .endpoint-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .5rem; }
+  .method-badge {
+    font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+    padding: .25rem .6rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+  }
+  .method-get  { background: rgba(6,182,212,.18); color: var(--cyan); border: 1px solid rgba(6,182,212,.35); }
+  .method-post { background: rgba(124,58,237,.18); color: var(--purple-lt); border: 1px solid rgba(124,58,237,.35); }
+  .endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: .9rem; color: var(--text); }
+  .endpoint-desc { font-size: .85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: .5rem; }
+  .mono { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-size: .85rem; }
 
-@media(max-width:900px){
-  .sidebar{transform:translateX(-100%)}
-  .main{margin-left:0}
-}
+  /* ─── TABLE ─── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  th {
+    background: rgba(124,58,237,.18); color: var(--purple-lt);
+    font-weight: 600; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+    padding: .7rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  td { padding: .65rem 1rem; border-bottom: 1px solid rgba(255,255,255,.05); color: var(--text-muted); }
+  tr:hover td { background: rgba(124,58,237,.06); color: var(--text); }
+  td.code-cell { font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--cyan); font-weight: 500; }
+
+  /* ─── PRICING TABLE ─── */
+  .pt td.plan-name { font-weight: 600; color: var(--text); }
+  .pt td.price { color: var(--cyan); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .badge-pop {
+    display: inline-block; font-size: .65rem; font-weight: 700; letter-spacing: .04em;
+    padding: .1rem .45rem; background: linear-gradient(135deg, var(--purple), var(--purple-lt));
+    color: #fff; border-radius: 4px; margin-left: .4rem;
+  }
+
+  /* ─── CTA BANNER ─── */
+  .cta-banner {
+    background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(6,182,212,.15));
+    border: 1px solid rgba(124,58,237,.4); border-radius: 18px; padding: 2rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    margin-bottom: 2.5rem; position: relative; overflow: hidden;
+  }
+  .cta-banner::after {
+    content: '∑'; position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+    font-size: 7rem; opacity: .04; color: var(--purple); pointer-events: none;
+  }
+  .cta-text h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: .35rem; }
+  .cta-text p  { color: var(--text-muted); font-size: .9rem; line-height: 1.5; }
+  .btn-cta-lg {
+    display: inline-flex; align-items: center; gap: .5rem; white-space: nowrap;
+    padding: .75rem 1.75rem;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    color: #fff; font-weight: 700; font-size: .95rem;
+    border: none; border-radius: 10px; cursor: pointer; text-decoration: none;
+    box-shadow: 0 0 30px var(--purple-glow), 0 0 60px var(--cyan-glow);
+    transition: transform .18s, box-shadow .18s;
+  }
+  .btn-cta-lg:hover { transform: translateY(-3px); box-shadow: 0 0 40px var(--purple-glow), 0 0 80px var(--cyan-glow); }
+
+  /* ─── BASE URL ─── */
+  .base-url {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: rgba(6,182,212,.1); border: 1px solid rgba(6,182,212,.3);
+    border-radius: 8px; padding: .5rem 1rem;
+    font-family: 'JetBrains Mono', monospace; font-size: .9rem; color: var(--cyan);
+    margin-bottom: 1.2rem;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 2rem 1.25rem 4rem; }
+    .mobile-nav { display: block; }
+    .cta-banner { flex-direction: column; align-items: flex-start; }
+    .cta-banner::after { display: none; }
+  }
+  @media (max-width: 600px) {
+    .section-title { font-size: 1.35rem; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <a href="index.html" class="sb-logo">
-    <div class="sb-logo-i">&#x2211;</div>
-    <div>
-      <div class="sb-logo-txt">sugaku-club.com</div>
-      <div class="sb-logo-badge">API v1</div>
-    </div>
-  </a>
-
-  <div class="sb-section">はじめに</div>
-  <a href="#intro"      class="sb-link active">&#x1F4D6; 概要</a>
-  <a href="#quickstart" class="sb-link">&#x26A1; クイックスタート</a>
-  <a href="#auth"       class="sb-link">&#x1F511; 認証</a>
-  <a href="#ratelimit"  class="sb-link">&#x23F1; レート制限</a>
-  <a href="#errors"     class="sb-link">&#x26A0; エラーコード</a>
-
-  <div class="sb-section">数学問題 API</div>
-  <a href="#prob-random"  class="sb-link"><span class="sb-method m-get">GET</span> /problems/random</a>
-  <a href="#prob-get"     class="sb-link"><span class="sb-method m-get">GET</span> /problems/{id}</a>
-  <a href="#prob-list"    class="sb-link"><span class="sb-method m-get">GET</span> /problems</a>
-  <a href="#prob-search"  class="sb-link"><span class="sb-method m-get">GET</span> /problems/search</a>
-
-  <div class="sb-section">CAPTCHA API</div>
-  <a href="#cap-generate" class="sb-link"><span class="sb-method m-post">POST</span> /captcha/generate</a>
-  <a href="#cap-verify"   class="sb-link"><span class="sb-method m-post">POST</span> /captcha/verify</a>
-
-  <div class="sb-section">使用量</div>
-  <a href="#usage"       class="sb-link"><span class="sb-method m-get">GET</span> /usage</a>
-  <a href="#webhook"     class="sb-link">&#x1F4E3; Webhook</a>
-
-  <div class="sb-section">リソース</div>
-  <a href="#sdk"         class="sb-link">&#x1F4E6; SDK</a>
-  <a href="#changelog"   class="sb-link">&#x1F4DD; 更新履歴</a>
-  <a href="signup.html"  class="sb-link" style="color:var(--ok);margin-top:8px">&#x1F513; APIキーを取得</a>
-</aside>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="top-bar">
-    <span style="font-size:.82rem;color:var(--mu)">Base URL: <code style="font-family:'JetBrains Mono',monospace;color:var(--pl)">https://api.sugaku-club.com/v1</code></span>
-    <div class="tb-right">
-      <a href="index.html" class="tb-btn outline">&#x2190; トップ</a>
-      <a href="signup.html" class="tb-btn fill">APIキーを取得</a>
-    </div>
-  </div>
-
-  <div class="content">
-
-    <!-- HERO -->
-    <div class="doc-hero" id="intro">
-      <div class="version-chip">&#x2705; API v1.0 — 稼働中</div>
-      <div class="doc-title">sugaku-club.com<br>API ドキュメント</div>
-      <div class="doc-sub">日本の数学問題データベースと AI 突破困難 CAPTCHA を REST API で提供します。フリープランは登録のみで即日利用可能。</div>
-      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
-        <a href="#quickstart" class="tb-btn fill" style="display:inline-flex">&#x26A1; クイックスタート</a>
-        <a href="signup.html" class="tb-btn outline" style="display:inline-flex">APIキーを取得</a>
+<!-- TOP NAV -->
+<nav class="topnav" role="navigation" aria-label="メインナビゲーション">
+  <a href="/index.html" class="topnav-logo">数学 Club</a>
+  <div class="topnav-right">
+    <div class="mobile-nav">
+      <button class="mobile-nav-btn" id="mobileNavBtn" aria-expanded="false" aria-controls="mobileDropdown">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        セクション
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mobile-dropdown" id="mobileDropdown" role="listbox">
+        <a href="#intro">はじめに</a>
+        <a href="#auth">認証</a>
+        <a href="#captcha">CAPTCHA API</a>
+        <a href="#math">数学問題 API</a>
+        <a href="#mail">メール送信 API <span class="new-badge">NEW</span></a>
+        <a href="#errors">エラーコード</a>
+        <a href="#pricing">料金・制限</a>
       </div>
     </div>
+    <a href="/signup.html" class="btn-cta" id="nav-signup">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      無料で始める
+    </a>
+  </div>
+</nav>
 
-    <!-- QUICKSTART -->
-    <div class="doc-section" id="quickstart">
-      <div class="doc-h2">&#x26A1; クイックスタート</div>
-      <p class="doc-p">3ステップで API を使い始めることができます。</p>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" role="complementary" aria-label="APIナビゲーション">
+    <div class="sidebar-section">
+      <span>ガイド</span>
+      <a href="#intro" class="active" id="sb-intro">はじめに</a>
+      <a href="#auth" id="sb-auth">認証</a>
+    </div>
+    <div class="sidebar-section">
+      <span>API リファレンス</span>
+      <a href="#captcha" id="sb-captcha">CAPTCHA API</a>
+      <a href="#math" id="sb-math">数学問題 API</a>
+      <a href="#mail" id="sb-mail">メール送信 API <span class="new-badge">NEW</span></a>
+    </div>
+    <div class="sidebar-section">
+      <span>その他</span>
+      <a href="#errors" id="sb-errors">エラーコード</a>
+      <a href="#pricing" id="sb-pricing">料金・制限</a>
+    </div>
+  </aside>
 
-      <div class="doc-h3">① APIキーを取得する</div>
-      <p class="doc-p"><a href="signup.html" style="color:var(--pl)">sugaku-club.com/signup</a> で登録すると、メールアドレスに APIキーが送られます。フリープランはクレジットカード不要です。</p>
+  <!-- MAIN -->
+  <main class="main" id="main-content">
 
-      <div class="doc-h3">② リクエストを送る</div>
+    <!-- CTA BANNER TOP -->
+    <div class="cta-banner">
+      <div class="cta-text">
+        <h2>フリープランで今すぐ試せます</h2>
+        <p>クレジットカード不要。APIキーを取得して、数分でインテグレーション完了。</p>
+      </div>
+      <a href="/signup.html" class="btn-cta-lg" id="cta-top">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        今すぐ無料で試す
+      </a>
+    </div>
+
+    <!-- ═══ はじめに ═══ -->
+    <section class="section" id="intro" aria-labelledby="intro-title">
+      <h1 id="intro-title" class="section-title">はじめに</h1>
+      <p class="section-lead">sugaku-club.com API を使うと、AI耐性CAPTCHAの発行・検証、数学問題の取得・採点、トランザクションメールの送信をシンプルなREST APIで利用できます。</p>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">ベース URL</div>
+          <div class="value">https://sugaku-club.com/api</div>
+        </div>
+        <div class="info-item">
+          <div class="label">認証ヘッダー</div>
+          <div class="value">X-Api-Key: sk_XXXX</div>
+        </div>
+        <div class="info-item">
+          <div class="label">レスポンス形式</div>
+          <div class="value">application/json</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.6rem;">ベース URL</div>
+        <div class="base-url">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          https://sugaku-club.com/api
+        </div>
+        <p style="font-size:.87rem;color:var(--text-muted);line-height:1.65;">全てのリクエストはHTTPSで行い、レスポンスは <span class="mono">application/json</span> です。エラー時も同様にJSONが返ります。</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ 認証 ═══ -->
+    <section class="section" id="auth" aria-labelledby="auth-title">
+      <h2 id="auth-title" class="section-title">認証</h2>
+      <p class="section-lead">まずアカウントを作成して <strong>APIキー</strong> を取得し、以後の全リクエストに <span class="mono">X-Api-Key</span> ヘッダーとして付与します。</p>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/auth/signup</span>
+        </div>
+        <p class="endpoint-desc">新規アカウントを作成し、JWTトークンとAPIキーを返します。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-signup" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">POST</span> <span class="c-path">https://sugaku-club.com/api/auth/signup</span>
+<span class="c-header">Content-Type:</span> application/json
+
+{
+  <span class="c-key">"email"</span>:    <span class="c-str">"user@example.com"</span>,
+  <span class="c-key">"password"</span>: <span class="c-str">"password123"</span>
+}
+
+<span class="c-comment"># レスポンス 201</span>
+{
+  <span class="c-key">"token"</span>:   <span class="c-str">"eyJ..."</span>,
+  <span class="c-key">"api_key"</span>: <span class="c-str">"sk_XXXX"</span>
+}</div>
+        </div>
+      </div>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/auth/login</span>
+        </div>
+        <p class="endpoint-desc">既存アカウントでログインし、JWTトークンとAPIキーを再取得します。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-login" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">POST</span> <span class="c-path">https://sugaku-club.com/api/auth/login</span>
+<span class="c-header">Content-Type:</span> application/json
+
+{
+  <span class="c-key">"email"</span>:    <span class="c-str">"user@example.com"</span>,
+  <span class="c-key">"password"</span>: <span class="c-str">"password123"</span>
+}
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"token"</span>:   <span class="c-str">"eyJ..."</span>,
+  <span class="c-key">"api_key"</span>: <span class="c-str">"sk_XXXX"</span>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ CAPTCHA API ═══ -->
+    <section class="section" id="captcha" aria-labelledby="captcha-title">
+      <h2 id="captcha-title" class="section-title">CAPTCHA API</h2>
+      <p class="section-lead">AI耐性の数学的CAPTCHAを発行・検証します。チャレンジを取得してユーザーに解かせ、回答を送信するとトークンが発行されます。</p>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/captcha/issue</span>
+        </div>
+        <p class="endpoint-desc">新しいCAPTCHAチャレンジを発行します。有効期限は発行から5分間です。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-issue" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">POST</span> <span class="c-path">https://sugaku-club.com/api/captcha/issue</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"challenge_id"</span>: <span class="c-str">"ch_XXXX"</span>,
+  <span class="c-key">"challenge"</span>:    <span class="c-str">"..."</span>,
+  <span class="c-key">"expires_at"</span>:   <span class="c-num">1750000000</span>
+}</div>
+        </div>
+      </div>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/captcha/verify</span>
+        </div>
+        <p class="endpoint-desc">ユーザーの回答を検証します。正答であれば使い捨てトークンが返ります。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-verify" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">POST</span> <span class="c-path">https://sugaku-club.com/api/captcha/verify</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+<span class="c-header">Content-Type:</span> application/json
+
+{
+  <span class="c-key">"challenge_id"</span>: <span class="c-str">"ch_XXXX"</span>,
+  <span class="c-key">"answer"</span>:       <span class="c-str">"答え"</span>
+}
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"valid"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"token"</span>: <span class="c-str">"SGK-XXXX"</span>
+}</div>
+        </div>
+      </div>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/api/captcha/challenge</span>
+        </div>
+        <p class="endpoint-desc">チャレンジ問題（表示用データ）を取得します。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-challenge" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">GET</span> <span class="c-path">https://sugaku-club.com/api/captcha/challenge</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"challenge_id"</span>: <span class="c-str">"ch_XXXX"</span>,
+  <span class="c-key">"challenge"</span>:    <span class="c-str">"次の計算の答えは？ 12 × 7 − 4"</span>,
+  <span class="c-key">"type"</span>:         <span class="c-str">"arithmetic"</span>,
+  <span class="c-key">"expires_at"</span>:   <span class="c-num">1750000000</span>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ 数学問題 API ═══ -->
+    <section class="section" id="math" aria-labelledby="math-title">
+      <h2 id="math-title" class="section-title">数学問題 API</h2>
+      <p class="section-lead">難易度別の数学問題を取得・採点できます。学習アプリや練習ツールへの組み込みに最適です。</p>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/api/math/problem</span>
+        </div>
+        <p class="endpoint-desc">クエリパラメータ <span class="mono">level</span> で難易度（1〜5）を指定して問題を取得します。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-problem" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">GET</span> <span class="c-path">https://sugaku-club.com/api/math/problem?level=1</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"id"</span>:       <span class="c-str">"p_XXXX"</span>,
+  <span class="c-key">"question"</span>: <span class="c-str">"3 + 5 = ?"</span>,
+  <span class="c-key">"level"</span>:    <span class="c-num">1</span>
+}</div>
+        </div>
+      </div>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/math/check</span>
+        </div>
+        <p class="endpoint-desc">問題IDと回答を送信し、正誤判定と解説を受け取ります。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-check" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">POST</span> <span class="c-path">https://sugaku-club.com/api/math/check</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+<span class="c-header">Content-Type:</span> application/json
+
+{
+  <span class="c-key">"id"</span>:     <span class="c-str">"p_XXXX"</span>,
+  <span class="c-key">"answer"</span>: <span class="c-num">8</span>
+}
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"correct"</span>:     <span class="c-bool">true</span>,
+  <span class="c-key">"explanation"</span>: <span class="c-str">"3+5=8"</span>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ メール送信 API ═══ -->
+    <section class="section" id="mail" aria-labelledby="mail-title">
+      <h2 id="mail-title" class="section-title">
+        メール送信 API
+        <span class="new-badge" style="font-size:.8rem;vertical-align:middle;">NEW</span>
+      </h2>
+      <p class="section-lead">トランザクションメールをシンプルなAPIで送信できます。フォーム送信通知、会員登録確認、パスワードリセットなどに活用できます。</p>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/mail/send</span>
+        </div>
+        <p class="endpoint-desc">宛先・件名・本文を指定してメールを送信します。送信後に月間使用数と残り数を返します。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-mailsend" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">POST</span> <span class="c-path">https://sugaku-club.com/api/mail/send</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+<span class="c-header">Content-Type:</span> application/json
+
+{
+  <span class="c-key">"to"</span>:      <span class="c-str">"user@example.com"</span>,
+  <span class="c-key">"subject"</span>: <span class="c-str">"件名"</span>,
+  <span class="c-key">"text"</span>:    <span class="c-str">"本文"</span>
+}
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"success"</span>:   <span class="c-bool">true</span>,
+  <span class="c-key">"used"</span>:      <span class="c-num">1</span>,
+  <span class="c-key">"remaining"</span>: <span class="c-num">99</span>
+}</div>
+        </div>
+      </div>
+
+      <div class="card endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/api/mail/quota</span>
+        </div>
+        <p class="endpoint-desc">現在の月間メール送信クォータと使用状況を返します。</p>
+        <div class="code-wrap">
+          <button class="copy-btn" id="cp-quota" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+          <div class="code-block"><span class="c-comment"># リクエスト</span>
+<span class="c-method">GET</span> <span class="c-path">https://sugaku-club.com/api/mail/quota</span>
+<span class="c-header">X-Api-Key:</span> sk_XXXX
+
+<span class="c-comment"># レスポンス 200</span>
+{
+  <span class="c-key">"plan"</span>:            <span class="c-str">"free"</span>,
+  <span class="c-key">"quota_per_month"</span>: <span class="c-num">100</span>,
+  <span class="c-key">"used"</span>:            <span class="c-num">1</span>,
+  <span class="c-key">"remaining"</span>:       <span class="c-num">99</span>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══ エラーコード ═══ -->
+    <section class="section" id="errors" aria-labelledby="errors-title">
+      <h2 id="errors-title" class="section-title">エラーコード</h2>
+      <p class="section-lead">全てのエラーレスポンスは <span class="mono">{"error":"...","code":...}</span> 形式のJSONで返ります。</p>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table aria-label="エラーコード一覧">
+            <thead>
+              <tr>
+                <th>HTTPステータス</th>
+                <th>意味</th>
+                <th>対処</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="code-cell">400</td><td style="color:var(--text);">リクエスト不正</td><td>パラメータの型・必須フィールドを確認</td></tr>
+              <tr><td class="code-cell">401</td><td style="color:var(--text);">APIキー不正</td><td>X-Api-Key ヘッダーとキーの値を確認</td></tr>
+              <tr><td class="code-cell">404</td><td style="color:var(--text);">リソースが見つからない</td><td>ID（challenge_id / id）が正しいか確認</td></tr>
+              <tr><td class="code-cell">422</td><td style="color:var(--text);">回答期限切れ</td><td>新しいチャレンジを再発行してください</td></tr>
+              <tr><td class="code-cell">429</td><td style="color:var(--text);">レート制限超過</td><td>しばらく待つかプランをアップグレード</td></tr>
+              <tr><td class="code-cell">503</td><td style="color:var(--text);">サービス一時停止</td><td>ステータスページを確認してください</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="code-wrap">
-        <div class="code-tabs">
-          <button class="code-tab active" onclick="switchTab(this,'qs','curl')">curl</button>
-          <button class="code-tab" onclick="switchTab(this,'qs','js')">JavaScript</button>
-          <button class="code-tab" onclick="switchTab(this,'qs','py')">Python</button>
-        </div>
-        <button class="copy-btn" onclick="copyCode(this)">コピー</button>
-        <pre id="qs-curl"><span class="cmt"># ランダムな数学問題を1件取得</span>
-<span class="fn">curl</span> https://api.sugaku-club.com/v1/problems/random \
-  -H <span class="str">"X-API-Key: SGK-XXXX-XXXXXXXX"</span></pre>
-        <pre id="qs-js" style="display:none"><span class="kw">const</span> <span class="var">response</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://api.sugaku-club.com/v1/problems/random'</span>, {
-  <span class="key">headers</span>: { <span class="str">'X-API-Key'</span>: <span class="str">'SGK-XXXX-XXXXXXXX'</span> }
-});
-<span class="kw">const</span> <span class="var">problem</span> = <span class="kw">await</span> <span class="var">response</span>.<span class="fn">json</span>();
-<span class="var">console</span>.<span class="fn">log</span>(<span class="var">problem</span>.<span class="key">question</span>); <span class="cmt">// "∫₀¹ x² dx を求めよ"</span></pre>
-        <pre id="qs-py" style="display:none"><span class="kw">import</span> <span class="var">requests</span>
-
-<span class="var">res</span> = <span class="var">requests</span>.<span class="fn">get</span>(
-    <span class="str">'https://api.sugaku-club.com/v1/problems/random'</span>,
-    <span class="key">headers</span>=<span class="str">{'X-API-Key'</span>: <span class="str">'SGK-XXXX-XXXXXXXX'</span>}
-)
-<span class="fn">print</span>(<span class="var">res</span>.<span class="fn">json</span>()[<span class="str">'question'</span>])</pre>
+        <button class="copy-btn" id="cp-error" onclick="copyCode(this)" aria-label="コードをコピー">コピー</button>
+        <div class="code-block"><span class="c-comment"># エラーレスポンス例 (401)</span>
+{
+  <span class="c-key">"error"</span>: <span class="c-str">"Invalid API key"</span>,
+  <span class="c-key">"code"</span>:  <span class="c-num">401</span>
+}</div>
       </div>
+    </section>
 
-      <div class="doc-h3">③ レスポンスを受け取る</div>
-      <div class="res-example"><span class="key">{</span>
-  <span class="str">"id"</span>: <span class="str">"prob_8Kx9mN3"</span>,
-  <span class="str">"subject"</span>: <span class="str">"calculus"</span>,
-  <span class="str">"topic"</span>: <span class="str">"definite_integral"</span>,
-  <span class="str">"difficulty"</span>: <span class="num">3</span>,
-  <span class="str">"grade"</span>: <span class="str">"high_school"</span>,
-  <span class="str">"question"</span>: <span class="str">"∫₀¹ x² dx を求めよ"</span>,
-  <span class="str">"question_latex"</span>: <span class="str">"\\int_0^1 x^2\\,dx"</span>,
-  <span class="str">"answer"</span>: <span class="str">"1/3"</span>,
-  <span class="str">"answer_latex"</span>: <span class="str">"\\frac{1}{3}"</span>,
-  <span class="str">"explanation"</span>: <span class="str">"[x³/3]₀¹ = 1/3 - 0 = 1/3"</span>,
-  <span class="str">"tags"</span>: [<span class="str">"integral"</span>, <span class="str">"power_rule"</span>],
-  <span class="str">"created_at"</span>: <span class="str">"2025-11-03"</span>
-<span class="key">}</span></div>
-    </div>
+    <hr class="divider">
 
-    <!-- AUTH -->
-    <div class="doc-section" id="auth">
-      <div class="doc-h2">&#x1F511; 認証</div>
-      <p class="doc-p">すべてのリクエストに <code>X-API-Key</code> ヘッダーを付けてください。</p>
-      <pre class="no-tabs"><span class="cmt"># ヘッダーで渡す（推奨）</span>
-X-API-Key: SGK-XXXX-XXXXXXXX
+    <!-- ═══ 料金・制限 ═══ -->
+    <section class="section" id="pricing" aria-labelledby="pricing-title">
+      <h2 id="pricing-title" class="section-title">料金・制限</h2>
+      <p class="section-lead">全プランで全APIが利用可能です。スループットと月間リクエスト数、メール送信数はプランにより異なります。</p>
 
-<span class="cmt"># クエリパラメータでも可（非推奨・URLにキーが残るため）</span>
-GET /v1/problems/random?api_key=SGK-XXXX-XXXXXXXX</pre>
-      <div class="alert alert-warn">
-        <span>&#x26A0;&#xFE0F;</span>
-        <div>APIキーはクライアントサイドのコード（JavaScript など）に直接埋め込まないでください。環境変数またはバックエンドで管理してください。</div>
-      </div>
-    </div>
-
-    <!-- RATE LIMIT -->
-    <div class="doc-section" id="ratelimit">
-      <div class="doc-h2">&#x23F1; レート制限</div>
-      <table class="plan-rate-table">
-        <thead>
-          <tr><th>プラン</th><th>月間上限</th><th>req/分</th><th>バースト</th><th>超過時</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>&#x1F331; フリー</td><td>10,000</td><td>20</td><td>—</td><td>当月停止</td></tr>
-          <tr><td>&#x1F3AE; ホビー</td><td>50,000</td><td>60</td><td>120/10秒</td><td>停止 or ¥0.30/req</td></tr>
-          <tr><td class="hl-col">&#x26A1; スタンダード</td><td class="hl-col">200,000</td><td class="hl-col">150</td><td class="hl-col">300/10秒</td><td class="hl-col">停止 or ¥0.15/req</td></tr>
-          <tr><td>&#x1F680; プロ</td><td>1,000,000</td><td>500</td><td>1,000/10秒</td><td>停止 or ¥0.06/req</td></tr>
-          <tr><td>&#x1F451; サポーター</td><td>5,000,000</td><td>1,000</td><td>2,000/10秒</td><td>停止 or ¥0.03/req</td></tr>
-        </tbody>
-      </table>
-      <p class="doc-p" style="margin-top:12px">レスポンスヘッダーに使用状況が含まれます：</p>
-      <pre class="no-tabs">X-RateLimit-Limit: 200000
-X-RateLimit-Remaining: 199847
-X-RateLimit-Reset: 1735689600   <span class="cmt"># Unix timestamp</span>
-X-RateLimit-Plan: standard</pre>
-    </div>
-
-    <!-- ERRORS -->
-    <div class="doc-section" id="errors">
-      <div class="doc-h2">&#x26A0; エラーコード</div>
-      <table class="error-table">
-        <thead><tr><th>HTTP</th><th>code</th><th>説明</th></tr></thead>
-        <tbody>
-          <tr><td class="e-4">400</td><td>invalid_param</td><td>パラメータが不正。レスポンスの <code>message</code> を確認</td></tr>
-          <tr><td class="e-4">401</td><td>unauthorized</td><td>APIキーが未設定または無効</td></tr>
-          <tr><td class="e-4">403</td><td>forbidden</td><td>プランの権限外のエンドポイントへのアクセス</td></tr>
-          <tr><td class="e-4">404</td><td>not_found</td><td>指定した問題IDが存在しない</td></tr>
-          <tr><td class="e-4">429</td><td>rate_limited</td><td>レート制限超過。<code>Retry-After</code> ヘッダーを確認</td></tr>
-          <tr><td class="e-5">500</td><td>internal_error</td><td>サーバーエラー。<a href="https://status.sugaku-club.com" style="color:var(--pl)">ステータスページ</a>を確認</td></tr>
-          <tr><td class="e-5">503</td><td>maintenance</td><td>メンテナンス中</td></tr>
-        </tbody>
-      </table>
-      <div class="res-example" style="margin-top:14px"><span class="cmt">// エラーレスポンス例</span>
-<span class="key">{</span>
-  <span class="str">"error"</span>: <span class="key">{</span>
-    <span class="str">"code"</span>: <span class="str">"rate_limited"</span>,
-    <span class="str">"message"</span>: <span class="str">"月間リクエスト上限に達しました。翌月1日にリセットされます。"</span>,
-    <span class="str">"reset_at"</span>: <span class="str">"2026-07-01T00:00:00+09:00"</span>
-  <span class="key">}</span>
-<span class="key">}</span></div>
-    </div>
-
-    <!-- PROBLEMS/RANDOM -->
-    <div class="doc-section" id="prob-random">
-      <div class="doc-h2">&#x1F4D0; 数学問題 API</div>
-      <div class="endpoint-card">
-        <div class="ep-header">
-          <span class="ep-method m-get">GET</span>
-          <span class="ep-path">/v1/problems/random</span>
-          <span class="ep-desc">ランダムな問題を1件取得</span>
-        </div>
-        <div class="ep-body">
-          <p class="doc-p">条件を指定してランダムな問題を取得します。指定なしの場合は全問題からランダムに返します。</p>
-          <table class="ep-params">
-            <thead><tr><th>パラメータ</th><th>型</th><th>説明</th></tr></thead>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="pt" aria-label="料金プラン一覧">
+            <thead>
+              <tr>
+                <th>プラン</th>
+                <th>月額</th>
+                <th>RPM (req/min)</th>
+                <th>月間リクエスト</th>
+                <th>メール送信/月</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>subject<span class="optional-badge">任意</span></td><td>string</td><td>分野。algebra / geometry / calculus / statistics / number_theory</td></tr>
-              <tr><td>difficulty<span class="optional-badge">任意</span></td><td>integer</td><td>難易度 1〜5（1=中学基礎、5=大学受験難関）</td></tr>
-              <tr><td>grade<span class="optional-badge">任意</span></td><td>string</td><td>学年。middle / high_school / university_exam</td></tr>
-              <tr><td>include_solution<span class="optional-badge">任意</span></td><td>boolean</td><td>解説を含むか（デフォルト: true）</td></tr>
+              <tr>
+                <td class="plan-name">フリー</td>
+                <td class="price">¥0</td>
+                <td>10</td><td>1,000</td><td>100</td>
+              </tr>
+              <tr>
+                <td class="plan-name">スターター</td>
+                <td class="price">¥280</td>
+                <td>30</td><td>10,000</td><td>500</td>
+              </tr>
+              <tr>
+                <td class="plan-name">ホビー <span class="badge-pop">人気</span></td>
+                <td class="price">¥480</td>
+                <td>60</td><td>30,000</td><td>1,000</td>
+              </tr>
+              <tr>
+                <td class="plan-name">スタンダード</td>
+                <td class="price">¥1,480</td>
+                <td>150</td><td>150,000</td><td>5,000</td>
+              </tr>
+              <tr>
+                <td class="plan-name">プロ</td>
+                <td class="price">¥3,980</td>
+                <td>500</td><td>無制限</td><td>20,000</td>
+              </tr>
             </tbody>
           </table>
-          <div class="code-wrap">
-            <div class="code-tabs">
-              <button class="code-tab active" onclick="switchTab(this,'pr','curl')">curl</button>
-              <button class="code-tab" onclick="switchTab(this,'pr','js')">JavaScript</button>
-              <button class="code-tab" onclick="switchTab(this,'pr','py')">Python</button>
-            </div>
-            <button class="copy-btn" onclick="copyCode(this)">コピー</button>
-            <pre id="pr-curl"><span class="fn">curl</span> <span class="str">"https://api.sugaku-club.com/v1/problems/random?subject=calculus&difficulty=3"</span> \
-  -H <span class="str">"X-API-Key: SGK-XXXX-XXXXXXXX"</span></pre>
-            <pre id="pr-js" style="display:none"><span class="kw">const</span> <span class="var">params</span> = <span class="kw">new</span> <span class="fn">URLSearchParams</span>({ <span class="key">subject</span>: <span class="str">'calculus'</span>, <span class="key">difficulty</span>: <span class="num">3</span> });
-<span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`https://api.sugaku-club.com/v1/problems/random?${params}`</span>, {
-  <span class="key">headers</span>: { <span class="str">'X-API-Key'</span>: <span class="str">'SGK-XXXX-XXXXXXXX'</span> }
-});</pre>
-            <pre id="pr-py" style="display:none"><span class="var">res</span> = <span class="var">requests</span>.<span class="fn">get</span>(<span class="str">'https://api.sugaku-club.com/v1/problems/random'</span>,
-    <span class="key">params</span>={<span class="str">'subject'</span>:<span class="str">'calculus'</span>,<span class="str">'difficulty'</span>:<span class="num">3</span>},
-    <span class="key">headers</span>={<span class="str">'X-API-Key'</span>:<span class="str">'SGK-XXXX-XXXXXXXX'</span>})</pre>
-          </div>
-
-          <!-- LIVE DEMO -->
-          <div class="doc-h3">&#x1F4BB; ライブデモ</div>
-          <div class="demo-wrap">
-            <div class="demo-bar">
-              <div class="demo-dot" style="background:#ef4444"></div>
-              <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
-              <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
-              <span style="font-size:.72rem;color:var(--mu);margin-left:10px">GET /v1/problems/random — ライブデモ（モックデータ）</span>
-            </div>
-            <div class="demo-input-row">
-              <select class="demo-select" id="demoSubject">
-                <option value="">subject: すべて</option>
-                <option value="algebra">algebra（代数）</option>
-                <option value="calculus">calculus（微積分）</option>
-                <option value="geometry">geometry（幾何）</option>
-                <option value="statistics">statistics（統計）</option>
-                <option value="number_theory">number_theory（数論）</option>
-              </select>
-              <select class="demo-select" id="demoDiff">
-                <option value="">difficulty: すべて</option>
-                <option value="1">1（中学基礎）</option>
-                <option value="2">2（中学応用）</option>
-                <option value="3">3（高校基礎）</option>
-                <option value="4">4（高校応用）</option>
-                <option value="5">5（大学受験難関）</option>
-              </select>
-              <button class="demo-run" onclick="runDemo()">&#x25B6; 実行</button>
-            </div>
-            <div class="demo-output">
-              <pre id="demoOutput" style="color:var(--mu)">← 「実行」ボタンを押すとランダムな問題が表示されます</pre>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
 
-    <!-- PROBLEMS/ID -->
-    <div class="doc-section" id="prob-get">
-      <div class="endpoint-card">
-        <div class="ep-header">
-          <span class="ep-method m-get">GET</span>
-          <span class="ep-path">/v1/problems/<span style="color:var(--am)">{id}</span></span>
-          <span class="ep-desc">IDで問題を取得</span>
+      <div class="cta-banner" style="margin-top:2rem;margin-bottom:0;">
+        <div class="cta-text">
+          <h2>プランをアップグレード</h2>
+          <p>より高いスループットと月間リクエスト数が必要な場合は、スターター以上のプランをご検討ください。</p>
         </div>
-        <div class="ep-body">
-          <table class="ep-params">
-            <thead><tr><th>パス変数</th><th>型</th><th>説明</th></tr></thead>
-            <tbody>
-              <tr><td>id<span class="required-badge">必須</span></td><td>string</td><td>問題ID（例: prob_8Kx9mN3）</td></tr>
-            </tbody>
-          </table>
-          <pre class="no-tabs"><span class="fn">curl</span> https://api.sugaku-club.com/v1/problems/<span class="var">prob_8Kx9mN3</span> \
-  -H <span class="str">"X-API-Key: SGK-XXXX-XXXXXXXX"</span></pre>
-        </div>
+        <a href="/signup.html" class="btn-cta-lg" id="cta-pricing">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          今すぐ無料で始める
+        </a>
       </div>
-    </div>
+    </section>
 
-    <!-- PROBLEMS LIST -->
-    <div class="doc-section" id="prob-list">
-      <div class="endpoint-card">
-        <div class="ep-header">
-          <span class="ep-method m-get">GET</span>
-          <span class="ep-path">/v1/problems</span>
-          <span class="ep-desc">問題一覧（ページネーション）</span>
-        </div>
-        <div class="ep-body">
-          <div class="alert alert-info"><span>&#x2139;&#xFE0F;</span><div>このエンドポイントはホビープラン以上でご利用いただけます。</div></div>
-          <table class="ep-params">
-            <thead><tr><th>パラメータ</th><th>型</th><th>説明</th></tr></thead>
-            <tbody>
-              <tr><td>page<span class="optional-badge">任意</span></td><td>integer</td><td>ページ番号（デフォルト: 1）</td></tr>
-              <tr><td>per_page<span class="optional-badge">任意</span></td><td>integer</td><td>1ページあたりの件数（最大50、デフォルト20）</td></tr>
-              <tr><td>subject<span class="optional-badge">任意</span></td><td>string</td><td>分野でフィルタ</td></tr>
-              <tr><td>difficulty<span class="optional-badge">任意</span></td><td>string</td><td>例: 3 または 3-5（範囲指定）</td></tr>
-              <tr><td>sort<span class="optional-badge">任意</span></td><td>string</td><td>created_at / difficulty / id（デフォルト: created_at）</td></tr>
-            </tbody>
-          </table>
-          <div class="res-example"><span class="key">{</span>
-  <span class="str">"data"</span>: [ <span class="cmt">/* 問題オブジェクトの配列 */</span> ],
-  <span class="str">"meta"</span>: <span class="key">{</span>
-    <span class="str">"total"</span>: <span class="num">2048</span>,
-    <span class="str">"page"</span>: <span class="num">1</span>,
-    <span class="str">"per_page"</span>: <span class="num">20</span>,
-    <span class="str">"pages"</span>: <span class="num">103</span>
-  <span class="key">}</span>
-<span class="key">}</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CAPTCHA GENERATE -->
-    <div class="doc-section" id="cap-generate">
-      <div class="doc-h2">&#x1F6E1; CAPTCHA API</div>
-      <div class="endpoint-card">
-        <div class="ep-header">
-          <span class="ep-method m-post">POST</span>
-          <span class="ep-path">/v1/captcha/generate</span>
-          <span class="ep-desc">チャレンジを生成</span>
-        </div>
-        <div class="ep-body">
-          <p class="doc-p">AIが苦手とする推論型チャレンジを生成します。返却された <code>challenge_id</code> を使って答え合わせを行います。</p>
-          <table class="ep-params">
-            <thead><tr><th>ボディ</th><th>型</th><th>説明</th></tr></thead>
-            <tbody>
-              <tr><td>locale<span class="optional-badge">任意</span></td><td>string</td><td>言語（ja / en。デフォルト: ja）</td></tr>
-              <tr><td>difficulty<span class="optional-badge">任意</span></td><td>integer</td><td>難易度 1〜5（デフォルト: ランダム）</td></tr>
-              <tr><td>category<span class="optional-badge">任意</span></td><td>string</td><td>カテゴリ（physics / logic / social / math / common_sense）</td></tr>
-              <tr><td>expires_in<span class="optional-badge">任意</span></td><td>integer</td><td>有効秒数（デフォルト: 300）</td></tr>
-            </tbody>
-          </table>
-          <div class="code-wrap">
-            <div class="code-tabs">
-              <button class="code-tab active" onclick="switchTab(this,'cg','curl')">curl</button>
-              <button class="code-tab" onclick="switchTab(this,'cg','js')">JavaScript</button>
-            </div>
-            <button class="copy-btn" onclick="copyCode(this)">コピー</button>
-            <pre id="cg-curl"><span class="fn">curl</span> -X POST https://api.sugaku-club.com/v1/captcha/generate \
-  -H <span class="str">"X-API-Key: SGK-XXXX-XXXXXXXX"</span> \
-  -H <span class="str">"Content-Type: application/json"</span> \
-  -d <span class="str">'{"locale":"ja","difficulty":4}'</span></pre>
-            <pre id="cg-js" style="display:none"><span class="kw">const</span> <span class="var">challenge</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://api.sugaku-club.com/v1/captcha/generate'</span>, {
-  <span class="key">method</span>: <span class="str">'POST'</span>,
-  <span class="key">headers</span>: { <span class="str">'X-API-Key'</span>: <span class="str">'SGK-XXXX-XXXXXXXX'</span>, <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
-  <span class="key">body</span>: <span class="fn">JSON.stringify</span>({ <span class="key">locale</span>: <span class="str">'ja'</span>, <span class="key">difficulty</span>: <span class="num">4</span> })
-}).<span class="fn">then</span>(<span class="var">r</span> => <span class="var">r</span>.<span class="fn">json</span>());</pre>
-          </div>
-          <div class="res-example"><span class="key">{</span>
-  <span class="str">"challenge_id"</span>: <span class="str">"chg_3mPqR7nXv"</span>,
-  <span class="str">"category"</span>: <span class="str">"physics"</span>,
-  <span class="str">"question"</span>: <span class="str">"足の上に落としたとき最も痛いのはどれ？"</span>,
-  <span class="str">"options"</span>: [<span class="str">"鉄塊"</span>, <span class="str">"木材"</span>, <span class="str">"綿"</span>, <span class="str">"シャボン玉"</span>],
-  <span class="str">"expires_at"</span>: <span class="str">"2026-06-13T10:00:00+09:00"</span>
-<span class="key">}</span></div>
-          <div class="alert alert-warn"><span>&#x26A0;&#xFE0F;</span><div>正解（answer）はレスポンスに含まれません。クライアントが答えを送信したあと <code>/captcha/verify</code> でサーバーサイド検証してください。</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CAPTCHA VERIFY -->
-    <div class="doc-section" id="cap-verify">
-      <div class="endpoint-card">
-        <div class="ep-header">
-          <span class="ep-method m-post">POST</span>
-          <span class="ep-path">/v1/captcha/verify</span>
-          <span class="ep-desc">回答を検証してトークンを発行</span>
-        </div>
-        <div class="ep-body">
-          <table class="ep-params">
-            <thead><tr><th>ボディ</th><th>型</th><th>説明</th></tr></thead>
-            <tbody>
-              <tr><td>challenge_id<span class="required-badge">必須</span></td><td>string</td><td>generateで取得したチャレンジID</td></tr>
-              <tr><td>answer<span class="required-badge">必須</span></td><td>integer</td><td>選択肢のインデックス（0始まり）</td></tr>
-            </tbody>
-          </table>
-          <pre class="no-tabs"><span class="fn">curl</span> -X POST https://api.sugaku-club.com/v1/captcha/verify \
-  -H <span class="str">"X-API-Key: SGK-XXXX-XXXXXXXX"</span> \
-  -H <span class="str">"Content-Type: application/json"</span> \
-  -d <span class="str">'{"challenge_id":"chg_3mPqR7nXv","answer":0}'</span></pre>
-          <div class="res-example"><span class="cmt">// 正解の場合</span>
-<span class="key">{</span>
-  <span class="str">"verified"</span>: <span class="kw">true</span>,
-  <span class="str">"token"</span>: <span class="str">"vt_9xKjQ2mN8pLr..."</span>,  <span class="cmt">// フォーム送信時に付与して再検証に使う</span>
-  <span class="str">"expires_at"</span>: <span class="str">"2026-06-13T10:15:00+09:00"</span>
-<span class="key">}</span>
-
-<span class="cmt">// 不正解の場合</span>
-<span class="key">{</span> <span class="str">"verified"</span>: <span class="kw">false</span>, <span class="str">"token"</span>: <span class="kw">null</span> <span class="key">}</span></div>
-          <div class="alert alert-ok"><span>&#x2705;</span><div>発行された <code>token</code> をフォームに hidden field として含め、バックエンドで再度 verify することでスパム送信を防げます。</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- USAGE -->
-    <div class="doc-section" id="usage">
-      <div class="doc-h2">&#x1F4CA; 使用量 API</div>
-      <div class="endpoint-card">
-        <div class="ep-header">
-          <span class="ep-method m-get">GET</span>
-          <span class="ep-path">/v1/usage</span>
-          <span class="ep-desc">当月の使用量を取得</span>
-        </div>
-        <div class="ep-body">
-          <div class="res-example"><span class="key">{</span>
-  <span class="str">"plan"</span>: <span class="str">"standard"</span>,
-  <span class="str">"period"</span>: <span class="str">"2026-06"</span>,
-  <span class="str">"requests"</span>: <span class="key">{</span>
-    <span class="str">"used"</span>: <span class="num">48320</span>,
-    <span class="str">"limit"</span>: <span class="num">200000</span>,
-    <span class="str">"percent"</span>: <span class="num">24.2</span>
-  <span class="key">}</span>,
-  <span class="str">"by_endpoint"</span>: <span class="key">{</span>
-    <span class="str">"/problems/random"</span>: <span class="num">31540</span>,
-    <span class="str">"/captcha/generate"</span>: <span class="num">10890</span>,
-    <span class="str">"/captcha/verify"</span>: <span class="num">5890</span>
-  <span class="key">}</span>,
-  <span class="str">"reset_at"</span>: <span class="str">"2026-07-01T00:00:00+09:00"</span>
-<span class="key">}</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WEBHOOK -->
-    <div class="doc-section" id="webhook">
-      <div class="doc-h2">&#x1F4E3; Webhook</div>
-      <p class="doc-p">スタンダードプラン以上で、月間リクエスト数が指定の閾値に達したときに Webhook で通知を受け取れます。</p>
-      <div class="doc-h3">Webhook ペイロード例</div>
-      <div class="res-example"><span class="key">{</span>
-  <span class="str">"event"</span>: <span class="str">"usage.threshold_reached"</span>,
-  <span class="str">"threshold_percent"</span>: <span class="num">80</span>,
-  <span class="str">"used"</span>: <span class="num">160000</span>,
-  <span class="str">"limit"</span>: <span class="num">200000</span>,
-  <span class="str">"timestamp"</span>: <span class="str">"2026-06-13T09:31:00+09:00"</span>
-<span class="key">}</span></div>
-      <div class="alert alert-info"><span>&#x2139;&#xFE0F;</span><div>Webhook URL の登録はダッシュボードから。HMAC-SHA256 で署名した <code>X-Sugaku-Signature</code> ヘッダーでリクエストの正当性を検証できます。</div></div>
-    </div>
-
-    <!-- SDK -->
-    <div class="doc-section" id="sdk">
-      <div class="doc-h2">&#x1F4E6; SDK・ライブラリ</div>
-      <div class="alert alert-info"><span>&#x1F6A7;</span><div>公式SDKは現在開発中です。以下のコミュニティSDKも参考にしてください。</div></div>
-      <pre class="no-tabs"><span class="cmt"># JavaScript / Node.js（準備中）</span>
-npm install sugaku-club-api
-
-<span class="cmt"># Python（準備中）</span>
-pip install sugaku-club
-
-<span class="cmt"># 現在は素の fetch / requests が最も安定しています</span></pre>
-    </div>
-
-    <!-- CHANGELOG -->
-    <div class="doc-section" id="changelog">
-      <div class="doc-h2">&#x1F4DD; 更新履歴</div>
-      <div style="border-left:2px solid var(--brd);padding-left:20px;display:flex;flex-direction:column;gap:20px">
-        <div>
-          <div style="font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:4px">v1.0.0 <span style="font-size:.75rem;color:var(--mu);font-weight:400">2026-06-13</span></div>
-          <div style="font-size:.84rem;color:var(--mu);line-height:1.7">
-            ・初回リリース<br>
-            ・数学問題 API（/problems/*）<br>
-            ・CAPTCHA API（/captcha/generate, /captcha/verify）<br>
-            ・使用量 API（/usage）<br>
-            ・Webhook 通知（スタンダード以上）
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="border-top:1px solid var(--brd);padding-top:24px;margin-top:20px;font-size:.78rem;color:var(--mu);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <span>&#x1F4AC; ドキュメントへの不明点は <a href="mailto:contact@sugaku-club.com" style="color:var(--pl)">contact@sugaku-club.com</a> へ</span>
-      <span>© 2026 sugaku-club.com — 個人運営</span>
-    </div>
-  </div>
+  </main>
 </div>
 
 <script>
-/* タブ切り替え */
-function switchTab(btn, group, lang){
-  var parent = btn.parentElement;
-  parent.querySelectorAll('.code-tab').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  // 同じ wrap 内の pre をすべて非表示にしてから対象を表示
-  var wrap = parent.parentElement;
-  wrap.querySelectorAll('pre').forEach(function(p){ p.style.display='none'; });
-  var target = document.getElementById(group+'-'+lang);
-  if(target) target.style.display='block';
-}
-
-/* コピー */
-function copyCode(btn){
-  var wrap = btn.closest('.code-wrap');
-  var visiblePre = wrap.querySelector('pre:not([style*="display: none"]):not([style*="display:none"])');
-  if(!visiblePre) visiblePre = wrap.querySelector('pre');
-  if(!visiblePre) return;
-  navigator.clipboard.writeText(visiblePre.innerText.replace(/\n$/, '')).then(function(){
+// ─── コピーボタン ───
+function copyCode(btn) {
+  const block = btn.nextElementSibling;
+  const text = block.innerText;
+  const orig = btn.textContent;
+  const finish = () => {
     btn.textContent = '✓ コピー済み';
-    setTimeout(function(){ btn.textContent = 'コピー'; }, 2000);
-  });
-}
-
-/* ライブデモ（モックデータ） */
-var MOCK_PROBLEMS = [
-  {id:"prob_Ax1",subject:"calculus",topic:"definite_integral",difficulty:3,grade:"high_school",
-   question:"∫₀¹ x² dx を求めよ",question_latex:"\\int_0^1 x^2\\,dx",
-   answer:"1/3",answer_latex:"\\frac{1}{3}",
-   explanation:"[x³/3]₀¹ = 1/3 - 0 = 1/3",tags:["integral","power_rule"]},
-  {id:"prob_Bm2",subject:"algebra",topic:"quadratic",difficulty:2,grade:"high_school",
-   question:"x² - 5x + 6 = 0 を解け",question_latex:"x^2 - 5x + 6 = 0",
-   answer:"x = 2, 3",answer_latex:"x = 2,\\; 3",
-   explanation:"(x-2)(x-3)=0 より x=2, 3",tags:["quadratic","factoring"]},
-  {id:"prob_Cn3",subject:"geometry",topic:"triangle",difficulty:1,grade:"middle",
-   question:"底辺8cm・高さ5cm の三角形の面積を求めよ",question_latex:"",
-   answer:"20 cm²",answer_latex:"20 \\text{ cm}^2",
-   explanation:"面積 = 底辺 × 高さ ÷ 2 = 8 × 5 / 2 = 20",tags:["area","triangle"]},
-  {id:"prob_Dp4",subject:"statistics",topic:"mean",difficulty:2,grade:"middle",
-   question:"3, 7, 5, 9, 1 の平均を求めよ",question_latex:"",
-   answer:"5",answer_latex:"5",
-   explanation:"合計 = 25、個数 = 5、平均 = 25/5 = 5",tags:["mean","basic_stats"]},
-  {id:"prob_Eq5",subject:"number_theory",topic:"prime",difficulty:4,grade:"high_school",
-   question:"100 以下の素数の個数を求めよ",question_latex:"",
-   answer:"25個",answer_latex:"25",
-   explanation:"2,3,5,7,...,97 の 25 個。エラトステネスの篩を使うと効率的。",tags:["prime","sieve"]},
-  {id:"prob_Fr6",subject:"calculus",topic:"derivative",difficulty:4,grade:"high_school",
-   question:"f(x) = x³ - 3x² + 2x の極値を求めよ",question_latex:"f(x)=x^3-3x^2+2x",
-   answer:"x=1で極大値0、x=2で極小値-... (要計算)",answer_latex:"",
-   explanation:"f'(x)=3x²-6x+2=0 → x=(3±√3)/3。f'(x)の符号変化から極値を求める。",tags:["derivative","extrema"]},
-];
-
-function runDemo(){
-  var subj = document.getElementById('demoSubject').value;
-  var diff = parseInt(document.getElementById('demoDiff').value);
-  var filtered = MOCK_PROBLEMS.filter(function(p){
-    if(subj && p.subject !== subj) return false;
-    if(diff && p.difficulty !== diff) return false;
-    return true;
-  });
-  var out = document.getElementById('demoOutput');
-  if(filtered.length === 0){
-    out.textContent = '// 条件に一致する問題が見つかりません（モックデータ）';
-    out.style.color = 'var(--ng)';
-    return;
-  }
-  var p = filtered[Math.floor(Math.random() * filtered.length)];
-  var obj = Object.assign({}, p);
-  out.style.color = 'var(--tx)';
-  out.innerHTML = syntaxHighlight(JSON.stringify(obj, null, 2));
-}
-
-function syntaxHighlight(json){
-  return json
-    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(m){
-      var cls = 'num';
-      if(/^"/.test(m)){
-        if(/:$/.test(m)){ cls='key'; }else{ cls='str'; }
-      }else if(/true|false/.test(m)){ cls='kw'; }
-      return '<span class="'+cls+'">'+m+'</span>';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(finish).catch(() => {
+      fallbackCopy(text); finish();
     });
+  } else { fallbackCopy(text); finish(); }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  document.execCommand('copy'); document.body.removeChild(ta);
 }
 
-/* サイドバーのアクティブリンク */
-window.addEventListener('scroll', function(){
-  var sections = document.querySelectorAll('.doc-section[id]');
-  var scrollY = window.scrollY + 80;
-  sections.forEach(function(sec){
-    var link = document.querySelector('.sb-link[href="#'+sec.id+'"]');
-    if(!link) return;
-    var top = sec.offsetTop;
-    var bottom = top + sec.offsetHeight;
-    if(scrollY >= top && scrollY < bottom){
-      document.querySelectorAll('.sb-link').forEach(function(l){ l.classList.remove('active'); });
-      link.classList.add('active');
+// ─── サイドバー アクティブ追従 ───
+const sections = document.querySelectorAll('section[id]');
+const sideLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      sideLinks.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+      if (a) a.classList.add('active');
     }
   });
+}, { rootMargin: '-25% 0px -60% 0px', threshold: 0 });
+sections.forEach(s => io.observe(s));
+
+// ─── モバイル ドロップダウン ───
+const mobileBtn = document.getElementById('mobileNavBtn');
+const mobileDD  = document.getElementById('mobileDropdown');
+mobileBtn.addEventListener('click', () => {
+  const open = mobileDD.classList.toggle('open');
+  mobileBtn.classList.toggle('open', open);
+  mobileBtn.setAttribute('aria-expanded', String(open));
 });
+document.addEventListener('click', e => {
+  if (!mobileBtn.contains(e.target) && !mobileDD.contains(e.target)) {
+    mobileDD.classList.remove('open');
+    mobileBtn.classList.remove('open');
+    mobileBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+mobileDD.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  mobileDD.classList.remove('open');
+  mobileBtn.classList.remove('open');
+  mobileBtn.setAttribute('aria-expanded', 'false');
+}));
 </script>
+
 </body>
 </html>
