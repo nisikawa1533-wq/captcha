@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>はじめかた — sugaku-club.com</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>
+*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#05071a;--bg2:#080b22;--pu:#7c3aed;--pu2:#9f5cf7;--cy:#06b6d4;--ok:#10b981;--ng:#ef4444;--gd:#f59e0b;--txt:#f1f5f9;--muted:#64748b;--border:rgba(124,58,237,.2)}
+body{background:var(--bg);color:var(--txt);font-family:'Outfit','Noto Sans JP',sans-serif;min-height:100vh;padding:2rem 1rem}
+.wrap{max-width:700px;margin:0 auto}
+.logo{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;margin-bottom:1.5rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:.4rem}
+.sub{font-size:.88rem;color:var(--muted);margin-bottom:2rem;line-height:1.7}
+.section{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1.2rem}
+.section-head{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}
+.section-icon{font-size:1.5rem}
+.section-title{font-size:1rem;font-weight:700}
+.section-badge{padding:.18rem .55rem;border-radius:99px;font-size:.7rem;font-weight:700}
+.badge-free{background:rgba(16,185,129,.1);color:var(--ok);border:1px solid rgba(16,185,129,.2)}
+.badge-minor{background:rgba(6,182,212,.1);color:var(--cy);border:1px solid rgba(6,182,212,.2)}
+.steps{counter-reset:step}
+.step{display:flex;gap:.8rem;margin-bottom:.8rem;counter-increment:step}
+.step::before{content:counter(step);min-width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--pu),var(--cy));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0;margin-top:.1rem}
+.step-body{font-size:.85rem;color:var(--muted);line-height:1.7}
+.step-body strong{color:var(--txt)}
+.cmd{background:#0a0c20;border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:.65rem 1rem;font-family:monospace;font-size:.8rem;color:#a8b2d8;margin:.4rem 0;display:flex;align-items:center;justify-content:space-between;gap:.5rem;word-break:break-all}
+.cmd-text{flex:1}
+.cbtn{padding:.2rem .55rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:.68rem;cursor:pointer;white-space:nowrap;transition:.2s}
+.cbtn:hover{color:var(--txt);border-color:var(--pu)}
+.alert{padding:.8rem 1rem;border-radius:9px;font-size:.82rem;line-height:1.6;margin:.7rem 0}
+.alert-ok{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);color:var(--ok)}
+.alert-warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);color:var(--gd)}
+.alert-info{background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.2);color:var(--cy)}
+.divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+.cta{display:block;width:100%;padding:.85rem;background:linear-gradient(135deg,var(--pu),var(--cy));border-radius:11px;color:#fff;font-weight:700;font-size:.9rem;text-align:center;text-decoration:none;margin-top:1rem;transition:.2s}
+.cta:hover{opacity:.88}
+.quota-table{width:100%;border-collapse:collapse;margin:.6rem 0}
+.quota-table th{text-align:left;padding:.4rem .7rem;background:rgba(255,255,255,.04);color:var(--muted);font-size:.72rem;font-weight:600;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.quota-table td{padding:.45rem .7rem;border-bottom:1px solid rgba(124,58,237,.07);font-size:.82rem}
+.tag-ok{color:var(--ok)}
+</style></head><body><div class="wrap">
+
+<span class="logo">∑ sugaku-club.com</span>
+<h1>メール・決済の設定ガイド</h1>
+<p class="sub">Googleアカウントと PayPay があれば<strong>親なし・口座なし・無料</strong>で始められます。</p>
+
+<!-- Gmail設定 -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">📧</span>
+    <span class="section-title">メール送信を有効にする（Gmail）</span>
+    <span class="section-badge badge-minor">13歳〜OK</span>
+    <span class="section-badge badge-free">無料</span>
+  </div>
+  <div class="alert alert-info">Googleアカウントがあれば即設定できます。Oracle Cloudのポート25制限も関係ありません（ポート587を使用）。</div>
+  <div class="steps">
+    <div class="step"><div class="step-body"><strong>専用Gmailを作る</strong><br>サービス用のGmailアドレスを1つ作成（例: sugakuclub.mail@gmail.com）<br><a href="https://accounts.google.com/signup" target="_blank" style="color:var(--cy)">→ Googleアカウント作成</a></div></div>
+    <div class="step"><div class="step-body"><strong>2段階認証をONにする</strong><br>myaccount.google.com → セキュリティ → 2段階認証プロセス → 有効にする</div></div>
+    <div class="step"><div class="step-body"><strong>アプリパスワードを発行する</strong><br>myaccount.google.com → セキュリティ → <strong>アプリパスワード</strong><br>「アプリを選択」→「その他」→「sugaku-api」などと入力 → <strong>16文字のパスワードをコピー</strong></div></div>
+    <div class="step"><div class="step-body"><strong>サーバーに設定する（SSH）</strong></div></div>
+  </div>
+  <div class="cmd"><span class="cmd-text">pm2 set sugaku-user-api:MAIL_TRANSPORT gmail</span><button class="cbtn" onclick="copy(this,'pm2 set sugaku-user-api:MAIL_TRANSPORT gmail')">コピー</button></div>
+  <div class="cmd"><span class="cmd-text">pm2 set sugaku-user-api:GMAIL_USER あなたのアドレス@gmail.com</span><button class="cbtn" onclick="copy(this,'pm2 set sugaku-user-api:GMAIL_USER ')">コピー</button></div>
+  <div class="cmd"><span class="cmd-text">pm2 set sugaku-user-api:GMAIL_PASS "16文字のアプリパスワード"</span><button class="cbtn" onclick="copy(this,`pm2 set sugaku-user-api:GMAIL_PASS `)">コピー</button></div>
+  <div class="cmd"><span class="cmd-text">pm2 restart sugaku-user-api</span><button class="cbtn" onclick="copy(this,'pm2 restart sugaku-user-api')">コピー</button></div>
+  <div class="alert alert-ok" style="margin-top:.8rem">✓ 設定後: 振込申請メール・プラン変更メールが自動で届くようになります。メール送信APIも使えます（フリープラン: 100通/月）</div>
+</div>
+
+<!-- PayPay設定 -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">💚</span>
+    <span class="section-title">PayPay で料金を受け取る</span>
+    <span class="section-badge badge-minor">13歳〜OK・口座不要</span>
+    <span class="section-badge badge-free">手数料0円</span>
+  </div>
+  <div class="alert alert-info">PayPayは個人間送金なら手数料0円・口座不要・中学生でもOK。<br>ユーザーが送金 → PayPay残高に貯まる → コンビニで使う or 将来口座に出金</div>
+  <div class="steps">
+    <div class="step"><div class="step-body"><strong>PayPayアプリをインストール</strong><br>App Store / Google Play → 「PayPay」<br>電話番号（自分のスマホ）で登録できます</div></div>
+    <div class="step"><div class="step-body"><strong>自分のPayPay IDを確認する</strong><br>PayPayアプリ → ホーム → 右上アイコン → PayPay ID（@から始まる文字列）</div></div>
+    <div class="step"><div class="step-body"><strong>サーバーに設定する（SSH）</strong></div></div>
+  </div>
+  <div class="cmd"><span class="cmd-text">pm2 set sugaku-user-api:PAYPAY_ID @あなたのPayPayID</span><button class="cbtn" onclick="copy(this,'pm2 set sugaku-user-api:PAYPAY_ID @')">コピー</button></div>
+  <div class="cmd"><span class="cmd-text">pm2 restart sugaku-user-api</span><button class="cbtn" onclick="copy(this,'pm2 restart sugaku-user-api')">コピー</button></div>
+  <div class="alert alert-ok" style="margin-top:.8rem">✓ 設定後: ユーザーが「PayPayで支払う」を選ぶと、あなたのPayPay IDとメモ欄の参照番号が表示されます。</div>
+  <div class="alert alert-warn">⚠️ 受け取り確認: PayPayで入金を確認したら admin.html の「入金管理」で「確認済み」にしてください。自動でプランが変わります。</div>
+</div>
+
+<hr class="divider">
+
+<!-- メール送信APIの説明 -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">✉️</span>
+    <span class="section-title">メール送信API — 新サービス</span>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:.8rem">APIキーがあれば自分のサービスからメールを送れます。フリープランでも100通/月まで無料。</p>
+  <table class="quota-table">
+    <thead><tr><th>プラン</th><th>月間送信数</th><th>月額</th></tr></thead>
+    <tbody>
+      <tr><td>フリー</td><td>100通</td><td>¥0</td></tr>
+      <tr><td>スターター</td><td>300通</td><td>¥280</td></tr>
+      <tr><td>ホビー</td><td>1,000通</td><td>¥480</td></tr>
+      <tr><td>スタンダード</td><td class="tag-ok">10,000通</td><td>¥1,480</td></tr>
+      <tr><td>プロ</td><td class="tag-ok">50,000通</td><td>¥3,980</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.8rem;color:var(--muted);margin:.7rem 0 .4rem">使い方（APIキー必要）:</p>
+  <div class="cmd"><span class="cmd-text">POST /api/mail/send
+{"to":"user@example.com","subject":"件名","text":"本文"}</span></div>
+  <div class="cmd"><span class="cmd-text">GET /api/mail/quota  →  残り送信数を確認</span></div>
+</div>
+
+<a class="cta" href="/dashboard.html">← ダッシュボードに戻る</a>
+</div>
+
+<script>
+function copy(btn, text) {
+  navigator.clipboard.writeText(text);
+  const orig = btn.textContent;
+  btn.textContent = '✓';
+  btn.style.color = 'var(--ok)';
+  setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+}
+</script></body></html>
