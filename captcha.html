@@ -173,132 +173,190 @@ body{font-family:"Noto Sans JP","Outfit",sans-serif;background:var(--bg);color:v
 
 <script>
 // ============================================================
-// BOT DETECTION ENGINE v3
+// BOT DETECTION ENGINE v4  ── 精度強化版
 // ============================================================
 var BotDetector = (function(){
-  var _mouse = [], _clicks = [], _keyTimes = [], _startTime = Date.now();
-  var _firstMove = null, _firstClick = null, _tabCount = 0, _scrolled = false;
-  var _answerTimes = [];
+  var _mouse=[], _clicks=[], _keyTimes=[], _startTime=Date.now();
+  var _firstMove=null, _firstClick=null, _tabCount=0, _scrolled=false;
+  var _answerTimes=[], _touchEvents=0, _mouseDist=0;
+  var _prevX=null, _prevY=null;
+  var BOT_THRESHOLD = 35; // 35点以上でBot判定（旧:50点）
 
-  // イベントリスナー登録
+  // ── イベントリスナー ──────────────────────────────────────────
   document.addEventListener('mousemove', function(e){
-    if(_firstMove === null) _firstMove = Date.now() - _startTime;
-    _mouse.push({x:e.clientX, y:e.clientY, t:Date.now()});
-    if(_mouse.length > 200) _mouse.shift();
-  }, {passive:true});
-  document.addEventListener('click', function(e){
-    if(_firstClick === null) _firstClick = Date.now() - _startTime;
-    _clicks.push({x:e.clientX, y:e.clientY, t:Date.now()});
+    if(_firstMove===null) _firstMove=Date.now()-_startTime;
+    _mouse.push({x:e.clientX,y:e.clientY,t:Date.now()});
+    if(_mouse.length>300) _mouse.shift();
+    if(_prevX!==null) _mouseDist+=Math.sqrt(Math.pow(e.clientX-_prevX,2)+Math.pow(e.clientY-_prevY,2));
+    _prevX=e.clientX; _prevY=e.clientY;
+  },{passive:true});
+  document.addEventListener('click',function(e){
+    if(_firstClick===null) _firstClick=Date.now()-_startTime;
+    _clicks.push({x:e.clientX,y:e.clientY,t:Date.now()});
   });
-  document.addEventListener('scroll', function(){ _scrolled = true; }, {passive:true, once:true});
-  document.addEventListener('keydown', function(){ _keyTimes.push(Date.now()); });
-  window.addEventListener('blur', function(){ _tabCount++; });
+  document.addEventListener('touchstart',function(){_touchEvents++;},{passive:true});
+  document.addEventListener('scroll',function(){_scrolled=true;},{passive:true,once:true});
+  document.addEventListener('keydown',function(){_keyTimes.push(Date.now());});
+  window.addEventListener('blur',function(){_tabCount++;});
 
-  // マウス軌跡エントロピー（直線度）
+  // ── Canvas指紋検査（ヘッドレスブラウザは異なる描画結果）────────
+  function _canvasFingerprint(){
+    try{
+      var c=document.createElement('canvas');
+      c.width=200; c.height=50;
+      var ctx=c.getContext('2d');
+      ctx.font='14px Arial';
+      ctx.fillStyle='rgba(102,204,0,0.7)';
+      ctx.fillText('sugaku\u2211Bot\u03C0Test',10,30);
+      ctx.strokeStyle='rgba(120,30,200,0.5)';
+      ctx.beginPath(); ctx.arc(100,25,15,0,Math.PI*2); ctx.stroke();
+      var data=c.toDataURL();
+      // ヘッドレスChromeは特定のハッシュ値になる
+      return data.length > 1000; // 正常なブラウザは十分なデータ量
+    }catch(e){ return false; }
+  }
+
+  // ── マウス軌跡エントロピー ────────────────────────────────────
   function _entropy(){
-    if(_mouse.length < 6) return 0;
-    var angles = [];
-    for(var i=1;i<Math.min(_mouse.length,50);i++){
+    if(_mouse.length<8) return 0;
+    var angles=[];
+    for(var i=1;i<Math.min(_mouse.length,80);i++){
       var dx=_mouse[i].x-_mouse[i-1].x, dy=_mouse[i].y-_mouse[i-1].y;
-      if(Math.abs(dx)+Math.abs(dy) < 2) continue;
+      if(Math.abs(dx)+Math.abs(dy)<1.5) continue;
       angles.push(Math.atan2(dy,dx));
     }
-    if(angles.length < 3) return 0;
+    if(angles.length<5) return 0;
     var mean=angles.reduce(function(a,b){return a+b;},0)/angles.length;
     var variance=angles.reduce(function(s,a){return s+Math.pow(a-mean,2);},0)/angles.length;
-    return Math.min(variance/2.5, 1);
+    return Math.min(variance/2.5,1);
   }
 
-  // 自動化フラグ検査
+  // ── クリック速度の等間隔検査（Botは一定間隔でクリック）──────────
+  function _clickRhythmScore(){
+    if(_clicks.length<3) return 0;
+    var intervals=[];
+    for(var i=1;i<_clicks.length;i++) intervals.push(_clicks[i].t-_clicks[i-1].t);
+    var avg=intervals.reduce(function(a,b){return a+b;},0)/intervals.length;
+    var jitter=intervals.reduce(function(s,v){return s+Math.abs(v-avg);},0)/intervals.length;
+    // jitter<20ms = 機械的に均等→Bot疑い
+    return jitter < 20 ? 20 : 0;
+  }
+
+  // ── 自動化フラグ ───────────────────────────────────────────────
   function _autoFlags(){
-    var flags = {};
-    flags.webdriver     = !!navigator.webdriver;
-    flags.headlessUA    = /HeadlessChrome|PhantomJS|Puppeteer|Playwright/i.test(navigator.userAgent);
-    flags.noPlugins     = navigator.plugins.length === 0;
-    flags.noLang        = !navigator.language || navigator.languages.length === 0;
-    flags.tinyScreen    = screen.width < 200 || screen.height < 200;
-    flags.outerZero     = window.outerWidth === 0 && window.outerHeight === 0;
-    flags.chromeNoChrome= typeof window.chrome !== 'undefined' && !window.chrome.runtime;
-    return flags;
+    var f={};
+    f.webdriver      = !!navigator.webdriver;
+    f.headlessUA     = /HeadlessChrome|PhantomJS|Puppeteer|Playwright|Selenium/i.test(navigator.userAgent);
+    f.noPlugins      = navigator.plugins.length===0;
+    f.noLang         = !navigator.language || navigator.languages.length===0;
+    f.tinyScreen     = screen.width<200 || screen.height<200;
+    f.outerZero      = window.outerWidth===0 && window.outerHeight===0;
+    f.badCanvas      = !_canvasFingerprint();
+    f.noNotification = typeof Notification==='undefined';
+    // Chromeだがchrome.runtimeがない（Puppeteer特有）
+    f.fakechrome     = /Chrome/.test(navigator.userAgent) && !window.chrome;
+    return f;
   }
 
-  // スコア計算（0=完全に人間, 100=完全にBot）
+  // ── スコア計算 ─────────────────────────────────────────────────
   function calculate(){
-    var score = 0;
-    var details = [];
-    var af = _autoFlags();
+    var score=0, details=[];
+    var af=_autoFlags();
+    var isMobile=_touchEvents>0;
 
-    if(af.webdriver)  { score+=45; details.push({k:'webdriver検出',     v:'⚠️', bad:true}); }
-    else               {             details.push({k:'webdriver',          v:'✅ なし', bad:false}); }
-    if(af.headlessUA) { score+=40; details.push({k:'HeadlessブラウザUA', v:'⚠️', bad:true}); }
-    else               {             details.push({k:'ブラウザUA',          v:'✅ 正常', bad:false}); }
-    if(af.noPlugins)  { score+=8;  details.push({k:'プラグイン',          v:'⚠️ 0件', bad:true}); }
-    else               {             details.push({k:'プラグイン',          v:'✅ '+navigator.plugins.length+'件', bad:false}); }
-    if(af.noLang)     { score+=12; details.push({k:'言語設定',            v:'⚠️ なし', bad:true}); }
-    else               {             details.push({k:'言語',               v:'✅ '+navigator.language, bad:false}); }
-    if(af.outerZero)  { score+=20; details.push({k:'ウィンドウサイズ',   v:'⚠️ 0×0', bad:true}); }
-    else               {             details.push({k:'ウィンドウ',          v:'✅ '+window.outerWidth+'×'+window.outerHeight, bad:false}); }
+    if(af.webdriver)    {score+=50;details.push({k:'webdriver検出',    v:'🚨 Bot確定',  bad:true});}
+    else                {           details.push({k:'webdriver',        v:'✅ 正常',      bad:false});}
+    if(af.headlessUA)   {score+=45;details.push({k:'ヘッドレスUA',     v:'🚨 異常',     bad:true});}
+    else                {           details.push({k:'ブラウザUA',       v:'✅ 正常',      bad:false});}
+    if(af.fakechrome)   {score+=30;details.push({k:'Chrome偽装',        v:'⚠️ 検出',     bad:true});}
+    if(af.badCanvas)    {score+=25;details.push({k:'Canvas指紋',        v:'⚠️ 異常',     bad:true});}
+    else                {           details.push({k:'Canvas指紋',       v:'✅ 正常',      bad:false});}
+    if(af.outerZero)    {score+=22;details.push({k:'ウィンドウ',        v:'⚠️ 0×0',      bad:true});}
+    if(af.noPlugins)    {score+=10;details.push({k:'プラグイン',        v:'⚠️ 0件',      bad:true});}
+    if(af.noLang)       {score+=12;details.push({k:'言語設定',          v:'⚠️ なし',     bad:true});}
 
-    // マウス挙動
-    if(_mouse.length < 5) { score+=18; details.push({k:'マウス移動',      v:'⚠️ なし', bad:true}); }
-    else {
-      var ent = _entropy();
-      if(ent < 0.15)      { score+=12; details.push({k:'マウス軌跡',     v:'⚠️ 直線的', bad:true}); }
-      else                {             details.push({k:'マウス軌跡',     v:'✅ 自然（entropy '+ent.toFixed(2)+'）', bad:false}); }
+    // マウス移動量（PCの場合のみ）
+    if(!isMobile){
+      if(_mouseDist<30) {score+=22;details.push({k:'マウス移動量',     v:'⚠️ '+Math.round(_mouseDist)+'px',bad:true});}
+      else if(_mouseDist<100){score+=8;details.push({k:'マウス移動量', v:'△ '+Math.round(_mouseDist)+'px',bad:true});}
+      else               {           details.push({k:'マウス移動量',    v:'✅ '+Math.round(_mouseDist)+'px',bad:false});}
+
+      var ent=_entropy();
+      if(_mouse.length<5) {score+=18;details.push({k:'マウス軌跡',    v:'⚠️ 未検出',   bad:true});}
+      else if(ent<0.12)   {score+=15;details.push({k:'マウス軌跡',    v:'⚠️ 直線的',   bad:true});}
+      else                {           details.push({k:'マウス軌跡',    v:'✅ 自然('+ent.toFixed(2)+')',bad:false});}
+    } else {
+      details.push({k:'入力デバイス',v:'📱 タッチ',bad:false});
     }
 
-    // 初回インタラクション速度
-    if(_firstMove !== null && _firstMove < 300)  { score+=8;  details.push({k:'初回移動',  v:'⚠️ 高速('+_firstMove+'ms)', bad:true}); }
-    else if(_firstMove !== null)                  {             details.push({k:'初回移動',  v:'✅ '+(_firstMove/1000).toFixed(1)+'s後', bad:false}); }
-    else                                          { score+=10; details.push({k:'初回移動',  v:'⚠️ なし', bad:true}); }
+    // 初回インタラクション
+    if(_firstMove!==null && _firstMove<200){score+=12;details.push({k:'初動速度',v:'⚠️ '+_firstMove+'ms',bad:true});}
+    else if(_firstMove===null && !isMobile){score+=10;details.push({k:'マウス動作',v:'⚠️ なし',bad:true});}
 
-    // スクロール
-    if(!_scrolled) { score+=3; details.push({k:'スクロール', v:'— なし', bad:false}); }
-    else            {            details.push({k:'スクロール', v:'✅ あり', bad:false}); }
+    // クリックリズム
+    var cr=_clickRhythmScore();
+    if(cr>0){score+=cr;details.push({k:'クリックリズム',v:'⚠️ 均等すぎる',bad:true});}
 
-    // 回答速度（登録済みなら）
-    if(_answerTimes.length > 0){
-      var avg = _answerTimes.reduce(function(a,b){return a+b;},0)/_answerTimes.length;
-      if(avg < 800) { score+=15; details.push({k:'平均回答速度', v:'⚠️ '+avg.toFixed(0)+'ms', bad:true}); }
-      else           {             details.push({k:'平均回答速度', v:'✅ '+avg.toFixed(0)+'ms', bad:false}); }
+    // 回答速度
+    if(_answerTimes.length>0){
+      var avg=_answerTimes.reduce(function(a,b){return a+b;},0)/_answerTimes.length;
+      if(avg<500) {score+=20;details.push({k:'回答速度',v:'🚨 '+avg.toFixed(0)+'ms(速すぎ)',bad:true});}
+      else if(avg<1000){score+=8;details.push({k:'回答速度',v:'⚠️ '+avg.toFixed(0)+'ms',bad:true});}
+      else             {          details.push({k:'回答速度',v:'✅ '+avg.toFixed(0)+'ms',bad:false});}
     }
 
-    return {score: Math.min(score,100), details: details};
+    return {score:Math.min(score,100), details:details, isBot:score>=BOT_THRESHOLD};
   }
 
   function recordAnswer(ms){ _answerTimes.push(ms); }
 
+  // マウス移動なしでは回答不可（PCのみ）
+  function isMouseRequired(){
+    var isMobile=_touchEvents>0||('ontouchstart' in window);
+    return !isMobile && _mouseDist<30;
+  }
+
   function render(){
-    var r = calculate();
-    var s = r.score;
-    var bar = document.getElementById('botScoreBar');
-    var lbl = document.getElementById('botScoreLabel');
-    var sig = document.getElementById('botSignals');
+    var r=calculate();
+    var s=r.score;
+    var bar=document.getElementById('botScoreBar');
+    var lbl=document.getElementById('botScoreLabel');
+    var sig=document.getElementById('botSignals');
+    var btn=document.getElementById('subBtn');
     if(!bar) return r;
 
-    var color = s < 20 ? '#10b981' : s < 50 ? '#f59e0b' : '#ef4444';
-    var label = s < 20 ? '🟢 人間 ('+s+'%)' : s < 50 ? '🟡 疑わしい ('+s+'%)' : '🔴 Bot疑い ('+s+'%)';
-    bar.style.width = s + '%';
-    bar.style.background = color;
-    lbl.textContent = label;
-    lbl.style.color = color;
+    var color=s<BOT_THRESHOLD?'#10b981':s<60?'#f59e0b':'#ef4444';
+    var label=s<BOT_THRESHOLD?'🟢 人間 ('+s+'%)':s<60?'🟡 疑わしい ('+s+'%)':'🔴 Bot検出 ('+s+'%)';
+    bar.style.width=s+'%';
+    bar.style.background=color;
+    lbl.textContent=label;
+    lbl.style.color=color;
 
-    sig.innerHTML = '';
+    // Botスコア超過時は送信ブロック
+    if(btn && r.isBot && !document.getElementById('chContent').querySelector('[data-type="draw"]')){
+      // draw/tap/slideチャレンジは別途管理するので除外
+      var ch=window._st&&window._st.q&&window._st.q[window._st&&window._st.step];
+      if(ch&&(ch.type==='ch'||ch.type==='sort')){
+        btn.disabled=true;
+        btn.title='Bot疑いのため回答不可';
+      }
+    }
+
+    sig.innerHTML='';
     r.details.forEach(function(d){
-      var el = document.createElement('div');
-      el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border-radius:5px;padding:3px 7px;font-size:.68rem';
-      el.innerHTML = '<span style="color:rgba(148,163,184,.7)">'+d.k+'</span><span style="color:'+(d.bad?'#fca5a5':'#6ee7b7')+';font-weight:600">'+d.v+'</span>';
+      var el=document.createElement('div');
+      el.style.cssText='display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border-radius:5px;padding:3px 7px;font-size:.68rem';
+      el.innerHTML='<span style="color:rgba(148,163,184,.7)">'+d.k+'</span><span style="color:'+(d.bad?'#fca5a5':'#6ee7b7')+';font-weight:600">'+d.v+'</span>';
       sig.appendChild(el);
     });
-
     return r;
   }
 
-  return { calculate:calculate, recordAnswer:recordAnswer, render:render };
+  return {calculate:calculate, recordAnswer:recordAnswer, render:render, isMouseRequired:isMouseRequired, BOT_THRESHOLD:BOT_THRESHOLD};
 })();
 
 // 定期的にBot解析パネルを更新
-setInterval(function(){ BotDetector.render(); }, 1500);
+setInterval(function(){ BotDetector.render(); }, 1000);
 BotDetector.render();
 
 // ============================================================
@@ -749,9 +807,37 @@ function onTimeout(){
 
 function handleSubmit(){
   if(st.done)return;
-  clearInterval(st.ti);st.done=true;
-  // 回答所要時間をBot検出エンジンに登録
-  if(st._chStart) BotDetector.recordAnswer(Date.now() - st._chStart);
+
+  // ── Bot検出ゲート ─────────────────────────────────────────────
+  var elapsed = st._chStart ? Date.now() - st._chStart : 9999;
+  BotDetector.recordAnswer(elapsed);
+  var botResult = BotDetector.calculate();
+
+  // マウス未移動ブロック（PCのみ）
+  if(BotDetector.isMouseRequired()){
+    showFb(false,'🖱️ まずマウスを画面上で動かしてください');
+    st.done=false; return;
+  }
+  // 回答速度が異常に速い（500ms以内）
+  if(elapsed < 500){
+    showFb(false,'⚡ 回答が速すぎます。もう少し考えてから回答してください');
+    st.done=false;
+    // _chStartをリセットして次回計測
+    st._chStart = Date.now() - elapsed;
+    return;
+  }
+  // Botスコアが閾値超過
+  if(botResult.isBot){
+    st.fails++;
+    if(st.fails>=3){
+      doLock();return;
+    }
+    showFb(false,'🤖 自動化ツールの使用が検出されました。通常のブラウザでアクセスしてください');
+    st.done=false; return;
+  }
+  // ─────────────────────────────────────────────────────────────
+
+  clearInterval(st.ti); st.done=true;
   var ch=st.q[st.step];
   if(ch.type==="ch"){
     if(st.sel===null){st.done=false;return;}
@@ -764,7 +850,7 @@ function handleSubmit(){
     markSort(ok,ch);
     if(ok)doCorrect(ch);else doWrong(ch);
   }
-  BotDetector.render(); // 回答後にスコア更新
+  BotDetector.render();
 }
 function markCh(ok,ch){
   ch.opts.forEach(function(_,i){

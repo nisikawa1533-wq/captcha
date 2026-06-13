@@ -887,23 +887,23 @@
 const plans = {
   free: {
     name: 'フリー', emoji: '🆓',
-    monthlyPrice: '¥0', yearlyPrice: '¥0',
+    monthlyPrice: '¥0', yearlyPrice: '¥0', monthlyEquiv: '¥0',
   },
   hobby: {
     name: 'ホビー', emoji: '🎮',
-    monthlyPrice: '¥480', yearlyPrice: '¥4,800',
+    monthlyPrice: '¥480', yearlyPrice: '¥4,800', monthlyEquiv: '¥400',
   },
   std: {
     name: 'スタンダード', emoji: '⭐',
-    monthlyPrice: '¥1,480', yearlyPrice: '¥14,800',
+    monthlyPrice: '¥1,480', yearlyPrice: '¥14,800', monthlyEquiv: '¥1,233',
   },
   pro: {
     name: 'プロ', emoji: '🚀',
-    monthlyPrice: '¥3,980', yearlyPrice: '¥39,800',
+    monthlyPrice: '¥3,980', yearlyPrice: '¥39,800', monthlyEquiv: '¥3,317',
   },
   supporter: {
     name: 'サポーター', emoji: '💎',
-    monthlyPrice: '¥9,800', yearlyPrice: '¥98,000',
+    monthlyPrice: '¥9,800', yearlyPrice: '¥98,000', monthlyEquiv: '¥8,167',
   }
 };
 
@@ -917,22 +917,31 @@ function switchBilling() {
   document.getElementById('label-yearly').classList.toggle('active', isYearly);
 
   const updates = [
-    { key: 'hobby',     priceId: 'price-hobby',     noteId: 'note-hobby' },
-    { key: 'std',       priceId: 'price-std',        noteId: 'note-std' },
-    { key: 'pro',       priceId: 'price-pro',        noteId: 'note-pro' },
-    { key: 'supporter', priceId: 'price-supporter',  noteId: 'note-supporter' },
+    { key: 'hobby',     priceId: 'price-hobby',     noteId: 'note-hobby',     periodId: 'period-hobby' },
+    { key: 'std',       priceId: 'price-std',        noteId: 'note-std',       periodId: 'period-std' },
+    { key: 'pro',       priceId: 'price-pro',        noteId: 'note-pro',       periodId: 'period-pro' },
+    { key: 'supporter', priceId: 'price-supporter',  noteId: 'note-supporter', periodId: 'period-supporter' },
   ];
 
-  updates.forEach(({ key, priceId, noteId }) => {
+  updates.forEach(({ key, priceId, noteId, periodId }) => {
     const plan = plans[key];
-    const priceEl = document.getElementById(priceId);
-    const noteEl = document.getElementById(noteId);
+    const priceEl  = document.getElementById(priceId);
+    const noteEl   = document.getElementById(noteId);
+    const periodEl = document.getElementById(periodId);
     if (!priceEl) return;
     priceEl.style.opacity = '0';
     priceEl.style.transform = 'scale(0.85)';
     setTimeout(() => {
-      priceEl.textContent = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
-      if (noteEl) noteEl.textContent = isYearly ? '年払い（2ヶ月分お得！）' : '';
+      if (isYearly) {
+        // 年払い：年額合計を表示
+        priceEl.textContent = plan.yearlyPrice;
+        if (periodEl) periodEl.textContent = '/ 年';
+        if (noteEl)   noteEl.textContent = '月換算 ' + plan.monthlyEquiv + '/月（2ヶ月分お得！）';
+      } else {
+        priceEl.textContent = plan.monthlyPrice;
+        if (periodEl) periodEl.textContent = '/ 月';
+        if (noteEl)   noteEl.textContent = '';
+      }
       priceEl.style.opacity = '1';
       priceEl.style.transform = 'scale(1)';
     }, 140);
@@ -998,7 +1007,13 @@ function submitPlan() {
     + 'このメールは sugaku-club.com の料金ページから送信されました。\n'
     + 'お申し込みありがとうございます。確認後、当日〜翌日中にご連絡いたします。';
   const mailtoLink = 'mailto:contact@sugaku-club.com?subject=' + subject + '&body=' + encodeURIComponent(bodyText);
-  window.location.href = mailtoLink;
+  // mailto を確実に起動（aタグclick方式）
+  const a = document.createElement('a');
+  a.href = mailtoLink;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 
   closeModal();
   setTimeout(() => showToast('メーラーを開きました！内容を確認して送信してください 📨'), 400);
