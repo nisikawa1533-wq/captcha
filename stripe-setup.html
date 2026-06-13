@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stripe設定ガイド — sugaku-club.com</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#05071a;--bg2:#080b22;--pu:#7c3aed;--pu2:#9f5cf7;--cy:#06b6d4;--ok:#10b981;--ng:#ef4444;--gd:#f59e0b;--txt:#f1f5f9;--muted:#64748b;--border:rgba(124,58,237,.2)}body{background:var(--bg);color:var(--txt);font-family:'Outfit','Noto Sans JP',sans-serif;min-height:100vh;padding:2rem 1rem}a{color:var(--cy);text-decoration:none}.wrap{max-width:680px;margin:0 auto}.logo{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;margin-bottom:2rem}.h1{font-size:1.6rem;font-weight:800;margin-bottom:.5rem}.sub{font-size:.9rem;color:var(--muted);margin-bottom:2rem;line-height:1.6}.step{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1rem;position:relative}.step-num{position:absolute;top:-12px;left:1rem;background:linear-gradient(135deg,var(--pu),var(--cy));border-radius:99px;padding:.15rem .7rem;font-size:.75rem;font-weight:700;color:#fff}.step h3{font-size:.95rem;font-weight:700;margin-bottom:.7rem;margin-top:.3rem}.step p,.step li{font-size:.85rem;color:var(--muted);line-height:1.7}.step ul{padding-left:1.2rem;margin-top:.4rem}.cmd{background:#0a0c20;border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:.7rem 1rem;font-family:monospace;font-size:.82rem;color:#a8b2d8;margin:.5rem 0;word-break:break-all;position:relative}.copy-btn{position:absolute;right:.5rem;top:.5rem;padding:.2rem .5rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:.68rem;cursor:pointer}.copy-btn:hover{color:var(--txt)}.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:5px;font-size:.72rem;font-weight:700}.badge-free{background:rgba(16,185,129,.1);color:var(--ok);border:1px solid rgba(16,185,129,.2)}.badge-warn{background:rgba(245,158,11,.1);color:var(--gd);border:1px solid rgba(245,158,11,.2)}.badge-ng{background:rgba(239,68,68,.08);color:var(--ng);border:1px solid rgba(239,68,68,.15)}.alert{padding:.9rem 1rem;border-radius:10px;font-size:.83rem;line-height:1.6;margin-bottom:1rem}.alert-warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);color:var(--gd)}.alert-ok{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);color:var(--ok)}.fee-table{width:100%;border-collapse:collapse;margin:.7rem 0}.fee-table th{text-align:left;padding:.4rem .7rem;background:rgba(255,255,255,.04);color:var(--muted);font-size:.75rem;font-weight:600;text-transform:uppercase}.fee-table td{padding:.5rem .7rem;border-top:1px solid rgba(124,58,237,.08);font-size:.83rem}.cta{display:block;width:100%;padding:.9rem;background:linear-gradient(135deg,var(--pu),var(--cy));border-radius:12px;color:#fff;font-weight:700;font-size:.95rem;text-align:center;text-decoration:none;margin-top:1.2rem;transition:.2s}.cta:hover{opacity:.88}</style></head><body><div class="wrap">
+<span class="logo">∑ sugaku-club.com</span>
+<h1 class="h1">💳 Stripe でカード決済を有効にする</h1>
+<p class="sub">口座なし・0円で開設できます。売上が出たら親の口座に振り込めばOK。<br>月3件の有料プランで VPS 代が出ます。</p>
+
+<div class="alert alert-warn">⚠️ <strong>未成年の場合:</strong> Stripe の登録は<strong>親権者名義</strong>で行ってください。親御さんに頼んで一緒に設定しましょう。</div>
+
+<div class="step">
+  <span class="step-num">STEP 1</span>
+  <h3>Stripeアカウントを作る <span class="badge badge-free">無料</span></h3>
+  <p>以下のリンクからアカウントを作成します（手数料は売上から自動差引、月額費用なし）</p>
+  <a class="cta" href="https://dashboard.stripe.com/register" target="_blank">Stripe に登録する（無料）→</a>
+  <ul style="margin-top:.8rem">
+    <li>メールアドレス・パスワードで登録</li>
+    <li>本人確認は<strong>親権者の情報</strong>で入力</li>
+    <li>銀行口座は<strong>親の口座</strong>を登録（売上がここに振り込まれる）</li>
+  </ul>
+</div>
+
+<div class="step">
+  <span class="step-num">STEP 2</span>
+  <h3>シークレットキーを取得する</h3>
+  <p>Stripeダッシュボードで:</p>
+  <ul>
+    <li>左メニュー「開発者」→「APIキー」</li>
+    <li>「シークレットキー」の「表示」ボタン</li>
+    <li><code>sk_live_XXXX...</code> をコピー</li>
+  </ul>
+  <p style="margin-top:.5rem;color:var(--ng)">⚠️ シークレットキーは絶対に公開しないこと</p>
+</div>
+
+<div class="step">
+  <span class="step-num">STEP 3</span>
+  <h3>サーバーに設定する（SSH 2コマンドだけ）</h3>
+  <p>Oracle Cloud サーバーに SSH ログインして実行:</p>
+  <div class="cmd">pm2 set sugaku-user-api:STRIPE_SECRET_KEY sk_live_ここにキーを貼る<button class="copy-btn" onclick="navigator.clipboard.writeText('pm2 set sugaku-user-api:STRIPE_SECRET_KEY sk_live_')">コピー</button></div>
+  <div class="cmd">pm2 restart sugaku-user-api<button class="copy-btn" onclick="navigator.clipboard.writeText('pm2 restart sugaku-user-api')">コピー</button></div>
+  <p style="margin-top:.5rem;color:var(--ok)">✓ これだけでカード決済が有効になります</p>
+</div>
+
+<div class="step">
+  <span class="step-num">STEP 4</span>
+  <h3>Webhook を設定する（自動でプラン反映）</h3>
+  <p>Stripeダッシュボード →「開発者」→「Webhook」→「エンドポイントを追加」</p>
+  <div class="cmd">https://sugaku-club.com/api/billing/webhook</div>
+  <ul>
+    <li>イベント: <code>checkout.session.completed</code> にチェック</li>
+    <li>「署名シークレット」をコピーして:</li>
+  </ul>
+  <div class="cmd">pm2 set sugaku-user-api:STRIPE_WEBHOOK_SECRET whsec_XXXX</div>
+</div>
+
+<div class="step">
+  <span class="step-num">費用</span>
+  <h3>Stripe の手数料（月額ゼロ・売上から自動差引）</h3>
+  <table class="fee-table">
+    <thead><tr><th>プラン</th><th>月額</th><th>Stripe手数料(3.6%+¥40)</th><th>手取り</th></tr></thead>
+    <tbody>
+      <tr><td>スターター</td><td>¥280</td><td>¥50</td><td><strong>¥230</strong></td></tr>
+      <tr><td>ホビー</td><td>¥480</td><td>¥57</td><td><strong>¥423</strong></td></tr>
+      <tr><td>スタンダード</td><td>¥1,480</td><td>¥93</td><td><strong>¥1,387</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:.5rem">ホビープラン2件 → 手取り約 <strong style="color:var(--ok)">¥846/月</strong>（ConoHa代¥880に近い）</p>
+</div>
+
+<div class="alert alert-ok">✅ Stripe を設定すると: ユーザーがカードで支払い → 自動でプラン変更 → 親の口座に振込（月次自動）。手動作業ゼロ。</div>
+
+<a class="cta" href="/dashboard.html">← ダッシュボードに戻る</a>
+</div></body></html>
