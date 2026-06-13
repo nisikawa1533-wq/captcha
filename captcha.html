@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>人間確認 — sugaku-club.com</title>
+<meta name="description" content="sugaku-club.com へのアクセス認証。AIには突破できない推論型CAPTCHA。"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet"/>
+<!-- 10K問題バンク生成エンジン -->
+<script src="bank_generator.js"></script>
+<style>
+:root{
+  --bg:#05071a;--surf:rgba(255,255,255,.04);--surf2:rgba(255,255,255,.08);
+  --brd:rgba(255,255,255,.1);--brd-a:rgba(139,92,246,.7);
+  --p:#7c3aed;--pl:#a78bfa;--ac:#06b6d4;--am:#f59e0b;
+  --ok:#10b981;--ng:#ef4444;--tx:#e2e8f0;--mu:#94a3b8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans JP","Outfit",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.bg-wrap{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.sym{position:absolute;font-weight:900;color:rgba(124,58,237,.055);animation:floatUp linear infinite}
+@keyframes floatUp{from{transform:translateY(110vh) rotate(0);opacity:0}10%{opacity:1}90%{opacity:1}to{transform:translateY(-10vh) rotate(360deg);opacity:0}}
+.neb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;animation:np 9s ease-in-out infinite alternate}
+@keyframes np{from{transform:scale(1);opacity:.4}to{transform:scale(1.18) translate(24px,-24px);opacity:.75}}
+.card{position:relative;z-index:10;background:rgba(8,10,35,.88);backdrop-filter:blur(28px);border:1px solid var(--brd);border-radius:24px;padding:40px 44px;width:min(570px,96vw);box-shadow:0 0 40px rgba(124,58,237,.3),0 40px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08);animation:cardIn .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes cardIn{from{transform:translateY(40px) scale(.94);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.logo-i{width:44px;height:44px;background:linear-gradient(135deg,var(--p),var(--ac));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 0 20px rgba(124,58,237,.5)}
+.site-nm{font-family:"Outfit",sans-serif;font-weight:700;font-size:1.1rem}
+.site-sb{font-size:.74rem;color:var(--mu)}
+.prog-wrap{margin-bottom:22px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.74rem;color:var(--mu);margin-bottom:8px}
+.prog-bg{height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--ac));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(124,58,237,.6)}
+.timer-row{display:flex;align-items:center;gap:8px;margin-bottom:18px;font-size:.8rem;color:var(--mu)}
+.tdot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 1s ease-in-out infinite}
+.tdot.w{background:var(--am);box-shadow:0 0 8px var(--am)}
+.tdot.d{background:var(--ng);box-shadow:0 0 8px var(--ng)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tnum{font-family:"Outfit",monospace;font-weight:700;font-size:1rem}
+.score-row{display:flex;gap:6px;margin-bottom:18px}
+.sp{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);transition:background .3s}
+.sp.ok{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.sp.ng{background:var(--ng);box-shadow:0 0 6px var(--ng)}
+.sp.act{background:var(--pl)}
+.ch-box{animation:slideIn .4s cubic-bezier(.4,0,.2,1) both}
+@keyframes slideIn{from{transform:translateX(28px);opacity:0}to{transform:translateX(0);opacity:1}}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:99px;padding:4px 12px;font-size:.72rem;font-weight:600;color:var(--pl);margin-bottom:16px;letter-spacing:.05em;text-transform:uppercase}
+.diffs{display:inline-flex;gap:3px;margin-left:8px}
+.dd{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15)}
+.dd.f{background:var(--am)}
+.ch-q{font-size:1.03rem;font-weight:700;line-height:1.65;margin-bottom:10px}
+.ch-hint{font-size:.79rem;color:var(--mu);margin-bottom:20px;line-height:1.5}
+.ch-vis{background:rgba(255,255,255,.03);border:1px solid var(--brd);border-radius:14px;margin-bottom:18px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:130px;padding:8px}
+.ch-vis svg{display:block;width:100%;height:auto}
+.opts{display:grid;gap:9px}
+.opts.g2{grid-template-columns:1fr 1fr}
+.opts.g1{grid-template-columns:1fr}
+.opt{position:relative;background:var(--surf);border:1px solid var(--brd);border-radius:12px;padding:13px 16px;cursor:pointer;transition:all .2s;text-align:left;color:var(--tx);font-family:"Noto Sans JP",sans-serif;font-size:.88rem;line-height:1.5;display:flex;align-items:center;gap:10px;overflow:hidden}
+.opt:hover{border-color:rgba(167,139,250,.5);background:var(--surf2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.opt.sel{border-color:var(--brd-a);background:rgba(124,58,237,.12);box-shadow:0 0 20px rgba(124,58,237,.2)}
+.opt.ok{border-color:var(--ok);background:rgba(16,185,129,.12);box-shadow:0 0 20px rgba(16,185,129,.3);animation:cpulse .5s ease}
+.opt.ng{border-color:var(--ng);background:rgba(239,68,68,.12);animation:cshake .4s ease}
+@keyframes cpulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes cshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.oradio{width:18px;height:18px;flex-shrink:0;border:2px solid rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative}
+.opt.sel .oradio,.opt.ok .oradio{border-color:var(--pl);background:var(--pl)}
+.opt.ok .oradio{border-color:var(--ok);background:var(--ok)}
+.opt.ng .oradio{border-color:var(--ng);background:var(--ng)}
+.oradio::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .2s;position:absolute}
+.opt.sel .oradio::after,.opt.ok .oradio::after,.opt.ng .oradio::after{opacity:1;transform:scale(1)}
+.sort-list{display:flex;flex-direction:column;gap:7px;margin-bottom:6px}
+.si{background:var(--surf);border:1px solid var(--brd);border-radius:10px;padding:11px 15px;cursor:grab;display:flex;align-items:center;gap:12px;transition:all .2s;user-select:none;font-size:.87rem}
+.si:active{cursor:grabbing}
+.si.dragging{opacity:.45;border-style:dashed;transform:scale(.97)}
+.si.dov{border-color:var(--pl);background:rgba(124,58,237,.1);transform:translateY(-2px)}
+.dh{color:var(--mu)}
+.sub-btn{margin-top:20px;width:100%;padding:14px;background:linear-gradient(135deg,var(--p),#5b21b6);border:none;border-radius:12px;color:#fff;font-family:"Outfit",sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .25s;box-shadow:0 4px 20px rgba(124,58,237,.4);letter-spacing:.03em}
+.sub-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,.6)}
+.sub-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.fb{margin-top:12px;padding:12px 16px;border-radius:10px;font-size:.84rem;font-weight:600;display:none;align-items:center;gap:8px;line-height:1.4}
+.fb.show{display:flex}
+.fb.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:#6ee7b7}
+.fb.ng{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+.succ{text-align:center;display:none;animation:cardIn .5s ease both}
+.succ.show{display:block}
+.succ-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--ok),#059669);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 20px;box-shadow:0 0 40px rgba(16,185,129,.5);animation:sspin .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sspin{from{transform:scale(0) rotate(-180deg)}to{transform:scale(1) rotate(0)}}
+.succ h2{font-size:1.4rem;font-weight:700;margin-bottom:8px}
+.succ p{font-size:.85rem;color:var(--mu);line-height:1.6;margin-bottom:4px}
+.token{margin-top:18px;padding:13px 18px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:12px;font-family:"Outfit",monospace;font-size:.76rem;color:#6ee7b7;word-break:break-all;letter-spacing:.04em}
+.locked{text-align:center;display:none}
+.locked.show{display:block}
+.lock-i{font-size:3rem;margin-bottom:14px;animation:lshake .5s ease}
+@keyframes lshake{0%,100%{transform:rotate(0)}20%{transform:rotate(-15deg)}40%{transform:rotate(15deg)}60%{transform:rotate(-10deg)}80%{transform:rotate(10deg)}}
+.ftr{margin-top:22px;display:flex;justify-content:space-between;align-items:center;font-size:.71rem;color:var(--mu)}
+.ftr a{color:var(--pl)}
+@media(max-width:480px){.card{padding:26px 20px}.opts.g2{grid-template-columns:1fr}.ch-q{font-size:.93rem}}
+</style>
+</head>
+<body>
+<div class="bg-wrap" id="bgWrap"></div>
+<div class="neb" style="width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.14),transparent);top:-120px;left:-180px;"></div>
+<div class="neb" style="width:420px;height:420px;background:radial-gradient(circle,rgba(6,182,212,.09),transparent);bottom:-80px;right:-120px;animation-delay:4s;"></div>
+
+<div class="card">
+  <div class="hdr">
+    <div class="logo-i">&#x2211;</div>
+    <div>
+      <div class="site-nm">sugaku-club.com</div>
+      <div class="site-sb">&#x4EBA;&#x9593;&#x78BA;&#x8A8D; / Human Verification</div>
+    </div>
+  </div>
+
+  <!-- 成功画面 -->
+  <div class="succ" id="succScreen">
+    <div class="succ-icon">&#x2713;</div>
+    <h2>&#x8A8D;&#x8A3C;&#x6210;&#x529F;&#xFF01;</h2>
+    <p>&#x3042;&#x306A;&#x305F;&#x304C;&#x4EBA;&#x9593;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x304C;&#x78BA;&#x8A8D;&#x3055;&#x308C;&#x307E;&#x3057;&#x305F;&#x3002;</p>
+    <p>sugaku-club.com &#x3078;&#x3088;&#x3046;&#x3053;&#x305D;&#xFF01;</p>
+    <div class="token" id="tokenBox"></div>
+    <a href="index.html"><button class="sub-btn" style="margin-top:18px;background:linear-gradient(135deg,#10b981,#059669)">sugaku-club.com &#x306B;&#x5165;&#x308B; &#x2192;</button></a>
+    <button class="sub-btn" style="margin-top:10px;background:rgba(255,255,255,.06);border:1px solid var(--brd)" onclick="resetAll()">&#x3082;&#x3046;&#x4E00;&#x5EA6;&#x8A66;&#x3059;</button>
+  </div>
+
+  <!-- ロック画面 -->
+  <div class="locked" id="lockedScreen">
+    <div class="lock-i">&#x1F512;</div>
+    <div style="font-size:1.05rem;font-weight:700;margin-bottom:8px">&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x304C;&#x30ED;&#x30C3;&#x30AF;&#x3055;&#x308C;&#x307E;&#x3057;&#x305F;</div>
+    <div style="font-size:.84rem;color:var(--mu);line-height:1.65;margin-bottom:20px">&#x5931;&#x6557;&#x56DE;&#x6570;&#x304C;&#x4E0A;&#x9650;&#x306B;&#x9054;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;<br><span id="lockCD" style="color:var(--am);font-weight:700"></span> &#x5F8C;&#x306B;&#x518D;&#x8A66;&#x884C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</div>
+    <button class="sub-btn" style="background:linear-gradient(135deg,#ef4444,#b91c1c)" onclick="resetAll()">&#x30EA;&#x30BB;&#x30C3;&#x30C8;&#xFF08;&#x30C7;&#x30E2;&#x7528;&#xFF09;</button>
+  </div>
+
+  <!-- チャレンジエリア -->
+  <div id="chArea">
+    <div class="prog-wrap">
+      <div class="prog-lbl"><span>&#x8A8D;&#x8A3C;&#x30C1;&#x30E3;&#x30EC;&#x30F3;&#x30B8;</span><span id="stepLbl">1 / 4</span></div>
+      <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+    <div class="score-row" id="scorePips"></div>
+    <div class="timer-row">
+      <div class="tdot" id="tDot"></div>
+      <span>&#x6B8B;&#x308A;&#x6642;&#x9593;&#xFF1A;</span>
+      <span class="tnum" id="tNum">30</span>
+      <span>&#x79D2;</span>
+    </div>
+    <div id="chContent"></div>
+    <div class="fb" id="feedbackBox"></div>
+    <button class="sub-btn" id="subBtn" onclick="handleSubmit()" disabled>&#x78BA;&#x8A8D;&#x3059;&#x308B; &#x2192;</button>
+
+  <!-- Bot解析パネル -->
+  <div id="botPanel" style="margin-top:18px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;font-size:.74rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-weight:700;color:#a78bfa">&#x1F916; Bot解析エンジン v3</span>
+      <span id="botScoreLabel" style="font-family:'Outfit',monospace;font-weight:900;font-size:.9rem;color:#10b981">スキャン中...</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="botSignals"></div>
+    <div style="margin-top:10px;height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden">
+      <div id="botScoreBar" style="height:100%;width:0%;border-radius:99px;transition:width .8s ease,background .8s ease;background:#10b981"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:.65rem;color:rgba(148,163,184,.5)">
+      <span>HUMAN</span><span>BOT</span>
+    </div>
+  </div>
+
+  <div class="ftr">
+    <span>&#x1F6E1;&#xFE0F; AIが突破できないCAPTCHA v3.0 &nbsp;|&nbsp; <span id="bankSizeLbl">バンク読み込み中...</span></span>
+    <a href="index.html">&#x2190; トップに戻る</a>
+  </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// BOT DETECTION ENGINE v3
+// ============================================================
+var BotDetector = (function(){
+  var _mouse = [], _clicks = [], _keyTimes = [], _startTime = Date.now();
+  var _firstMove = null, _firstClick = null, _tabCount = 0, _scrolled = false;
+  var _answerTimes = [];
+
+  // イベントリスナー登録
+  document.addEventListener('mousemove', function(e){
+    if(_firstMove === null) _firstMove = Date.now() - _startTime;
+    _mouse.push({x:e.clientX, y:e.clientY, t:Date.now()});
+    if(_mouse.length > 200) _mouse.shift();
+  }, {passive:true});
+  document.addEventListener('click', function(e){
+    if(_firstClick === null) _firstClick = Date.now() - _startTime;
+    _clicks.push({x:e.clientX, y:e.clientY, t:Date.now()});
+  });
+  document.addEventListener('scroll', function(){ _scrolled = true; }, {passive:true, once:true});
+  document.addEventListener('keydown', function(){ _keyTimes.push(Date.now()); });
+  window.addEventListener('blur', function(){ _tabCount++; });
+
+  // マウス軌跡エントロピー（直線度）
+  function _entropy(){
+    if(_mouse.length < 6) return 0;
+    var angles = [];
+    for(var i=1;i<Math.min(_mouse.length,50);i++){
+      var dx=_mouse[i].x-_mouse[i-1].x, dy=_mouse[i].y-_mouse[i-1].y;
+      if(Math.abs(dx)+Math.abs(dy) < 2) continue;
+      angles.push(Math.atan2(dy,dx));
+    }
+    if(angles.length < 3) return 0;
+    var mean=angles.reduce(function(a,b){return a+b;},0)/angles.length;
+    var variance=angles.reduce(function(s,a){return s+Math.pow(a-mean,2);},0)/angles.length;
+    return Math.min(variance/2.5, 1);
+  }
+
+  // 自動化フラグ検査
+  function _autoFlags(){
+    var flags = {};
+    flags.webdriver     = !!navigator.webdriver;
+    flags.headlessUA    = /HeadlessChrome|PhantomJS|Puppeteer|Playwright/i.test(navigator.userAgent);
+    flags.noPlugins     = navigator.plugins.length === 0;
+    flags.noLang        = !navigator.language || navigator.languages.length === 0;
+    flags.tinyScreen    = screen.width < 200 || screen.height < 200;
+    flags.outerZero     = window.outerWidth === 0 && window.outerHeight === 0;
+    flags.chromeNoChrome= typeof window.chrome !== 'undefined' && !window.chrome.runtime;
+    return flags;
+  }
+
+  // スコア計算（0=完全に人間, 100=完全にBot）
+  function calculate(){
+    var score = 0;
+    var details = [];
+    var af = _autoFlags();
+
+    if(af.webdriver)  { score+=45; details.push({k:'webdriver検出',     v:'⚠️', bad:true}); }
+    else               {             details.push({k:'webdriver',          v:'✅ なし', bad:false}); }
+    if(af.headlessUA) { score+=40; details.push({k:'HeadlessブラウザUA', v:'⚠️', bad:true}); }
+    else               {             details.push({k:'ブラウザUA',          v:'✅ 正常', bad:false}); }
+    if(af.noPlugins)  { score+=8;  details.push({k:'プラグイン',          v:'⚠️ 0件', bad:true}); }
+    else               {             details.push({k:'プラグイン',          v:'✅ '+navigator.plugins.length+'件', bad:false}); }
+    if(af.noLang)     { score+=12; details.push({k:'言語設定',            v:'⚠️ なし', bad:true}); }
+    else               {             details.push({k:'言語',               v:'✅ '+navigator.language, bad:false}); }
+    if(af.outerZero)  { score+=20; details.push({k:'ウィンドウサイズ',   v:'⚠️ 0×0', bad:true}); }
+    else               {             details.push({k:'ウィンドウ',          v:'✅ '+window.outerWidth+'×'+window.outerHeight, bad:false}); }
+
+    // マウス挙動
+    if(_mouse.length < 5) { score+=18; details.push({k:'マウス移動',      v:'⚠️ なし', bad:true}); }
+    else {
+      var ent = _entropy();
+      if(ent < 0.15)      { score+=12; details.push({k:'マウス軌跡',     v:'⚠️ 直線的', bad:true}); }
+      else                {             details.push({k:'マウス軌跡',     v:'✅ 自然（entropy '+ent.toFixed(2)+'）', bad:false}); }
+    }
+
+    // 初回インタラクション速度
+    if(_firstMove !== null && _firstMove < 300)  { score+=8;  details.push({k:'初回移動',  v:'⚠️ 高速('+_firstMove+'ms)', bad:true}); }
+    else if(_firstMove !== null)                  {             details.push({k:'初回移動',  v:'✅ '+(_firstMove/1000).toFixed(1)+'s後', bad:false}); }
+    else                                          { score+=10; details.push({k:'初回移動',  v:'⚠️ なし', bad:true}); }
+
+    // スクロール
+    if(!_scrolled) { score+=3; details.push({k:'スクロール', v:'— なし', bad:false}); }
+    else            {            details.push({k:'スクロール', v:'✅ あり', bad:false}); }
+
+    // 回答速度（登録済みなら）
+    if(_answerTimes.length > 0){
+      var avg = _answerTimes.reduce(function(a,b){return a+b;},0)/_answerTimes.length;
+      if(avg < 800) { score+=15; details.push({k:'平均回答速度', v:'⚠️ '+avg.toFixed(0)+'ms', bad:true}); }
+      else           {             details.push({k:'平均回答速度', v:'✅ '+avg.toFixed(0)+'ms', bad:false}); }
+    }
+
+    return {score: Math.min(score,100), details: details};
+  }
+
+  function recordAnswer(ms){ _answerTimes.push(ms); }
+
+  function render(){
+    var r = calculate();
+    var s = r.score;
+    var bar = document.getElementById('botScoreBar');
+    var lbl = document.getElementById('botScoreLabel');
+    var sig = document.getElementById('botSignals');
+    if(!bar) return r;
+
+    var color = s < 20 ? '#10b981' : s < 50 ? '#f59e0b' : '#ef4444';
+    var label = s < 20 ? '🟢 人間 ('+s+'%)' : s < 50 ? '🟡 疑わしい ('+s+'%)' : '🔴 Bot疑い ('+s+'%)';
+    bar.style.width = s + '%';
+    bar.style.background = color;
+    lbl.textContent = label;
+    lbl.style.color = color;
+
+    sig.innerHTML = '';
+    r.details.forEach(function(d){
+      var el = document.createElement('div');
+      el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border-radius:5px;padding:3px 7px;font-size:.68rem';
+      el.innerHTML = '<span style="color:rgba(148,163,184,.7)">'+d.k+'</span><span style="color:'+(d.bad?'#fca5a5':'#6ee7b7')+';font-weight:600">'+d.v+'</span>';
+      sig.appendChild(el);
+    });
+
+    return r;
+  }
+
+  return { calculate:calculate, recordAnswer:recordAnswer, render:render };
+})();
+
+// 定期的にBot解析パネルを更新
+setInterval(function(){ BotDetector.render(); }, 1500);
+BotDetector.render();
+
+// ============================================================
+// Background symbols
+// ============================================================
+(function(){
+  var S=["\u2211","\u222B","\u2202","\u2207","\u221E","\u03C0","\u0394","\u221A","n!","lim","log","\u03BB","\u03C9","sin","cos","x\u207F","f(x)","a\u00B2","\u03B1\u03B2","\u222B\u2080\u221E"];
+  var bw=document.getElementById("bgWrap");
+  for(var i=0;i<22;i++){
+    var s=document.createElement("div");s.className="sym";
+    var sz=22+Math.random()*58;
+    s.style.cssText="font-size:"+sz+"px;left:"+Math.random()*100+"%;font-family:Outfit,serif;animation-duration:"+(13+Math.random()*20)+"s;animation-delay:"+(Math.random()*16)+"s;";
+    s.textContent=S[Math.floor(Math.random()*S.length)];bw.appendChild(s);
+  }
+})();
+
+// ============================================================
+// Challenge Data
+// ============================================================
+var CHAL=[
+  // 1. 物理直感
+  {type:"ch",cat:"\u7269\u7406\u76F4\u611F",icon:"\u2696\uFE0F",diff:3,
+   q:"\u540C\u3058\u30B5\u30A4\u30BA\u306E\u7BB1\u306B\u8A70\u3081\u3089\u308C\u3066\u3044\u307E\u3059\u3002\u8DB3\u306E\u4E0A\u306B\u843D\u3068\u3057\u305F\u3068\u304D\u3001\u6700\u3082\u75DB\u3044\u306E\u306F\u3069\u308C\u3067\u3057\u3087\u3046\uFF1F",
+   hint:"\u6750\u8CEA\u30FB\u5BC6\u5EA6\u30FB\u786C\u3055\u3092\u8003\u616E\u3057\u3066\u9078\u3093\u3067\u304F\u3060\u3055\u3044\u3002",
+   vis:'<svg viewBox="0 0 460 130" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#94a3b8"/><stop offset="100%" stop-color="#475569"/></linearGradient><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#92400e"/><stop offset="100%" stop-color="#78350f"/></linearGradient></defs><rect x="20" y="35" width="75" height="65" rx="5" fill="url(#g1)" stroke="#334155" stroke-width="2"/><text x="57" y="77" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="900" font-family="Outfit">Fe</text><text x="57" y="118" text-anchor="middle" fill="#94a3b8" font-size="10">\u9244\u584A</text><rect x="120" y="35" width="75" height="65" rx="5" fill="url(#g2)" stroke="#451a03" stroke-width="2"/><line x1="120" y1="55" x2="195" y2="55" stroke="#451a03" stroke-width="1.5"/><line x1="120" y1="74" x2="195" y2="74" stroke="#451a03" stroke-width="1.5"/><line x1="120" y1="93" x2="195" y2="93" stroke="#451a03" stroke-width="1.5"/><text x="157" y="118" text-anchor="middle" fill="#94a3b8" font-size="10">\u6728\u6750</text><rect x="220" y="35" width="75" height="65" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/><text x="257" y="79" text-anchor="middle" fill="#64748b" font-size="30">\u2601</text><text x="257" y="118" text-anchor="middle" fill="#94a3b8" font-size="10">\u7DBF\u30FB\u5E03</text><circle cx="382" cy="68" r="26" fill="rgba(6,182,212,0.15)" stroke="rgba(6,182,212,0.6)" stroke-width="2"/><circle cx="382" cy="68" r="16" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="1.5"/><ellipse cx="376" cy="60" rx="5" ry="3.5" fill="rgba(255,255,255,0.4)" transform="rotate(-30 376 60)"/><text x="382" y="118" text-anchor="middle" fill="#94a3b8" font-size="10">\u30B7\u30E3\u30DC\u30F3\u7389</text></svg>',
+   opts:["\u9244\u584A","\u6728\u6750","\u7DBF\u30FB\u5E03","\u30B7\u30E3\u30DC\u30F3\u7389"],ans:0,
+   exp:"\u9244\u584A\u306F\u5BC6\u5EA6\u304C\u6700\u3082\u9AD8\u304F\u3001\u540C\u3058\u4F53\u7A4D\u3067\u3082\u91CD\u3055\u304C\u6BB5\u9055\u3044\u3002\u786C\u3055\u3082\u76F8\u307E\u3063\u3066\u885D\u6483\u304C\u4E00\u70B9\u96C6\u4E2D\u3057\u307E\u3059\u3002"},
+
+  // 2. 皮肉理解
+  {type:"ch",cat:"\u6587\u8108\u30FB\u76AE\u8089\u7406\u89E3",icon:"\uD83D\uDCAC",diff:4,
+   q:"\u6B21\u306E\u4F1A\u8A71\u3067\u300C\u2015\u2015\u300D\u306E\u767A\u8A00\u306E\u672C\u5F53\u306E\u610F\u5473\u306F\uFF1F\n\n\u82B1\u5B50\u300C\u6570\u5B66\u306E\u30C6\u30B9\u30C8\u3001\u307E\u305F10\u70B9\u3060\u3063\u305F\u2026\u300D\n\u5148\u751F\u300C\u2015\u300C\u7D20\u6674\u3089\u3057\u3044\uFF01\u541B\u306F\u304D\u3063\u3068\u7121\u9650\u306B\u4F38\u3073\u3057\u308D\u304C\u3042\u308B\u306D\u300D\u2015",
+   hint:"\u5148\u751F\u306E\u53E3\u8ABF\u3068\u72B6\u6CC1\u304B\u3089\u771F\u610F\u3092\u8AAD\u307F\u53D6\u3063\u3066\u304F\u3060\u3055\u3044\u3002",
+   vis:null,
+   opts:["\u672C\u5F53\u306B\u8912\u3081\u3066\u3044\u308B\uFF08\u512A\u79C0\u3060\u3068\u601D\u3063\u3066\u3044\u308B\uFF09","\u76AE\u8089\u3092\u8A00\u3063\u3066\u3044\u308B\uFF08\u5446\u308C\u3066\u3044\u308B\uFF09","\u52B1\u307E\u3057\u3066\u3044\u308B\uFF08\u524D\u5411\u304D\u306B\u6355\u3048\u3066\u3044\u308B\uFF09","\u6012\u3063\u3066\u3044\u308B\uFF08\u611F\u60C5\u7684\u306B\u306A\u3063\u3066\u3044\u308B\uFF09"],ans:1,
+   exp:"\u300C\u4F38\u3073\u3057\u308D\u304C\u3042\u308B\u300D\u306F\u9060\u56DE\u3057\u306A\u76AE\u8089\u300210\u70B9\u306B\u300C\u7D20\u6674\u3089\u3057\u3044\u300D\u306F\u77DB\u76FE\u3057\u3066\u304A\u308A\u3001\u76AE\u8089\u3092\u793A\u3057\u3066\u3044\u307E\u3059\u3002"},
+
+  // 3. 反事実推論
+  {type:"ch",cat:"\u53CD\u4E8B\u5B9F\u63A8\u8AD6",icon:"\uD83D\uDD2C",diff:4,
+   q:"\u9244\u3067\u3067\u304D\u305F\u8239\u304C\u306A\u305C\u6C34\u306B\u6D6E\u304B\u3076\u306E\u304B\u3001\u6B63\u3057\u3044\u7406\u7531\u3092\u9078\u3093\u3067\u304F\u3060\u3055\u3044\u3002",
+   hint:"\u30A2\u30EB\u30AD\u30E1\u30C7\u30B9\u306E\u539F\u7406\u3092\u601D\u3044\u51FA\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+   vis:'<svg viewBox="0 0 460 130" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="88" width="460" height="42" fill="rgba(6,182,212,0.12)"/><path d="M55 88 L75 56 L365 56 L385 88 Z" fill="rgba(100,116,139,0.6)" stroke="#475569" stroke-width="2"/><rect x="155" y="32" width="150" height="26" rx="4" fill="rgba(100,116,139,0.4)" stroke="#475569" stroke-width="1.5"/><line x1="210" y1="32" x2="210" y2="10" stroke="#475569" stroke-width="2"/><line x1="190" y1="10" x2="250" y2="10" stroke="#475569" stroke-width="2"/><line x1="230" y1="118" x2="230" y2="100" stroke="#10b981" stroke-width="2.5" marker-end="url(#arU)"/><defs><marker id="arU" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto"><path d="M0,7 L3.5,0 L7,7" fill="#10b981"/></marker></defs><text x="248" y="114" fill="#10b981" font-size="10" font-family="Noto Sans JP">\u6D6E\u529B</text></svg>',
+   opts:["\u9244\u306F\u6C34\u3088\u308A\u8EFD\u3044\u304B\u3089","\u6392\u9664\u3057\u305F\u6C34\u306E\u91CD\u3055\uFF08\u6D6E\u529B\uFF09\u304C\u8239\u5168\u4F53\u306E\u91CD\u3055\u3092\u4E0A\u56DE\u308B\u304B\u3089","\u8239\u306E\u30A8\u30F3\u30B8\u30F3\u304C\u6C34\u3092\u62BC\u3057\u3066\u3044\u308B\u304B\u3089","\u9244\u304C\u6C34\u3092\u5438\u53CE\u3057\u3066\u5BC6\u5EA6\u304C\u4E0B\u304C\u308B\u304B\u3089"],ans:1,
+   exp:"\u30A2\u30EB\u30AD\u30E1\u30C7\u30B9\u306E\u539F\u7406\uFF1A\u8239\u306F\u5185\u90E8\u304C\u7A7A\u6D1E\u3067\u4F53\u7A4D\u304C\u5927\u304D\u304F\u3001\u6392\u9664\u3059\u308B\u6C34\u306E\u91CD\u3055\u304C\u8239\u4F53\u306E\u91CD\u3055\u3092\u8D85\u3048\u3066\u6D6E\u304D\u307E\u3059\u3002"},
+
+  // 4. 時系列ソート
+  {type:"sort",cat:"\u56E0\u679C\u30FB\u6642\u7CFB\u5217\u63A8\u8AD6",icon:"\uD83D\uDD17",diff:5,
+   q:"\u6B21\u306E\u51FA\u6765\u4E8B\u3092\u7269\u7406\u7684\u306B\u6B63\u3057\u3044\u9806\u5E8F\u306B\u4E26\u3079\u66FF\u3048\u3066\u304F\u3060\u3055\u3044\uFF08\u4E0A\u304C\u5148\uFF09",
+   hint:"\u30C9\u30E9\u30C3\u30B0\uFF06\u30C9\u30ED\u30C3\u30D7\u3067\u4E26\u3079\u66FF\u3048\u3089\u308C\u307E\u3059\u3002",
+   vis:null,
+   items:[{id:"a",tx:"\uD83E\uDD32 \u624B\u304C\u3059\u3079\u3063\u3066\u3001\u30B3\u30C3\u30D7\u3092\u624B\u653E\u3059"},{id:"b",tx:"\uD83D\uDCA7 \u30B3\u30C3\u30D7\u304C\u843D\u4E0B\u30FB\u5272\u308C\u308B"},{id:"c",tx:"\uD83C\uDF0A \u6C34\u304C\u3053\u307C\u308C\u3001\u5E8A\u3092\u6FE1\u3089\u3059"},{id:"d",tx:"\uD83E\uDDF9 \u5E8A\u3092\u62ED\u304D\u6383\u9664\u3059\u308B"}],
+   correctOrder:["a","b","c","d"],ans:null,
+   exp:"\u6B63\u3057\u3044\u9806\u5E8F\uFF1A\u624B\u653E\u3059\u2192\u843D\u4E0B\u30FB\u5272\u308C\u308B\u2192\u6C34\u304C\u3053\u307C\u308C\u308B\u2192\u6383\u9664"},
+
+  // 5. 不可能性
+  {type:"ch",cat:"\u5E38\u8B58\u7684\u4E0D\u53EF\u80FD\u6027",icon:"\uD83D\uDEAB",diff:5,
+   q:"\u73FE\u5B9F\u4E16\u754C\u3067\u6C7A\u3057\u3066\u8D77\u3053\u308A\u3048\u306A\u3044\u3082\u306E\u3092\u9078\u3093\u3067\u304F\u3060\u3055\u3044\u3002",
+   hint:"\u7269\u7406\u6CD5\u5247\u30FB\u71B1\u529B\u5B66\u306E\u89B3\u70B9\u304B\u3089\u8003\u3048\u3066\u304F\u3060\u3055\u3044\u3002",
+   vis:null,
+   opts:["\u5149\u304C\u91CD\u529B\u306E\u5F71\u97FF\u3092\u53D7\u3051\u3066\u66F2\u304C\u308B","\u6642\u9593\u304C\u89B3\u6E2C\u8005\u306E\u901F\u5EA6\u306B\u3088\u3063\u3066\u9045\u308C\u308B","\u22122​73.15\xB0C \u3088\u308A\u4F4E\u3044\u6E29\u5EA6\u306B\u306A\u308B","\u97F3\u304C\u771F\u7A7A\u4E2D\u3067\u4F1A\u308F\u3089\u306A\u3044"],ans:2,
+   exp:"\u7D55\u5BFE\u96F6\u5EA6\uFF08\u22122​73.15\xB0C=0K\uFF09\u306F\u71B1\u529B\u5B66\u306E\u4E0B\u9650\u3002\u4ED6\u306F\u5B9F\u969B\u306B\u89B3\u6E2C\u30FB\u8A3C\u660E\u3055\u308C\u3066\u3044\u307E\u3059\u3002"},
+
+  // 6. 数学直感
+  {type:"ch",cat:"\u6570\u5B66\u7684\u76F4\u611F",icon:"\uD83E\uDDEE",diff:4,
+   q:"1\u679A\u306E\u7D19\u3092​41\u56DE\u534A\u5206\u306B\u6298\u3063\u305F\u3068\u304D\u3001\u305D\u306E\u539A\u3055\u306B\u6700\u3082\u8FD1\u3044\u3082\u306E\u306F\uFF1F\uFF08\u7D191\u679A\u22480.1mm\uFF09",
+   hint:"2\u207F \u306E\u6307\u6570\u7684\u5897\u52A0\u3092\u8003\u3048\u3066\u307F\u307E\u3057\u3087\u3046\u3002",
+   vis:'<svg viewBox="0 0 460 110" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(167,139,250,0.9)"/><stop offset="100%" stop-color="rgba(124,58,237,0.5)"/></linearGradient></defs><rect x="20" y="96" width="18" height="2" rx="2" fill="url(#bg)"/><rect x="58" y="93" width="18" height="5" rx="2" fill="url(#bg)"/><rect x="96" y="86" width="18" height="12" rx="2" fill="url(#bg)"/><rect x="134" y="70" width="18" height="28" rx="2" fill="url(#bg)"/><rect x="172" y="40" width="18" height="58" rx="2" fill="url(#bg)"/><rect x="210" y="8" width="18" height="90" rx="2" fill="url(#bg)" opacity="0.6"/><text x="219" y="6" text-anchor="middle" fill="rgba(167,139,250,0.9)" font-size="9" font-weight="700">\u2191 41\u56DE\u6298\u308A</text><text x="340" y="56" fill="#6ee7b7" font-size="14" font-weight="700" font-family="Outfit">2\u2074\u00B9 \u00D7 0.1mm = ?</text></svg>',
+   opts:["\u6771\u4EAC\u30BF\u30EF\u30FC\u306E\u9AD8\u3055\u304F\u3089\u3044\uFF08\u7D04333m\uFF09","\u5BCC\u58EB\u5C71\u306E\u9AD8\u3055\u304F\u3089\u3044\uFF08\u7D043,776m\uFF09","\u5730\u7403\u2013\u6708\u9593\u306E\u8DDD\u96E2\u304F\u3089\u3044\uFF08\u7D0438\u4E07km\uFF09","\u30B9\u30AB\u30A4\u30C4\u30EA\u30FC\u306E\u9AD8\u3055\u304F\u3089\u3044\uFF08\u7D04634m\uFF09"],ans:2,
+   exp:"2\u2074\u00B9 \u00D7 0.1mm \u2248 220,000km\u3002\u6307\u6570\u7206\u767A\u306F\u76F4\u611F\u3092\u306F\u308B\u304B\u306B\u8D85\u3048\u307E\u3059\u3002"},
+
+  // 7. 視覚的因果推論
+  {type:"ch",cat:"\u8996\u899A\u7684\u56E0\u679C\u63A8\u8AD6",icon:"\uD83C\uDFD7\uFE0F",diff:5,
+   q:"\u4E0B\u306E\u56F3\u3067\u2605\u5370\u306E\u30D6\u30ED\u30C3\u30AF\u3060\u3051\u3092\u53D6\u308A\u9664\u3044\u305F\u3068\u304D\u3001\u5854A\u304C\u5012\u308C\u308B\u65B9\u5411\u306F\uFF1F",
+   hint:"\u91CD\u5FC3\u306E\u4F4D\u7F6E\u3068\u652F\u70B9\u306E\u95A2\u4FC2\u306B\u6CE8\u76EE\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+   vis:'<svg viewBox="0 0 460 155" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="142" x2="450" y2="142" stroke="#475569" stroke-width="2"/><rect x="52" y="112" width="48" height="30" rx="3" fill="rgba(124,58,237,0.7)" stroke="#7c3aed" stroke-width="1.5"/><rect x="57" y="84" width="48" height="30" rx="3" fill="rgba(124,58,237,0.6)" stroke="#7c3aed" stroke-width="1.5"/><rect x="62" y="56" width="48" height="30" rx="3" fill="rgba(124,58,237,0.5)" stroke="#7c3aed" stroke-width="1.5"/><rect x="44" y="132" width="78" height="12" rx="3" fill="rgba(245,158,11,0.85)" stroke="#f59e0b" stroke-width="2"/><text x="83" y="142" text-anchor="middle" fill="#1c1917" font-size="10" font-weight="900">\u2605</text><text x="83" y="155" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="700">\u5854A</text><text x="38" y="78" fill="rgba(239,68,68,0.8)" font-size="20">\u2190</text><rect x="240" y="112" width="48" height="30" rx="3" fill="rgba(6,182,212,0.7)" stroke="#06b6d4" stroke-width="1.5"/><rect x="240" y="84" width="48" height="30" rx="3" fill="rgba(6,182,212,0.6)" stroke="#06b6d4" stroke-width="1.5"/><rect x="244" y="56" width="40" height="30" rx="3" fill="rgba(6,182,212,0.5)" stroke="#06b6d4" stroke-width="1.5"/><rect x="253" y="36" width="22" height="22" rx="3" fill="rgba(6,182,212,0.4)" stroke="#06b6d4" stroke-width="1.5"/><rect x="232" y="132" width="78" height="12" rx="3" fill="rgba(245,158,11,0.85)" stroke="#f59e0b" stroke-width="2"/><text x="271" y="142" text-anchor="middle" fill="#1c1917" font-size="10" font-weight="900">\u2605</text><text x="271" y="155" text-anchor="middle" fill="#06b6d4" font-size="9" font-weight="700">\u5854B</text><text x="400" y="70" text-anchor="middle" fill="#94a3b8" font-size="10">\u2605\u3092\u5916\u3059\u3068\uFF1F</text></svg>',
+   opts:["\u5DE6\u306B\u5012\u308C\u308B","\u53F3\u306B\u5012\u308C\u308B","\u5012\u308C\u306A\u3044","\u771F\u4E0B\u306B\u5D29\u308C\u308B"],ans:0,
+   exp:"\u5854A\u306F\u2605\uFF08\u5E95\u8FBA\u5DE6\u7AEF\u306E\u652F\u3048\uFF09\u3092\u5916\u3059\u3068\u91CD\u5FC3\u304C\u652F\u70B9\u3088\u308A\u5DE6\u306B\u504F\u308B\u305F\u3081\u5DE6\u65B9\u5411\u306B\u8EE2\u5012\u3057\u307E\u3059\u3002"},
+
+  // 8. 社会的推論
+  {type:"ch",cat:"\u793E\u4F1A\u7684\u63A8\u8AD6",icon:"\uD83E\uDDE0",diff:4,
+   q:"\u540C\u50DA\u306B\u300C\u3053\u306E\u30B3\u30FC\u30C9\u3001\u3059\u3054\u304F\u2026\u72EC\u5275\u7684\u3067\u3059\u306D\u300D\u3068\u8A00\u308F\u308C\u307E\u3057\u305F\u3002\n\nThis\u767A\u8A00\u306E\u672C\u5F53\u306E\u610F\u5473\u3068\u3057\u3066\u6700\u3082\u9069\u5207\u306A\u3082\u306E\u306F\uFF1F",
+   hint:"\u8077\u5834\u306E\u6587\u8108\u3068\u4E09\u70B9\u30EA\u30FC\u30C0\u30FC\u306E\u30C8\u30FC\u30F3\u3092\u8003\u3048\u3066\u304F\u3060\u3055\u3044\u3002",
+   vis:null,
+   opts:["\u672C\u5F53\u306B\u9769\u65B0\u7684\u3067\u7D20\u6674\u3089\u3057\u3044\u3068\u601D\u3063\u3066\u3044\u308B","\u8AAD\u307F\u306B\u304F\u304F\u554F\u984C\u304C\u3042\u308B\u3068\u601D\u3063\u3066\u3044\u308B","\u611F\u52D5\u3057\u3066\u8A00\u8449\u304C\u51FA\u3066\u3053\u306A\u3044\u72B6\u614B","\u30B3\u30FC\u30C9\u3092\u8912\u3081\u308B\u7FD2\u6163\u304C\u3042\u308B\u4EBA\u3060"],ans:1,
+   exp:"\u300C\u72EC\u5275\u7684\u300D\uFF0B\u4E09\u70B9\u30EA\u30FC\u30C0\u30FC\u306F\u5A49\u66F2\u7684\u306A\u5426\u5B9A\u8868\u73FE\u3002\u300C\u5909\u308F\u3063\u305F\uFF1D\u554F\u984C\u306E\u3042\u308B\u300D\u30B3\u30FC\u30C9\u3092\u9060\u56DE\u3057\u306B\u6307\u6458\u3057\u3066\u3044\u307E\u3059\u3002"},
+
+  // 9. 感覚的常識
+  {type:"ch",cat:"\u611F\u899A\u7684\u5E38\u8B58",icon:"\uD83C\uDF21\uFE0F",diff:3,
+   q:"\u771F\u590F\uFF08\u6C17\u6E2935\xB0C\uFF09\u306E\u5C4B\u5916\u306B1\u6642\u9593\u7F6E\u3044\u305F\u3068\u304D\u3001\u89E6\u3063\u3066\u6700\u3082\u71B1\u304F\u611F\u3058\u308B\u306E\u306F\u3069\u308C\uFF1F",
+   hint:"\u71B1\u5BB9\u91CF\u30FB\u71B1\u4F1D\u5C0E\u7387\u30FB\u8272\u3092\u8003\u3048\u3066\u304F\u3060\u3055\u3044\u3002",
+   vis:'<svg viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg"><circle cx="230" cy="22" r="16" fill="rgba(245,158,11,0.9)"/><line x1="230" y1="1" x2="230" y2="-3" stroke="#f59e0b" stroke-width="2"/><line x1="248" y1="6" x2="253" y2="1" stroke="#f59e0b" stroke-width="2"/><line x1="252" y1="22" x2="257" y2="22" stroke="#f59e0b" stroke-width="2"/><line x1="248" y1="38" x2="253" y2="43" stroke="#f59e0b" stroke-width="2"/><line x1="212" y1="6" x2="207" y2="1" stroke="#f59e0b" stroke-width="2"/><line x1="208" y1="22" x2="203" y2="22" stroke="#f59e0b" stroke-width="2"/><rect x="20" y="64" width="72" height="38" rx="4" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><text x="56" y="89" text-anchor="middle" fill="#64748b" font-size="9" font-weight="700">\u9ED2\u3044\u91D1\u5C5E\u677F</text><rect x="114" y="64" width="72" height="38" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/><text x="150" y="74" text-anchor="middle" fill="#475569" font-size="8">\u6728\u76EE</text><text x="150" y="89" text-anchor="middle" fill="#475569" font-size="9">\u767D\u3044\u6728\u677F</text><rect x="213" y="57" width="36" height="48" rx="7" fill="rgba(6,182,212,0.25)" stroke="rgba(6,182,212,0.6)" stroke-width="2"/><rect x="221" y="52" width="20" height="9" rx="3" fill="rgba(6,182,212,0.5)"/><text x="231" y="116" text-anchor="middle" fill="#94a3b8" font-size="8">\u6C34\u30DA\u30C3\u30C8</text><path d="M352,64 L344,102 L400,102 L392,64 Z" fill="rgba(245,158,11,0.25)" stroke="rgba(245,158,11,0.6)" stroke-width="2"/><text x="372" y="116" text-anchor="middle" fill="#94a3b8" font-size="8">\u767D\u3044\u9676\u5668</text></svg>',
+   opts:["\u9ED2\u3044\u91D1\u5C5E\u677F","\u767D\u3044\u6728\u306E\u677F","\u6C34\u306E\u30DA\u30C3\u30C8\u30DC\u30C8\u30EB","\u767D\u3044\u9676\u5668\u30AB\u30C3\u30D7"],ans:0,
+   exp:"\u9ED2\u8272\u306F\u5149\u3092\u6700\u3082\u5438\u53CE\u3057\u3001\u91D1\u5C5E\u306F\u71B1\u4F1D\u5C0E\u7387\u304C\u9AD8\u3044\u305F\u3081\u7D20\u65E9\u304F\u84C4\u71B1\u3002\u89E6\u308C\u305F\u77AC\u9593\u306E\u71B1\u4F1D\u5C0E\u3082\u6700\u9AD8\u3067\u3059\u3002"},
+
+  // 10. 感情・空気読み
+  {type:"ch",cat:"感情・空気読み",icon:"😊",diff:4,
+   q:"会議中、上司が「まあ、それでもいいんじゃない？」と言いました。\n\nこの発言が示す上司の本音として最も適切なのは？",
+   hint:"日本語の「まあ」と語尾の曖昧さに注目してください。",
+   vis:null,
+   opts:["本当に賛成している","実は反対だが直接言えない","どちらでもよく興味がない","部下に判断を任せている"],ans:1,
+   exp:"「まあ」＋「いいんじゃない？」は日本語特有の消極的な同意で、実際には不満や反対意見を婉曲に示しています。"},
+
+  // 11. 論理パズル
+  {type:"ch",cat:"論理・集合推論",icon:"🔣",diff:5,
+   q:"「数学が得意な人は全員、理科も得意だ」が正しいとき、\n必ず正しいと言えるのはどれ？",
+   hint:"対偶：「AならばB」の対偶は「BでなければAでない」",
+   vis:null,
+   opts:["理科が得意な人は数学も得意","数学が苦手な人は理科も苦手","理科が苦手な人は数学も苦手","理科と数学は同じ難しさだ"],ans:2,
+   exp:"「数学得意→理科得意」の対偶は「理科苦手→数学苦手」です。これは論理的に必ず成立します。"},
+
+  // 12. 経済的直感
+  {type:"ch",cat:"経済的直感",icon:"💰",diff:4,
+   q:"同じ品質のコーヒーが\nカフェA：¥500、カフェB：¥480\n\nカフェAが長蛇の列で、Bはガラガラです。\n最も合理的な行動は？",
+   hint:"時間コスト・機会費用を考慮してください。",
+   vis:null,
+   opts:["必ずAに並ぶ（品質が同じなら安い方がよい）","状況による（列の長さと自分の時間的余裕で判断）","必ずBに行く（合理的に安い）","コーヒーを飲まない"],ans:1,
+   exp:"¥20の差より「並ぶ時間」の機会費用が大きいことが多い。状況によって最適解が変わるのが合理的判断です。"},
+
+  // 13. 歴史的因果順序
+  {type:"sort",cat:"歴史的因果順序",icon:"📅",diff:5,
+   q:"スマートフォン普及による社会変化を時系列順に並べてください（上が先）",
+   hint:"技術が先か、社会変化が先かを考えましょう。",
+   vis:null,
+   items:[{id:"a",tx:"📱 スマートフォンの発売・普及"},{id:"b",tx:"📸 SNSへの写真投稿が日常化"},{id:"c",tx:"📷 コンパクトデジカメの販売減少"},{id:"d",tx:"🏪 カメラフィルム現像店の激減"}],
+   correctOrder:["a","b","c","d"],ans:null,
+   exp:"スマホ普及→SNS活性化→デジカメ需要消滅→フィルム現像店が不要になる、という連鎖的変化。"},
+
+  // 14. 材料・熱の常識
+  {type:"ch",cat:"材料と熱の常識",icon:"🔬",diff:3,
+   q:"冬に鉄のフライパンと木のまな板を同じ部屋に放置しました。\n同じ室温（18°C）のはずなのに、鉄の方が冷たく感じます。\nその理由として正しいのは？",
+   hint:"「冷たく感じる」は温度ではなく何が関係しているでしょうか？",
+   vis:null,
+   opts:["鉄は木より実際の温度が低いから","鉄は熱伝導率が高く体温を速く奪うから","鉄は熱を吸収しないから","木は保温効果があるから"],ans:1,
+   exp:"同じ温度でも熱伝導率の高い鉄は手の体温を素早く奪います。「冷たさ」の感覚は温度差×熱伝導率で決まります。"},
+
+  // ─────────────────────────────────────────
+  // 【判断力系】AIが最も苦手な「文脈×価値判断」
+  // ─────────────────────────────────────────
+
+  // 15. 優先順位判断
+  {type:"ch",cat:"優先順位判断",icon:"⚡",diff:5,
+   q:"あなたはプログラマーです。今日の17時が締め切りで、\n残り2時間で以下のタスクがあります。最初に着手すべきは？\n\n①バグ修正（本番障害・ユーザー影響あり）\n②新機能実装（来週のリリース予定）\n③ドキュメント更新（今月中に完了でOK）\n④コードレビュー（同僚に依頼されたが急ぎでない）",
+   hint:"「影響範囲」と「緊急度」の2軸で考えてください。",
+   vis:null,
+   opts:["①バグ修正（本番障害・即影響）","②新機能実装（来週締め切り）","③ドキュメント更新（今月中）","④コードレビュー（同僚依頼）"],ans:0,
+   exp:"本番障害はユーザーへの即時影響があり、最優先です。緊急度×影響度マトリクスでは①が圧倒的に上位。"},
+
+  // 16. リスク評価
+  {type:"ch",cat:"リスク評価",icon:"🎲",diff:4,
+   q:"スタートアップが資金100万円でサービスを始めます。\n以下のうち「最もリスクが高い」選択はどれ？",
+   hint:"回収可能性・埋没コスト・機会損失の観点から考えてください。",
+   vis:null,
+   opts:["広告に50万円使い効果を測定してから追加投資","最初から全額100万円を広告に一括投下","5万円ずつ試しながらPDCAを回す","まず無料で10人のユーザーに使ってもらいフィードバックを得る"],ans:1,
+   exp:"全額一括投下は失敗した場合の回収手段がなく最高リスク。小さく試してPDCAを回すのがリスク管理の基本です。"},
+
+  // 17. 倫理的判断
+  {type:"ch",cat:"倫理・状況判断",icon:"⚖️",diff:5,
+   q:"あなたは医師です。手術室で予想外の合併症が発生しました。\n患者の命を救える可能性が高い処置があるが、\n事前のインフォームドコンセントにない処置です。患者は意識なし。\n最も適切な行動は？",
+   hint:"医療倫理の「善行」「緊急性」「自律尊重」を考えてください。",
+   vis:null,
+   opts:["インフォームドコンセントがないので処置しない","患者の命を救うために緊急処置を行い、後で記録・説明する","家族の同意を得るまで待機する（家族が連絡不通でも）","同僚医師に判断を丸投げして自分は関与しない"],ans:1,
+   exp:"緊急時の医療倫理では「善行原則」が優先。意識不明の緊急時は推定同意のもと生命救助が最優先。後の説明責任も果たす。"},
+
+  // 18. 状況判断（社会）
+  {type:"ch",cat:"状況判断",icon:"🧭",diff:4,
+   q:"電車内で、お年寄りが優先席に座っている若者に\n席を譲るよう頼みました。若者は「優先席に座る義務はない」\nと正論を言って断りました。\nこの状況で「最も現実的かつ建設的な対応」はどれ？",
+   hint:"「正論かどうか」と「状況として望ましいか」は別の話です。",
+   vis:null,
+   opts:["若者は法的に正しいので問題ない","自分（第三者）が席を立ってお年寄りに提供する","若者に対し大声で非難する","お年寄りに『諦めてください』と言う"],ans:1,
+   exp:"正論の応酬では問題が解決しない。第三者が率先して席を提供するのが最も実効的で摩擦のない解決策。"},
+
+  // 19. 証拠と結論の判断
+  {type:"ch",cat:"証拠と結論の判断",icon:"🔍",diff:5,
+   q:"「コーヒーをよく飲む人ほど長生きする」という調査結果があります。\nこの結果から言えることとして最も適切なのは？",
+   hint:"相関関係と因果関係の違いを考えてください。",
+   vis:null,
+   opts:["コーヒーを飲めば長生きできる（因果関係がある）","コーヒーを飲む量と寿命に相関があるが、原因は不明","コーヒーは体に絶対良い","調査が間違っているので無視すべき"],ans:1,
+   exp:"相関≠因果。「健康的な生活習慣の人がコーヒーも飲む傾向がある」など第三の要因（交絡因子）の可能性がある。"},
+
+  // 20. トレードオフ判断
+  {type:"ch",cat:"トレードオフ判断",icon:"🔄",diff:5,
+   q:"個人開発でWebサービスを作る際の技術選定です。\n「慣れていない最新技術」vs「古いが熟知している技術」\n締め切りは2週間。最も合理的な選択は？",
+   hint:"「締め切り」という制約条件が判断を大きく変えます。",
+   vis:null,
+   opts:["最新技術を使う（将来性がある）","熟知した技術を使う（2週間では習得リスクが高すぎる）","どちらも使わず既存サービスで代替する","技術選定より先にリリースして後から変える"],ans:1,
+   exp:"制約のある状況では「確実に動くもの」が正解。技術的負債は後で返済できるが、締め切りは取り返せない。"},
+];
+
+// ============================================================
+// Game State
+// ============================================================
+var TOTAL=4,MAX_FAIL=3,TIME=30,LOCK_SEC=60;
+var st={q:[],step:0,score:0,fails:0,sel:null,items:[],tv:TIME,ti:null,done:false,res:[]};
+
+// ── 統合バンクの構築 ──
+// CHAL（手作り20問）+ 動的生成で合計10,000問以上
+var MASTER_BANK = [];
+
+function buildMasterBank(){
+  var generated = QuestionBankGenerator.generateBank(9980);
+  MASTER_BANK = CHAL.concat(generated);
+  // シャッフル
+  MASTER_BANK = MASTER_BANK.sort(function(){return Math.random()-.5;});
+  var lbl = document.getElementById('bankSizeLbl');
+  if(lbl) lbl.textContent = '📚 問題バンク: ' + MASTER_BANK.length.toLocaleString() + '問';
+  console.log('[sugaku-CAPTCHA] バンク構築完了:', MASTER_BANK.length, '問 (テンプレート数:', QuestionBankGenerator.templateCount, ')');
+}
+
+function init(){
+  if(MASTER_BANK.length === 0) buildMasterBank();
+  var sh = [].concat(MASTER_BANK).sort(function(){return Math.random()-.5;});
+  st.q = sh.slice(0,TOTAL);
+  st.step=0;st.score=0;st.fails=0;st.res=[];
+  renderPips();renderCh();
+}
+
+function renderPips(){
+  var el=document.getElementById("scorePips");el.innerHTML="";
+  for(var i=0;i<TOTAL;i++){
+    var d=document.createElement("div");
+    d.className="sp"+(i===st.step?" act":i<st.step?(st.res[i]?" ok":" ng"):"");
+    d.id="pip"+i;el.appendChild(d);
+  }
+}
+
+function renderCh(){
+  var ch=st.q[st.step];
+  st.sel=null;st.done=false;
+  document.getElementById("stepLbl").textContent=(st.step+1)+" / "+TOTAL;
+  document.getElementById("progFill").style.width=(st.step/TOTAL*100)+"%";
+  var fb=document.getElementById("feedbackBox");fb.className="fb";fb.textContent="";
+  var btn=document.getElementById("subBtn");
+  btn.disabled=true;btn.textContent="\u78BA\u8A8D\u3059\u308B \u2192";btn.onclick=handleSubmit;
+  var cc=document.getElementById("chContent");cc.innerHTML="";
+  var box=document.createElement("div");box.className="ch-box";
+
+  // badge + difficulty
+  var dd="";for(var i=0;i<5;i++)dd+='<span class="dd'+(i<ch.diff?" f":"")+'"></span>';
+  box.innerHTML='<div class="badge"><span>'+ch.icon+'</span>'+ch.cat+'<span class="diffs">'+dd+'</span></div>';
+  box.innerHTML+='<div class="ch-q">'+ch.q.replace(/\n/g,"<br>")+'</div>';
+  if(ch.hint)box.innerHTML+='<div class="ch-hint">\uD83D\uDCA1 '+ch.hint+'</div>';
+  if(ch.vis)box.innerHTML+='<div class="ch-vis">'+ch.vis+'</div>';
+
+  if(ch.type==="ch"){
+    var g=document.createElement("div");
+    g.className="opts "+(ch.opts.length<=2?"g1":"g2");
+    ch.opts.forEach(function(o,i){
+      var b=document.createElement("button");b.className="opt";b.id="o"+i;
+      b.innerHTML='<div class="oradio"></div><span>'+o+'</span>';
+      b.onclick=(function(idx,tot){return function(){selOpt(idx,tot);};})(i,ch.opts.length);
+      g.appendChild(b);
+    });
+    box.appendChild(g);
+  }else if(ch.type==="sort"){
+    renderSort(box,ch);
+  }
+  cc.appendChild(box);
+  st._chStart = Date.now(); // チャレンジ開始時刻
+  startTimer();renderPips();
+}
+
+function renderSort(box,ch){
+  st.items=[].concat(ch.items).sort(function(){return Math.random()-.5});
+  var list=document.createElement("div");list.className="sort-list";list.id="sortList";
+  st.items.forEach(function(item){
+    var el=document.createElement("div");el.className="si";el.draggable=true;
+    el.dataset.id=item.id;
+    el.innerHTML='<span class="dh">\u283F\u283F</span><span>'+item.tx+'</span>';
+    el.addEventListener("dragstart",onDS);el.addEventListener("dragover",onDO);
+    el.addEventListener("drop",onDR);el.addEventListener("dragend",onDE);
+    list.appendChild(el);
+  });
+  box.appendChild(list);
+  var hint=document.createElement("div");
+  hint.style.cssText="font-size:.74rem;color:var(--mu);margin-top:6px";
+  hint.textContent="\u2195 \u4E0A\u4E0B\u30C9\u30E9\u30C3\u30B0\u3067\u4E26\u3079\u66FF\u3048";
+  box.appendChild(hint);
+  document.getElementById("subBtn").disabled=false;
+}
+
+var dSrc=null;
+function onDS(e){dSrc=this;this.classList.add("dragging");e.dataTransfer.effectAllowed="move";}
+function onDO(e){e.preventDefault();document.querySelectorAll(".si").forEach(function(x){x.classList.remove("dov");});this.classList.add("dov");}
+function onDR(e){
+  e.stopPropagation();
+  if(dSrc!==this){
+    var list=document.getElementById("sortList");
+    var items=[].slice.call(list.children);
+    var si=items.indexOf(dSrc),di=items.indexOf(this);
+    if(si<di)list.insertBefore(dSrc,this.nextSibling);else list.insertBefore(dSrc,this);
+    var mv=st.items.splice(si,1)[0];st.items.splice(di,0,mv);
+  }
+}
+function onDE(){document.querySelectorAll(".si").forEach(function(x){x.classList.remove("dragging","dov");});}
+
+function selOpt(idx,tot){
+  if(st.done)return;
+  st.sel=idx;
+  for(var i=0;i<tot;i++){var b=document.getElementById("o"+i);if(b)b.classList.toggle("sel",i===idx);}
+  document.getElementById("subBtn").disabled=false;
+  BotDetector.render(); // 選択時に即時スキャン
+}
+
+function startTimer(){
+  clearInterval(st.ti);st.tv=TIME;updTimer();
+  st.ti=setInterval(function(){
+    st.tv--;updTimer();
+    if(st.tv<=0){clearInterval(st.ti);onTimeout();}
+  },1000);
+}
+function updTimer(){
+  var n=document.getElementById("tNum"),d=document.getElementById("tDot");
+  n.textContent=st.tv;
+  d.className="tdot"+(st.tv<=5?" d":st.tv<=10?" w":"");
+  n.style.color=st.tv<=5?"var(--ng)":st.tv<=10?"var(--am)":"var(--tx)";
+}
+function onTimeout(){
+  if(st.done)return;
+  showFb(false,"\u23F0 \u30BF\u30A4\u30E0\u30A2\u30A6\u30C8\uFF01");
+  doWrong();
+}
+
+function handleSubmit(){
+  if(st.done)return;
+  clearInterval(st.ti);st.done=true;
+  // 回答所要時間をBot検出エンジンに登録
+  if(st._chStart) BotDetector.recordAnswer(Date.now() - st._chStart);
+  var ch=st.q[st.step];
+  if(ch.type==="ch"){
+    if(st.sel===null){st.done=false;return;}
+    var ok=st.sel===ch.ans;
+    markCh(ok,ch);
+    if(ok)doCorrect(ch);else doWrong(ch);
+  }else{
+    var uo=st.items.map(function(x){return x.id;});
+    var ok=JSON.stringify(uo)===JSON.stringify(ch.correctOrder);
+    markSort(ok,ch);
+    if(ok)doCorrect(ch);else doWrong(ch);
+  }
+  BotDetector.render(); // 回答後にスコア更新
+}
+function markCh(ok,ch){
+  ch.opts.forEach(function(_,i){
+    var b=document.getElementById("o"+i);if(!b)return;
+    b.disabled=true;
+    if(i===ch.ans)b.classList.add("ok");
+    else if(i===st.sel&&!ok)b.classList.add("ng");
+  });
+}
+function markSort(ok,ch){
+  var list=document.getElementById("sortList");
+  [].slice.call(list.children).forEach(function(el,pos){
+    var good=el.dataset.id===ch.correctOrder[pos];
+    el.style.borderColor=good?"var(--ok)":"var(--ng)";
+    el.style.background=good?"rgba(16,185,129,.1)":"rgba(239,68,68,.1)";
+  });
+}
+function doCorrect(ch){
+  st.score++;st.res.push(true);
+  showFb(true,"\u2713 \u6B63\u89E3\uFF01 "+(ch.exp||""));
+  setPip(st.step,"ok");
+  var btn=document.getElementById("subBtn");
+  btn.textContent="\u6B21\u3078 \u2192";btn.disabled=false;btn.onclick=nextStep;
+  setTimeout(nextStep,2800);
+}
+function doWrong(ch){
+  st.fails++;st.res.push(false);
+  showFb(false,"\u2717 \u4E0D\u6B63\u89E3\u3002"+((ch&&ch.exp)||""));
+  setPip(st.step,"ng");
+  if(st.fails>=MAX_FAIL){setTimeout(showLocked,1500);return;}
+  var btn=document.getElementById("subBtn");
+  btn.textContent="\u6B21\u3078 \u2192";btn.disabled=false;btn.onclick=nextStep;
+  setTimeout(nextStep,3000);
+}
+function nextStep(){
+  st.step++;document.getElementById("subBtn").onclick=handleSubmit;
+  if(st.step>=TOTAL)showResult();
+  else{renderPips();renderCh();}
+}
+function showResult(){
+  clearInterval(st.ti);
+  var pass=st.score>=Math.ceil(TOTAL*.75);
+  if(pass){
+    document.getElementById("chArea").style.display="none";
+    document.getElementById("succScreen").classList.add("show");
+    var tk="SGK-"+Date.now().toString(36).toUpperCase()+"-"+Math.random().toString(36).substr(2,8).toUpperCase();
+    document.getElementById("tokenBox").textContent="\u2713 CAPTCHA TOKEN: "+tk;
+    confetti();
+  }else showLocked();
+}
+function showLocked(){
+  clearInterval(st.ti);
+  document.getElementById("chArea").style.display="none";
+  document.getElementById("lockedScreen").classList.add("show");
+  var sec=LOCK_SEC,cd=document.getElementById("lockCD");
+  cd.textContent=sec+"\u79D2";
+  var t=setInterval(function(){sec--;cd.textContent=sec+"\u79D2";if(sec<=0){clearInterval(t);cd.textContent="\u4ECA\u3059\u3050";}},1000);
+}
+function resetAll(){
+  document.getElementById("chArea").style.display="";
+  document.getElementById("succScreen").classList.remove("show");
+  document.getElementById("lockedScreen").classList.remove("show");
+  document.getElementById("subBtn").onclick=handleSubmit;
+  init();
+}
+function showFb(ok,msg){
+  var fb=document.getElementById("feedbackBox");
+  fb.className="fb show "+(ok?"ok":"ng");
+  fb.innerHTML="<span>"+(ok?"\u2705":"\u274C")+"</span><span>"+msg+"</span>";
+}
+function setPip(idx,cls){
+  var p=document.getElementById("pip"+idx);if(p)p.className="sp "+cls;
+}
+function confetti(){
+  var cl=["#7c3aed","#06b6d4","#10b981","#f59e0b","#a78bfa","#34d399"];
+  var sty=document.createElement("style");
+  sty.textContent="@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}";
+  document.head.appendChild(sty);
+  for(var i=0;i<60;i++){
+    (function(delay){
+      setTimeout(function(){
+        var s=document.createElement("div");
+        var sz=6+Math.random()*10,c=cl[Math.floor(Math.random()*cl.length)],dur=1+Math.random()*2;
+        s.style.cssText="position:fixed;z-index:999;width:"+sz+"px;height:"+sz+"px;background:"+c+";border-radius:"+(Math.random()>.5?"50%":"2px")+";left:"+(15+Math.random()*70)+"%;top:-20px;opacity:.9;animation:cfall "+dur+"s linear forwards;";
+        document.body.appendChild(s);
+        setTimeout(function(){s.remove();},dur*1000+200);
+      },delay);
+    })(i*40);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
