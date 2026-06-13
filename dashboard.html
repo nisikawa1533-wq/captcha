@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ダッシュボード — sugaku-club.com</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#05071a;--bg2:#080b22;--bg3:#0d1030;--pu:#7c3aed;--pu2:#9f5cf7;--cy:#06b6d4;--ok:#10b981;--ng:#ef4444;--gd:#f59e0b;--txt:#f1f5f9;--muted:#64748b;--border:rgba(124,58,237,.2);--card:rgba(255,255,255,.03)}body{background:var(--bg);color:var(--txt);font-family:'Outfit','Noto Sans JP',sans-serif;min-height:100vh;display:flex}a{color:inherit;text-decoration:none}.sidebar{width:240px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 0;flex-shrink:0}.logo{padding:0 1.5rem 1.5rem;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.nav-item{padding:.65rem 1.5rem;display:flex;align-items:center;gap:.7rem;font-size:.88rem;font-weight:500;color:var(--muted);cursor:pointer;transition:.2s;border-left:3px solid transparent}.nav-item:hover{color:var(--txt);background:rgba(255,255,255,.03)}.nav-item.active{color:var(--pu2);background:rgba(124,58,237,.08);border-left-color:var(--pu)}.nav-icon{font-size:1rem;width:1.2rem;text-align:center}.sidebar-foot{margin-top:auto;padding:1rem 1.5rem}.logout-btn{width:100%;padding:.55rem 1rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:var(--ng);font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;text-align:left}.logout-btn:hover{background:rgba(239,68,68,.15)}.main{flex:1;overflow:auto}.topbar{padding:1.2rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2)}.topbar h1{font-size:1.2rem;font-weight:700}.user-info{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}.user-dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}.section{padding:2rem;display:none}.section.active{display:block}.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem}.stat-label{font-size:.75rem;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.08em}.stat-val{font-size:1.6rem;font-weight:800}.stat-sub{font-size:.72rem;color:var(--muted);margin-top:.2rem}.stat-card.highlight .stat-val{background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.usage-bar-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:2rem}.usage-bar-wrap h3{font-size:.9rem;font-weight:600;margin-bottom:1rem}.ubar-track{background:rgba(255,255,255,.08);height:8px;border-radius:99px;overflow:hidden;margin-bottom:.5rem}.ubar-fill{height:100%;background:linear-gradient(90deg,var(--pu),var(--cy));border-radius:99px;transition:1s}.ubar-labels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}.quick-key{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.4rem}.quick-key h3{font-size:.9rem;font-weight:600;margin-bottom:.8rem}.key-display{font-family:monospace;font-size:1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem}.key-val{filter:blur(5px);transition:.3s;flex:1}.key-val.show{filter:none}.key-actions{display:flex;gap:.5rem}.kbtn{padding:.35rem .8rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:7px;color:var(--txt);font-size:.78rem;cursor:pointer;transition:.2s;white-space:nowrap}.kbtn:hover{border-color:var(--pu);background:rgba(124,58,237,.08)}.code-tabs{display:flex;gap:.4rem;margin-bottom:.8rem}.ct{padding:.35rem .8rem;border:1px solid var(--border);border-radius:6px;font-size:.78rem;cursor:pointer;color:var(--muted);transition:.2s}.ct.active{background:rgba(124,58,237,.15);border-color:var(--pu);color:var(--pu2)}.code-block{background:#0a0c20;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:monospace;font-size:.8rem;line-height:1.6;overflow-x:auto;color:#a8b2d8;white-space:pre}.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center}.modal-bg.open{display:flex}.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:1.8rem;max-width:420px;width:90%}.modal h3{font-size:1rem;font-weight:700;margin-bottom:.8rem}.modal p{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}.modal-btns{display:flex;gap:.7rem;justify-content:flex-end}.mbtn{padding:.55rem 1.2rem;border-radius:9px;font-weight:600;font-size:.85rem;cursor:pointer;border:none;transition:.2s}.mbtn.cancel{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--txt)}.mbtn.danger{background:linear-gradient(135deg,var(--ng),#c2410c);color:#fff}.mbtn.danger:hover{opacity:.85}.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ok);color:#fff;padding:.6rem 1.4rem;border-radius:99px;font-size:.83rem;font-weight:600;z-index:2000;transition:.3s;opacity:0}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}.plan-card-current{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(6,182,212,.06));border:1px solid var(--pu);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}.plan-name{font-size:1.3rem;font-weight:800;margin-bottom:.3rem}.plan-limits{display:flex;gap:1rem;flex-wrap:wrap;margin:.8rem 0}.plan-limit-item{background:rgba(255,255,255,.05);border-radius:8px;padding:.4rem .8rem;font-size:.78rem}.plan-upgrade-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}.upgrade-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;cursor:pointer;transition:.2s}.upgrade-card:hover{border-color:var(--pu);transform:translateY(-2px)}.upgrade-name{font-size:.95rem;font-weight:700;margin-bottom:.3rem}.upgrade-price{font-size:1.2rem;font-weight:800;color:var(--pu2);margin-bottom:.3rem}.upgrade-desc{font-size:.76rem;color:var(--muted)}.upgrade-btn{width:100%;margin-top:.8rem;padding:.5rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.82rem;cursor:pointer}@media(max-width:640px){.sidebar{position:fixed;left:-240px;z-index:50;transition:.3s}.sidebar.open{left:0}.main{margin-left:0}}</style></head><body>
+<div class="sidebar" id="sidebar">
+  <div class="logo">∑ sugaku-club.com</div>
+  <div class="nav-item active" id="nav-home" onclick="sw('home')"><span class="nav-icon">🏠</span>ダッシュボード</div>
+  <div class="nav-item" id="nav-key" onclick="sw('key')"><span class="nav-icon">🔑</span>APIキー</div>
+  <div class="nav-item" id="nav-usage" onclick="sw('usage')"><span class="nav-icon">📊</span>使用量</div>
+  <div class="nav-item" id="nav-plan" onclick="sw('plan')"><span class="nav-icon">💳</span>プラン管理</div>
+  <div class="nav-item" id="nav-docs" onclick="location.href='https://sugaku-club.com/docs.html'"><span class="nav-icon">📖</span>ドキュメント</div>
+  <div class="sidebar-foot"><button class="logout-btn" onclick="logout()">🚪 ログアウト</button></div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <h1 id="topbar-title">ダッシュボード</h1>
+    <div class="user-info"><span class="user-dot"></span><span id="user-email">loading...</span></div>
+  </div>
+  <!-- ダッシュボード -->
+  <div class="section active" id="section-home">
+    <div class="stat-grid">
+      <div class="stat-card highlight"><div class="stat-label">今月の利用</div><div class="stat-val" id="s-used">-</div><div class="stat-sub">リクエスト</div></div>
+      <div class="stat-card"><div class="stat-label">残り利用可能</div><div class="stat-val" id="s-remain">-</div><div class="stat-sub">リクエスト</div></div>
+      <div class="stat-card"><div class="stat-label">現在のプラン</div><div class="stat-val" id="s-plan" style="font-size:1.1rem">-</div></div>
+      <div class="stat-card"><div class="stat-label">APIキー</div><div class="stat-val" style="color:var(--ok);font-size:1.1rem">有効</div></div>
+    </div>
+    <div class="usage-bar-wrap">
+      <h3>今月の使用量</h3>
+      <div class="ubar-track"><div class="ubar-fill" id="ubar" style="width:0%"></div></div>
+      <div class="ubar-labels"><span id="ubar-used">0 req</span><span id="ubar-limit">/ - req</span></div>
+    </div>
+    <div class="quick-key">
+      <h3>🔑 APIキー（クイックコピー）</h3>
+      <div class="key-display">
+        <span class="key-val" id="key-home">SGK-????-????????</span>
+        <div class="key-actions"><button class="kbtn" onclick="revealKey('key-home',this)">🔓 表示</button><button class="kbtn" onclick="copyKey()">📋 コピー</button></div>
+      </div>
+    </div>
+  </div>
+  <!-- APIキー -->
+  <div class="section" id="section-key">
+    <h2 style="font-size:1.1rem;margin-bottom:1.5rem;font-weight:700">APIキー管理</h2>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem">
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">現在のAPIキー</div>
+      <div class="key-display" style="margin-bottom:1rem">
+        <span class="key-val" id="key-main">SGK-????-????????</span>
+        <div class="key-actions"><button class="kbtn" onclick="revealKey('key-main',this)">🔓 表示</button><button class="kbtn" onclick="copyKey()">📋 コピー</button></div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">作成日: <span id="key-created">-</span></div>
+      <button class="kbtn" style="color:var(--ng);border-color:rgba(239,68,68,.3)" onclick="confirmRotate()">🔄 APIキーを再生成</button>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem">
+      <div style="font-size:.8rem;font-weight:600;margin-bottom:1rem">使用方法</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:.7rem">X-API-Keyヘッダーまたは Authorization: Bearer で送信してください</div>
+      <div class="code-tabs"><span class="ct active" onclick="showCode('js',this)">JavaScript</span><span class="ct" onclick="showCode('py',this)">Python</span><span class="ct" onclick="showCode('curl',this)">curl</span></div>
+      <div id="code-js" class="code-block">const res = await fetch('https://sugaku-club.com/api/captcha/verify', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': '<span id="ckey-js">YOUR_API_KEY</span>'
+  },
+  body: JSON.stringify({ token: 'captcha_token' })
+});</div>
+      <div id="code-py" class="code-block" style="display:none">import requests
+
+resp = requests.post(
+    'https://sugaku-club.com/api/captcha/verify',
+    headers={'X-API-Key': '<span id="ckey-py">YOUR_API_KEY</span>'},
+    json={'token': 'captcha_token'}
+)</div>
+      <div id="code-curl" class="code-block" style="display:none">curl -X POST https://sugaku-club.com/api/captcha/verify \
+  -H 'Content-Type: application/json' \
+  -H 'X-API-Key: <span id="ckey-curl">YOUR_API_KEY</span>' \
+  -d '{"token":"captcha_token"}'</div>
+    </div>
+  </div>
+  <!-- 使用量 -->
+  <div class="section" id="section-usage">
+    <h2 style="font-size:1.1rem;margin-bottom:1.5rem;font-weight:700">使用量履歴</h2>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead><tr style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em"><th style="text-align:left;padding:.5rem .8rem">月</th><th style="text-align:right;padding:.5rem .8rem">リクエスト数</th></tr></thead>
+        <tbody id="usage-table"><tr><td colspan="2" style="text-align:center;padding:2rem;color:var(--muted)">読み込み中...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <!-- プラン -->
+  <div class="section" id="section-plan">
+    <h2 style="font-size:1.1rem;margin-bottom:1.5rem;font-weight:700">プラン管理</h2>
+    <div class="plan-card-current">
+      <div class="plan-name" id="plan-name">-</div>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:.8rem">現在のプラン</div>
+      <div class="plan-limits" id="plan-limits"></div>
+    </div>
+    <h3 style="font-size:.9rem;font-weight:600;margin-bottom:1rem">アップグレード</h3>
+    <div class="plan-upgrade-opts" id="upgrade-opts"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal"><div class="modal"><h3>APIキーを再生成しますか？</h3><p>現在のAPIキーは無効になります。利用中のアプリケーションがある場合は、更新が必要です。</p><div class="modal-btns"><button class="mbtn cancel" onclick="closeModal()">キャンセル</button><button class="mbtn danger" onclick="doRotate()">再生成する</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = '';
+let userData = null;
+let apiKey = '';
+
+const PLANS = {
+  free:{label:'フリー',monthly:10000,rpm:20,price:0},
+  payg:{label:'従量課金',monthly:null,rpm:60,price:0},
+  hobby:{label:'ホビー',monthly:50000,rpm:60,price:480},
+  std:{label:'スタンダード',monthly:200000,rpm:150,price:1480},
+  pro:{label:'プロ',monthly:1000000,rpm:500,price:3980},
+  supporter:{label:'サポーター',monthly:5000000,rpm:1000,price:9800},
+};
+
+async function init(){
+  const token=localStorage.getItem('sgk_token');
+  if(!token){location.href='/signup.html';return;}
+  try{
+    const res=await fetch('/api/user/dashboard',{headers:{'Authorization':'Bearer '+token}});
+    if(res.status===401){localStorage.clear();location.href='/signup.html';return;}
+    if(!res.ok) throw new Error('fetch failed');
+    const data=await res.json();
+    userData=data;
+    apiKey=data.api_key||'';
+    renderAll(data);
+  }catch(e){
+    // フォールバック: localStorageから
+    const u=JSON.parse(localStorage.getItem('sgk_user')||'{}');
+    const k=localStorage.getItem('sgk_key')||'';
+    apiKey=k;
+    document.getElementById('user-email').textContent=u.email||'不明';
+    setKeyDisplays(k);
+  }
+}
+
+function renderAll(d){
+  const u=d.user||{};
+  document.getElementById('user-email').textContent=u.email||'不明';
+  const used=d.usage_this_month||0;
+  const limit=d.monthly_limit;
+  const plan=PLANS[u.plan]||PLANS.free;
+  document.getElementById('s-used').textContent=used.toLocaleString();
+  document.getElementById('s-remain').textContent=limit!=null?(limit-used).toLocaleString():'∞';
+  document.getElementById('s-plan').textContent=plan.label;
+  const pct=limit?Math.min(100,Math.round(used/limit*100)):0;
+  document.getElementById('ubar').style.width=pct+'%';
+  document.getElementById('ubar-used').textContent=used.toLocaleString()+' req';
+  document.getElementById('ubar-limit').textContent='/ '+(limit?limit.toLocaleString():'∞')+' req';
+  setKeyDisplays(apiKey);
+  document.getElementById('key-created').textContent=u.created_at?new Date(u.created_at).toLocaleDateString('ja-JP'):'不明';
+  // usage table
+  const hist=d.history||[];
+  if(hist.length===0){document.getElementById('usage-table').innerHTML='<tr><td colspan="2" style="text-align:center;padding:2rem;color:var(--muted)">使用履歴なし</td></tr>';}
+  else{document.getElementById('usage-table').innerHTML=hist.map(h=>`<tr><td style="padding:.5rem .8rem;border-top:1px solid var(--border)">${h.month}</td><td style="text-align:right;padding:.5rem .8rem;border-top:1px solid var(--border)">${h.count.toLocaleString()}</td></tr>`).join('');}
+  // plan
+  document.getElementById('plan-name').textContent=plan.label;
+  document.getElementById('plan-limits').innerHTML=`<span class="plan-limit-item">${limit?limit.toLocaleString():'無制限'} req/月</span><span class="plan-limit-item">${plan.rpm} req/分</span>`;
+  const upgrades=Object.entries(PLANS).filter(([k,v])=>v.price>plan.price&&k!==u.plan);
+  document.getElementById('upgrade-opts').innerHTML=upgrades.map(([k,v])=>`<div class="upgrade-card"><div class="upgrade-name">${v.label}</div><div class="upgrade-price">¥${v.price.toLocaleString()}/月</div><div class="upgrade-desc">${v.monthly?v.monthly.toLocaleString():'無制限'} req/月 / ${v.rpm} req/分</div><button class="upgrade-btn" onclick="upgradeClick('${v.label}',${v.price})">このプランに変更</button></div>`).join('');
+}
+
+function setKeyDisplays(k){
+  ['key-home','key-main','ckey-js','ckey-py','ckey-curl'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=k||'YOUR_API_KEY';
+  });
+}
+
+function sw(name){
+  ['home','key','usage','plan'].forEach(s=>{
+    document.getElementById('section-'+s).classList.toggle('active',s===name);
+    document.getElementById('nav-'+s).classList.toggle('active',s===name);
+  });
+  const titles={home:'ダッシュボード',key:'APIキー管理',usage:'使用量',plan:'プラン管理'};
+  document.getElementById('topbar-title').textContent=titles[name]||'';
+}
+
+function revealKey(elId,btn){
+  const el=document.getElementById(elId);
+  const showing=el.classList.toggle('show');
+  btn.textContent=showing?'🔒 隠す':'🔓 表示';
+}
+
+function copyKey(){
+  if(!apiKey){toast('APIキーが読み込まれていません');return;}
+  navigator.clipboard.writeText(apiKey).then(()=>toast('✅ APIキーをコピーしました'));
+}
+
+function confirmRotate(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+async function doRotate(){
+  closeModal();
+  const token=localStorage.getItem('sgk_token');
+  try{
+    const res=await fetch('/api/user/apikey/rotate',{method:'POST',headers:{'Authorization':'Bearer '+token}});
+    const data=await res.json();
+    if(data.api_key){apiKey=data.api_key;localStorage.setItem('sgk_key',apiKey);setKeyDisplays(apiKey);toast('✅ APIキーを再生成しました');}
+  }catch{toast('エラーが発生しました');}
+}
+
+function showCode(lang,el){
+  ['js','py','curl'].forEach(l=>document.getElementById('code-'+l).style.display=l===lang?'block':'none');
+  document.querySelectorAll('.ct').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function upgradeClick(planName,price){
+  const sub=encodeURIComponent('[sugaku-club] プラン変更リクエスト: '+planName);
+  const u=JSON.parse(localStorage.getItem('sgk_user')||'{}');
+  const body=encodeURIComponent('メールアドレス: '+(u.email||'不明')+'\n変更希望プラン: '+planName+' (¥'+price.toLocaleString()+'/月)\n\n---自動送信---');
+  location.href='mailto:contact@sugaku-club.com?subject='+sub+'&body='+body;
+}
+
+function logout(){localStorage.clear();location.href='/';}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script></body></html>
