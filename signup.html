@@ -8,7 +8,7 @@
   </div>
   <div class="tabs"><div class="tab active" id="tab-reg" onclick="switchTab('reg')">新規登録</div><div class="tab" id="tab-log" onclick="switchTab('log')">ログイン</div></div>
   <div id="errmsg" class="errmsg"></div>
-  <form id="form" onsubmit="submit(event)">
+  <form id="form" onsubmit="handleSubmit(event)">
     <div class="fg"><label>メールアドレス</label><input type="email" class="fi" id="email" placeholder="your@email.com" required></div>
     <div class="fg"><label>パスワード</label><div class="pw-wrap"><input type="password" class="fi" id="pass" placeholder="8文字以上" required><button type="button" class="pw-toggle" onclick="togglePw('pass')">👁</button></div></div>
     <div class="fg" id="fg-conf"><label>パスワード確認</label><div class="pw-wrap"><input type="password" class="fi" id="conf" placeholder="パスワードを再入力"><button type="button" class="pw-toggle" onclick="togglePw('conf')">👁</button></div></div>
@@ -72,7 +72,7 @@ function togglePw(id){
   el.type=el.type==='password'?'text':'password';
 }
 
-async function submit(e){
+async function handleSubmit(e){
   e.preventDefault();
   const hp=document.querySelector('input[name=website]');
   if(hp&&hp.value) return; // honeypot
