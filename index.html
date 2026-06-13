@@ -1013,29 +1013,90 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 // ============================================================
 // ★ STRIPE PAYMENT LINKS — ここだけ変えれば全ボタンが更新される
 // ============================================================
-var STRIPE_LINKS = {
-  'free'         : 'signup.html?plan=free',          // 無料は登録フローへ
-  'pay-as-you-go': 'signup.html?plan=payg',          // 従量課金登録へ
-
-  // ↓↓↓ Stripeダッシュボードで作成したPayment Linkに差し替える ↓↓↓
-  'hobby'        : 'https://buy.stripe.com/XXXX_hobby',     // ¥480/月
-  'std'          : 'https://buy.stripe.com/XXXX_std',       // ¥1,480/月
-  'pro'          : 'https://buy.stripe.com/XXXX_pro',       // ¥3,980/月
-  'supporter'    : 'https://buy.stripe.com/XXXX_supporter', // ¥9,800/月
-  // ↑↑↑ PayPalで代用する場合: 'https://paypal.me/あなたのID/1480JPY' ↑↑↑
+var PLAN_INFO = {
+  'free'         : {name:'フリープラン',    price:'¥0/月',    desc:'月10問・基本解説・フォーラム閲覧'},
+  'pay-as-you-go': {name:'従量課金プラン', price:'¥0.05/問', desc:'1問ごとの課金・初期費用なし'},
+  'hobby'        : {name:'ホビープラン',    price:'¥480/月',  desc:'月5万問・全解説・メールサポート'},
+  'std'          : {name:'スタンダードプラン',price:'¥1,480/月',desc:'月20万問・Webhook・優先サポート'},
+  'pro'          : {name:'プロプラン',      price:'¥3,980/月',desc:'月100万問・SLA・専任サポート'},
+  'supporter'    : {name:'サポータープラン', price:'¥9,800/月',desc:'無制限・個別実装相談・最優先対応'},
 };
 
-// 決済先に飛ぶ
+// ── お問い合わせモーダル ──────────────────────────────────────────
 function goPlan(planKey) {
-  var url = STRIPE_LINKS[planKey];
-  if (!url) return;
+  if(planKey === 'free') { window.location.href='captcha.html'; return; }
+  var info = PLAN_INFO[planKey] || {name:planKey,price:'',desc:''};
+  var existing = document.getElementById('planModal');
+  if(existing) existing.remove();
 
-  // まだStripe URLを設定していない場合はsignup.htmlへ
-  if (url.indexOf('XXXX') !== -1) {
-    alert('🔧 現在準備中です。\ncontact@sugaku-club.com にご連絡いただければ手動で対応します。');
+  var overlay = document.createElement('div');
+  overlay.id = 'planModal';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:16px';
+  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
+
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:linear-gradient(135deg,#0f172a,#1e1b4b);border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:36px 32px;max-width:440px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.6);position:relative';
+
+  var closeBtn = document.createElement('button');
+  closeBtn.textContent = '✕';
+  closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;background:none;border:none;color:#64748b;font-size:1.2rem;cursor:pointer;padding:4px 8px;border-radius:6px';
+  closeBtn.onclick = function(){ overlay.remove(); };
+
+  modal.innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="display:inline-block;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(6,182,212,.2));border:1px solid rgba(124,58,237,.4);border-radius:12px;padding:8px 20px;margin-bottom:12px">
+        <span style="font-size:.8rem;color:#a78bfa;font-weight:700;letter-spacing:.08em">プラン申し込み</span>
+      </div>
+      <h3 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#f1f5f9;margin:0 0 4px">${info.name}</h3>
+      <div style="font-size:2rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Outfit',sans-serif">${info.price}</div>
+      <p style="color:#94a3b8;font-size:.85rem;margin-top:8px">${info.desc}</p>
+    </div>
+    <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:12px;padding:16px;margin-bottom:20px;font-size:.82rem;color:#94a3b8;line-height:1.7">
+      📧 メールアドレスを入力して送信すると、<br>
+      <strong style="color:#c4b5fd">contact@sugaku-club.com</strong> から<br>
+      1営業日以内にご連絡します。
+    </div>
+    <input id="planEmailInput" type="email" placeholder="your@email.com" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;color:#f1f5f9;font-size:1rem;font-family:'Outfit',sans-serif;margin-bottom:12px;outline:none" />
+    <textarea id="planMsgInput" placeholder="ご要望・ご質問など（任意）" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;color:#f1f5f9;font-size:.9rem;font-family:'Outfit',sans-serif;margin-bottom:16px;outline:none;resize:vertical;min-height:80px"></textarea>
+    <button id="planSendBtn" onclick="sendPlanInquiry('${planKey}','${info.name}','${info.price}')" style="width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:opacity .2s">
+      📩 申し込みメールを送る →
+    </button>
+    <p style="text-align:center;margin-top:12px;font-size:.75rem;color:#475569">
+      ✅ 現在β版につき、最初の5名様は50%オフでご提供します
+    </p>
+  `;
+  modal.appendChild(closeBtn);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  setTimeout(function(){ document.getElementById('planEmailInput').focus(); }, 100);
+}
+
+function sendPlanInquiry(planKey, planName, planPrice) {
+  var email = (document.getElementById('planEmailInput')||{}).value || '';
+  var msg   = (document.getElementById('planMsgInput')||{}).value || '';
+  if(!email || !email.includes('@')) {
+    document.getElementById('planEmailInput').style.borderColor='#ef4444';
+    document.getElementById('planEmailInput').focus();
     return;
   }
-  window.location.href = url;
+  var subject = encodeURIComponent('[sugaku-club] ' + planName + ' (' + planPrice + ') のお申し込み');
+  var body = encodeURIComponent(
+    'プラン: ' + planName + ' ' + planPrice + '\n' +
+    '申込者メール: ' + email + '\n\n' +
+    (msg ? 'メッセージ:\n' + msg + '\n\n' : '') +
+    '---\nsugaku-club.com より自動生成'
+  );
+  window.location.href = 'mailto:contact@sugaku-club.com?subject=' + subject + '&body=' + body;
+  document.getElementById('planModal').remove();
+
+  // 送信後メッセージ
+  setTimeout(function(){
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:14px 28px;border-radius:99px;font-weight:700;font-family:"Outfit",sans-serif;z-index:9999;box-shadow:0 8px 32px rgba(124,58,237,.5)';
+    toast.textContent = '✅ メールアプリが開きます。送信してください！';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 4000);
+  }, 200);
 }
 
 </body>
