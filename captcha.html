@@ -484,6 +484,29 @@ var CHAL=[
    vis:null,
    opts:["最新技術を使う（将来性がある）","熟知した技術を使う（2週間では習得リスクが高すぎる）","どちらも使わず既存サービスで代替する","技術選定より先にリリースして後から変える"],ans:1,
    exp:"制約のある状況では「確実に動くもの」が正解。技術的負債は後で返済できるが、締め切りは取り返せない。"},
+
+  // ── 人間にしか再現できないチャレンジ ──────────────────────────
+
+  // TAP: リズムタップ認証
+  {type:"tap",cat:"リズム認証",icon:"👆",diff:3,
+   q:"ボタンを ちょうど 3回 タップしてください\n（速すぎず・遅すぎず）",
+   hint:"ロボットは完全に均等にタップします。あなたの自然なリズムで。",
+   targetTaps:3,vis:null,opts:null,ans:null,
+   exp:"タップ間隔の自然なゆらぎ（ジッター）が人間の証拠。完全な等間隔は機械的です。"},
+
+  // DRAW: 手書きキャンバス認証
+  {type:"draw",cat:"手書き認証",icon:"✏️",diff:4,
+   q:"枠の中に 丸（○） をひとつ書いてください",
+   hint:"完璧な円は不要です。人間らしい自然な丸を書いてください。",
+   vis:null,opts:null,ans:null,
+   exp:"人間の筆跡には必ず微細な手振れ（トレモア）があります。完璧すぎる円や直線はBotの証拠。"},
+
+  // SLIDE: スライダー感覚認証
+  {type:"slide",cat:"感覚認証",icon:"🎯",diff:3,
+   q:"スライダーを ちょうど 68% に合わせてください\n（±5%以内でOK）",
+   hint:"人間は必ずちょっと行き過ぎて戻します。その動きが大切。",
+   target:68,tolerance:5,vis:null,opts:null,ans:null,
+   exp:"人間は目標値に向かってオーバーシュートし微調整します。この動きがロボットには難しい。"},
 ];
 
 // ============================================================
@@ -553,6 +576,12 @@ function renderCh(){
     box.appendChild(g);
   }else if(ch.type==="sort"){
     renderSort(box,ch);
+  }else if(ch.type==="tap"){
+    renderTap(box,ch);
+  }else if(ch.type==="draw"){
+    renderDraw(box,ch);
+  }else if(ch.type==="slide"){
+    renderSlide(box,ch);
   }
   cc.appendChild(box);
   st._chStart = Date.now(); // チャレンジ開始時刻
@@ -576,6 +605,104 @@ function renderSort(box,ch){
   hint.textContent="\u2195 \u4E0A\u4E0B\u30C9\u30E9\u30C3\u30B0\u3067\u4E26\u3079\u66FF\u3048";
   box.appendChild(hint);
   document.getElementById("subBtn").disabled=false;
+}
+
+// ── TAP チャレンジ ─────────────────────────────────────────────
+function renderTap(box,ch){
+  st._tapTimes=[];
+  var needed=ch.targetTaps||3;
+  var wrap=document.createElement("div");
+  wrap.style.cssText="text-align:center;padding:16px 0";
+  var lbl=document.createElement("div");
+  lbl.id="tapLbl";
+  lbl.style.cssText="font-size:2rem;font-weight:900;font-family:'Outfit',sans-serif;color:var(--pl);margin-bottom:16px";
+  lbl.textContent="0 / "+needed;
+  var tapBtn=document.createElement("button");
+  tapBtn.id="tapBtn";
+  tapBtn.style.cssText="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);border:none;cursor:pointer;font-size:2.5rem;color:#fff;transition:transform .1s,box-shadow .1s;box-shadow:0 6px 24px rgba(124,58,237,.5)";
+  tapBtn.textContent="👆";
+  tapBtn.onclick=function(){
+    st._tapTimes.push(Date.now());
+    var n=st._tapTimes.length;
+    lbl.textContent=n+" / "+needed;
+    tapBtn.style.transform="scale(0.88)";
+    tapBtn.style.boxShadow="0 2px 8px rgba(124,58,237,.3)";
+    setTimeout(function(){tapBtn.style.transform="scale(1)";tapBtn.style.boxShadow="0 6px 24px rgba(124,58,237,.5)";},100);
+    if(n>=needed){
+      tapBtn.disabled=true;
+      lbl.style.color="#10b981";
+      lbl.textContent="✓ 完了！";
+      document.getElementById("subBtn").disabled=false;
+    }
+  };
+  wrap.appendChild(lbl);
+  wrap.appendChild(tapBtn);
+  box.appendChild(wrap);
+}
+
+// ── DRAW チャレンジ ─────────────────────────────────────────────
+function renderDraw(box,ch){
+  st._drawPoints=[];
+  var wrap=document.createElement("div");
+  wrap.style.cssText="text-align:center;padding:8px 0";
+  var canvas=document.createElement("canvas");
+  canvas.width=320;canvas.height=200;
+  canvas.style.cssText="border:2px solid rgba(124,58,237,.4);border-radius:12px;background:rgba(0,0,0,.2);cursor:crosshair;touch-action:none;max-width:100%";
+  var ctx=canvas.getContext("2d");
+  ctx.strokeStyle="#a78bfa";ctx.lineWidth=3;ctx.lineCap="round";ctx.lineJoin="round";
+  var drawing=false;
+  var clrBtn=document.createElement("button");
+  clrBtn.textContent="🗑 やり直し";
+  clrBtn.style.cssText="margin-top:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#94a3b8;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:.8rem";
+  clrBtn.onclick=function(){ctx.clearRect(0,0,canvas.width,canvas.height);st._drawPoints=[];document.getElementById("subBtn").disabled=true;};
+  function getPos(e){
+    var r=canvas.getBoundingClientRect();
+    var sc=canvas.width/r.width;
+    if(e.touches) return {x:(e.touches[0].clientX-r.left)*sc,y:(e.touches[0].clientY-r.top)*sc};
+    return {x:(e.clientX-r.left)*sc,y:(e.clientY-r.top)*sc};
+  }
+  function start(e){e.preventDefault();drawing=true;var p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);st._drawPoints.push(p);}
+  function move(e){e.preventDefault();if(!drawing)return;var p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();st._drawPoints.push(p);if(st._drawPoints.length>10)document.getElementById("subBtn").disabled=false;}
+  function end(e){e.preventDefault();drawing=false;}
+  canvas.addEventListener("mousedown",start);canvas.addEventListener("mousemove",move);canvas.addEventListener("mouseup",end);
+  canvas.addEventListener("touchstart",start,{passive:false});canvas.addEventListener("touchmove",move,{passive:false});canvas.addEventListener("touchend",end);
+  wrap.appendChild(canvas);
+  wrap.appendChild(document.createElement("br"));
+  wrap.appendChild(clrBtn);
+  box.appendChild(wrap);
+}
+
+// ── SLIDE チャレンジ ────────────────────────────────────────────
+function renderSlide(box,ch){
+  st._slideHistory=[];
+  var target=ch.target||68;
+  var wrap=document.createElement("div");
+  wrap.style.cssText="text-align:center;padding:16px 0";
+  var valLbl=document.createElement("div");
+  valLbl.style.cssText="font-size:2.5rem;font-weight:900;font-family:'Outfit',sans-serif;color:var(--pl);margin-bottom:12px";
+  valLbl.textContent="50%";
+  var slider=document.createElement("input");
+  slider.type="range";slider.min=0;slider.max=100;slider.value=50;
+  slider.style.cssText="width:90%;accent-color:#7c3aed;height:6px;cursor:pointer";
+  var targetLbl=document.createElement("div");
+  targetLbl.style.cssText="font-size:.8rem;color:#64748b;margin-top:10px";
+  targetLbl.textContent="目標: "+target+"% ±"+(ch.tolerance||5)+"%";
+  slider.oninput=function(){
+    var v=parseInt(this.value);
+    valLbl.textContent=v+"%";
+    st._slideHistory.push({v:v,t:Date.now()});
+    var diff=Math.abs(v-target);
+    if(diff<=(ch.tolerance||5)){
+      valLbl.style.color="#10b981";
+      document.getElementById("subBtn").disabled=false;
+    }else{
+      valLbl.style.color=diff<=15?"var(--am)":"var(--pl)";
+    }
+  };
+  wrap.appendChild(valLbl);
+  wrap.appendChild(slider);
+  wrap.appendChild(targetLbl);
+  box.appendChild(wrap);
 }
 
 var dSrc=null;
