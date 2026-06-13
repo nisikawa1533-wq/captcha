@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>管理者パネル — sugaku-club.com</title><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#05071a;--bg2:#080b22;--bg3:#0d1030;--pu:#7c3aed;--pu2:#9f5cf7;--cy:#06b6d4;--ok:#10b981;--ng:#ef4444;--gd:#f59e0b;--txt:#f1f5f9;--muted:#64748b;--border:rgba(124,58,237,.2)}body{background:var(--bg);color:var(--txt);font-family:'Outfit','Noto Sans JP',sans-serif;min-height:100vh}a{color:inherit;text-decoration:none}
+/* ログイン */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:2rem;width:100%;max-width:380px}.login-logo{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;text-align:center;margin-bottom:.3rem}.login-title{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:.3rem}.login-sub{text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:1.5rem}.fg{margin-bottom:1rem}.fg label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:.35rem}.fi{width:100%;padding:.62rem .85rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:var(--txt);font-size:.87rem;font-family:inherit}.fi:focus{outline:none;border-color:var(--pu)}.login-btn{width:100%;padding:.68rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:9px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;margin-top:.5rem}.errmsg{font-size:.8rem;color:var(--ng);text-align:center;margin-top:.7rem;display:none}
+/* メインレイアウト */
+.app{display:flex;min-height:100vh}.sidebar{width:210px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.2rem 0;flex-shrink:0}.logo{padding:0 1.2rem 1rem;font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.badge{margin:0 1.2rem .5rem;padding:.2rem .5rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:5px;font-size:.68rem;font-weight:700;color:var(--ng);display:inline-block}.ni{padding:.55rem 1.2rem;display:flex;align-items:center;gap:.55rem;font-size:.84rem;color:var(--muted);cursor:pointer;transition:.2s;border-left:3px solid transparent}.ni:hover{color:var(--txt);background:rgba(255,255,255,.03)}.ni.on{color:var(--pu2);background:rgba(124,58,237,.08);border-left-color:var(--pu)}.main{flex:1;overflow:auto}.topbar{padding:.9rem 1.8rem;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between}.topbar h1{font-size:1rem;font-weight:700}.tbright{display:flex;align-items:center;gap:.8rem;font-size:.78rem;color:var(--muted)}.stripe-badge{padding:.2rem .6rem;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:5px;font-size:.7rem;color:#818cf8}.sec{padding:1.6rem;display:none}.sec.on{display:block}
+/* 統計カード */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8rem;margin-bottom:1.5rem}.sc{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:.9rem 1rem}.sc .sl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.2rem}.sc .sv{font-size:1.35rem;font-weight:800}.sc.hl .sv{background:linear-gradient(135deg,var(--pu2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.sc .ss{font-size:.68rem;color:var(--muted);margin-top:.1rem}
+/* テーブル */
+.tbl-wrap{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:1.2rem}.tbl{width:100%;border-collapse:collapse;font-size:.8rem}.tbl th{padding:.55rem .8rem;background:rgba(255,255,255,.03);color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid var(--border)}.tbl td{padding:.55rem .8rem;border-bottom:1px solid rgba(124,58,237,.08)}.tbl tr:last-child td{border-bottom:none}.status-badge{display:inline-flex;padding:.18rem .55rem;border-radius:5px;font-size:.7rem;font-weight:700}.status-pending{background:rgba(245,158,11,.12);color:var(--gd);border:1px solid rgba(245,158,11,.25)}.status-confirmed{background:rgba(16,185,129,.12);color:var(--ok);border:1px solid rgba(16,185,129,.25)}.status-cancelled{background:rgba(239,68,68,.1);color:var(--ng);border:1px solid rgba(239,68,68,.2)}.confirm-btn{padding:.3rem .8rem;background:linear-gradient(135deg,var(--ok),#059669);border:none;border-radius:7px;color:#fff;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}.confirm-btn:hover{opacity:.85}.ref-code{font-family:monospace;font-size:.78rem;color:var(--cy);background:rgba(6,182,212,.08);padding:.1rem .4rem;border-radius:4px}
+/* 税務サマリー */
+.tax-card{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1.2rem;margin-bottom:1rem}.tax-title{font-size:.88rem;font-weight:700;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}.tax-row{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid rgba(245,158,11,.1);font-size:.82rem}.tax-row:last-child{border-bottom:none;font-weight:700;font-size:.9rem}.tax-key{color:var(--muted)}.tax-val{font-family:monospace;font-weight:600}.tax-val.ok{color:var(--ok)}.tax-val.warn{color:var(--gd)}.tax-val.ng{color:var(--ng)}.alert-box{padding:.8rem 1rem;border-radius:9px;font-size:.8rem;margin-bottom:.8rem}.alert-ok{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);color:var(--ok)}.alert-warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);color:var(--gd)}.alert-ng{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);color:var(--ng)}
+/* フォーム */
+.form-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:11px;padding:1.2rem;margin-bottom:1rem}.form-card h3{font-size:.88rem;font-weight:700;margin-bottom:.9rem}.fg2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.7rem}.fi2{width:100%;padding:.52rem .75rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--txt);font-size:.82rem;font-family:inherit}.fi2:focus{outline:none;border-color:var(--pu)}.sbtn{padding:.55rem 1.2rem;background:linear-gradient(135deg,var(--pu),var(--cy));border:none;border-radius:8px;color:#fff;font-weight:600;font-size:.82rem;cursor:pointer}.sbtn:hover{opacity:.85}.csv-btn{padding:.5rem 1rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;color:var(--ok);font-size:.8rem;font-weight:600;cursor:pointer;transition:.2s}.csv-btn:hover{background:rgba(16,185,129,.18)}.year-sel{padding:.45rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:7px;color:var(--txt);font-size:.82rem;font-family:inherit;cursor:pointer}
+/* トースト */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ok);color:#fff;padding:.5rem 1.3rem;border-radius:99px;font-size:.8rem;font-weight:600;z-index:9999;transition:.3s;opacity:0}.toast.sh{transform:translateX(-50%) translateY(0);opacity:1}
+</style></head><body>
+
+<!-- ログイン画面 -->
+<div id="login-page">
+  <div class="login-wrap">
+    <div class="login-card">
+      <span class="login-logo">∑ sugaku-club.com</span>
+      <div class="login-title">管理者パネル</div>
+      <div class="login-sub">このページはサービス運営者専用です</div>
+      <div class="fg"><label>管理者パスワード</label><input type="password" class="fi" id="login-pw" placeholder="管理者パスワード" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="login-btn" onclick="doLogin()">ログイン →</button>
+      <div class="errmsg" id="login-err">パスワードが間違っています</div>
+    </div>
+  </div>
+</div>
+
+<!-- メインアプリ -->
+<div id="app" style="display:none">
+  <div class="app">
+    <div class="sidebar">
+      <div class="logo">∑ sugaku-club.com</div>
+      <span class="badge">管理者専用</span>
+      <div class="ni on" id="n-overview" onclick="sw('overview')">📊 概要</div>
+      <div class="ni" id="n-payments" onclick="sw('payments')">💳 入金管理</div>
+      <div class="ni" id="n-users" onclick="sw('users')">👥 ユーザー</div>
+      <div class="ni" id="n-tax" onclick="sw('tax')">📋 税務・確定申告</div>
+      <div class="ni" id="n-expenses" onclick="sw('expenses')">💰 経費登録</div>
+    </div>
+    <div class="main">
+      <div class="topbar">
+        <h1 id="ttl">概要</h1>
+        <div class="tbright">
+          <span id="stripe-status"></span>
+          <span>sugaku-club.com 管理者</span>
+          <span onclick="logout()" style="cursor:pointer;color:var(--ng)">ログアウト</span>
+        </div>
+      </div>
+
+      <!-- 概要 -->
+      <div class="sec on" id="s-overview">
+        <div class="sg">
+          <div class="sc hl"><div class="sl">今月の売上</div><div class="sv" id="ov-rev">¥-</div></div>
+          <div class="sc"><div class="sl">未確認入金</div><div class="sv" id="ov-pending">-</div><div class="ss">件</div></div>
+          <div class="sc"><div class="sl">ユーザー数</div><div class="sv" id="ov-users">-</div></div>
+          <div class="sc"><div class="sl">今月のreq</div><div class="sv" id="ov-req">-</div></div>
+        </div>
+        <div style="background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:11px;padding:1.2rem;margin-bottom:1.2rem">
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:1rem">📈 月次売上</div>
+          <div id="rev-chart" style="display:flex;align-items:flex-end;gap:.5rem;height:120px;overflow-x:auto"></div>
+        </div>
+        <div id="ov-alerts"></div>
+      </div>
+
+      <!-- 入金管理 -->
+      <div class="sec" id="s-payments">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1rem">
+          <select class="year-sel" id="pay-status-sel" onchange="loadPayments()">
+            <option value="pending">未確認</option>
+            <option value="confirmed">確認済み</option>
+          </select>
+          <button class="sbtn" onclick="loadPayments()">🔄 更新</button>
+        </div>
+        <div class="tbl-wrap"><table class="tbl">
+          <thead><tr><th>参照番号</th><th>ユーザー</th><th>プラン</th><th>金額</th><th>申請日</th><th>ステータス</th><th>操作</th></tr></thead>
+          <tbody id="pay-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">読み込み中...</td></tr></tbody>
+        </table></div>
+      </div>
+
+      <!-- ユーザー -->
+      <div class="sec" id="s-users">
+        <div class="tbl-wrap"><table class="tbl">
+          <thead><tr><th>メール</th><th>プラン</th><th>今月のreq</th><th>登録日</th><th>ステータス</th></tr></thead>
+          <tbody id="user-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">読み込み中...</td></tr></tbody>
+        </table></div>
+      </div>
+
+      <!-- 税務 -->
+      <div class="sec" id="s-tax">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap">
+          <select class="year-sel" id="tax-year-sel" onchange="loadTax()">
+            <option value="2026">2026年</option>
+            <option value="2025">2025年</option>
+          </select>
+          <button class="sbtn" onclick="loadTax()">🔄 更新</button>
+          <button class="csv-btn" onclick="downloadCsv()">📥 確定申告用CSV</button>
+        </div>
+        <div id="tax-content">
+          <div style="text-align:center;padding:3rem;color:var(--muted)">読み込み中...</div>
+        </div>
+      </div>
+
+      <!-- 経費登録 -->
+      <div class="sec" id="s-expenses">
+        <div class="form-card">
+          <h3>経費を登録する</h3>
+          <div class="fg2">
+            <div><label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:.3rem">月</label><input type="month" class="fi2" id="exp-month"></div>
+            <div><label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:.3rem">金額（円）</label><input type="number" class="fi2" id="exp-amount" placeholder="例: 1200"></div>
+          </div>
+          <div class="fg2">
+            <div><label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:.3rem">区分</label>
+              <select class="fi2" id="exp-cat">
+                <option value="VPS・サーバー">VPS・サーバー</option>
+                <option value="ドメイン">ドメイン</option>
+                <option value="ソフトウェア">ソフトウェア</option>
+                <option value="通信費">通信費</option>
+                <option value="その他">その他</option>
+              </select>
+            </div>
+            <div><label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:.3rem">摘要</label><input type="text" class="fi2" id="exp-desc" placeholder="例: Oracle Cloud VPS"></div>
+          </div>
+          <button class="sbtn" onclick="addExpense()">登録する</button>
+        </div>
+        <div class="tbl-wrap"><table class="tbl">
+          <thead><tr><th>月</th><th>金額</th><th>区分</th><th>摘要</th></tr></thead>
+          <tbody id="exp-tbody"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--muted)">読み込み中...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let adminToken = null;
+const API = '';
+
+// ── ログイン ──────────────────────────────────────────────
+async function doLogin() {
+  const pw = document.getElementById('login-pw').value;
+  try {
+    const res = await fetch(`${API}/api/admin/login`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    const data = await res.json();
+    if (!res.ok) { document.getElementById('login-err').style.display='block'; return; }
+    adminToken = data.token;
+    sessionStorage.setItem('admin_token', adminToken);
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('app').style.display='flex';
+    initApp();
+  } catch { document.getElementById('login-err').style.display='block'; }
+}
+
+function logout() { sessionStorage.removeItem('admin_token'); location.reload(); }
+
+// auto-login from session
+window.addEventListener('DOMContentLoaded', () => {
+  const t = sessionStorage.getItem('admin_token');
+  if (t) { adminToken = t; document.getElementById('login-page').style.display='none'; document.getElementById('app').style.display='flex'; initApp(); }
+  // Set default month
+  const now = new Date();
+  document.getElementById('exp-month').value = now.toISOString().slice(0,7);
+});
+
+function ah() { return {'Content-Type':'application/json','Authorization':'Bearer '+adminToken}; }
+
+async function initApp() {
+  // Stripe status
+  try {
+    const h = await fetch('/api/user/health');
+    const d = await h.json();
+    const el = document.getElementById('stripe-status');
+    el.innerHTML = d.stripe ? '<span class="stripe-badge">Stripe ✓</span>' : '<span style="font-size:.72rem;color:var(--muted)">Stripe 未設定</span>';
+  } catch {}
+  loadOverview();
+  loadPayments();
+  loadUsers();
+  loadTax();
+  loadExpenses();
+}
+
+function sw(n) {
+  ['overview','payments','users','tax','expenses'].forEach(s => { document.getElementById('s-'+s).classList.toggle('on',s===n); document.getElementById('n-'+s).classList.toggle('on',s===n); });
+  const t = {overview:'概要',payments:'入金管理',users:'ユーザー',tax:'税務・確定申告',expenses:'経費登録'};
+  document.getElementById('ttl').textContent = t[n] || '';
+}
+
+// ── 概要 ─────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const [revRes, payRes, usrRes] = await Promise.all([
+      fetch('/api/admin/revenue?year='+new Date().getFullYear(), {headers:ah()}),
+      fetch('/api/admin/payments?status=pending', {headers:ah()}),
+      fetch('/api/admin/users', {headers:ah()}),
+    ]);
+    const rev = await revRes.json(), pay = await payRes.json(), usr = await usrRes.json();
+    const thisMonth = new Date().toISOString().slice(0,7);
+    const curRev = (rev.monthly_revenue || []).find(m => m.month === thisMonth);
+    document.getElementById('ov-rev').textContent = '¥' + (curRev ? curRev.total : 0).toLocaleString();
+    document.getElementById('ov-pending').textContent = (pay.count || 0);
+    document.getElementById('ov-users').textContent = (usr.total || 0);
+    // 月次売上グラフ
+    const months = rev.monthly_revenue || [];
+    if (months.length > 0) {
+      const max = Math.max(...months.map(m => m.total), 1);
+      document.getElementById('rev-chart').innerHTML = months.map(m => {
+        const h = Math.round((m.total / max) * 100);
+        return `<div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;min-width:50px"><div style="background:linear-gradient(0,var(--pu),var(--cy));border-radius:4px;width:100%;height:${h}px;min-height:2px"></div><div style="font-size:.65rem;color:var(--muted)">${m.month.slice(5)}</div><div style="font-size:.68rem;color:var(--txt)">¥${m.total.toLocaleString()}</div></div>`;
+      }).join('');
+    }
+    // アラート
+    const taxInfo = rev.tax_info || {};
+    const alerts = [];
+    if (pay.count > 0) alerts.push(`<div class="alert-box alert-warn">⚠️ 未確認入金が${pay.count}件あります。「入金管理」から確認してください。</div>`);
+    if (taxInfo.needs_income_tax) alerts.push(`<div class="alert-box alert-ng">⚠️ 年間所得が¥48万を超えています。確定申告が必要です。</div>`);
+    if (!taxInfo.needs_income_tax) alerts.push(`<div class="alert-box alert-ok">✓ 年間所得は¥48万以内のため、現在確定申告不要です（${taxInfo.notes || ''}）</div>`);
+    document.getElementById('ov-alerts').innerHTML = alerts.join('');
+  } catch(e) { console.error(e); }
+}
+
+// ── 入金管理 ──────────────────────────────────────────────
+async function loadPayments() {
+  const status = document.getElementById('pay-status-sel').value;
+  try {
+    const res = await fetch(`/api/admin/payments?status=${status}`, {headers:ah()});
+    const data = await res.json();
+    const tbody = document.getElementById('pay-tbody');
+    if (!data.payments || data.payments.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">${status === 'pending' ? '未確認の入金はありません' : '確認済みの入金はありません'}</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.payments.map(p => `
+      <tr>
+        <td><span class="ref-code">${p.ref_code}</span></td>
+        <td style="font-size:.78rem">${p.email}</td>
+        <td>${p.plan}</td>
+        <td>¥${p.amount_yen.toLocaleString()}</td>
+        <td style="font-size:.75rem;color:var(--muted)">${new Date(p.created_at).toLocaleDateString('ja-JP')}</td>
+        <td><span class="status-badge status-${p.status}">${p.status === 'pending' ? '未確認' : '確認済み'}</span></td>
+        <td>${p.status === 'pending' ? `<button class="confirm-btn" onclick="confirmPayment('${p.id}','${p.email}','${p.plan}')">✓ 確認済みにする</button>` : '—'}</td>
+      </tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function confirmPayment(id, email, plan) {
+  if (!confirm(`${email} の入金を確認済みにしてプラン「${plan}」に変更しますか？`)) return;
+  try {
+    const res = await fetch(`/api/admin/payments/${id}/confirm`, {method:'POST',headers:ah()});
+    const data = await res.json();
+    if (data.success) { toast(`✅ ${email} のプランを ${plan} に変更しました`); loadPayments(); loadOverview(); }
+    else toast('エラー: ' + JSON.stringify(data));
+  } catch(e) { toast('通信エラー'); }
+}
+
+// ── ユーザー ─────────────────────────────────────────────
+async function loadUsers() {
+  try {
+    const res = await fetch('/api/admin/users', {headers:ah()});
+    const data = await res.json();
+    const tbody = document.getElementById('user-tbody');
+    tbody.innerHTML = (data.users||[]).map(u => `
+      <tr>
+        <td>${u.email}</td>
+        <td><span style="color:${u.plan==='free'?'var(--muted)':u.plan==='payg'?'var(--cy)':'var(--pu2)';}">${u.plan}</span></td>
+        <td>${(u.usage_this_month||0).toLocaleString()}</td>
+        <td style="font-size:.75rem;color:var(--muted)">${new Date(u.created_at).toLocaleDateString('ja-JP')}</td>
+        <td><span style="color:${u.active?'var(--ok)':'var(--ng)'}">${u.active?'有効':'停止'}</span></td>
+      </tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+// ── 税務 ─────────────────────────────────────────────────
+async function loadTax() {
+  const year = document.getElementById('tax-year-sel').value;
+  try {
+    const res = await fetch(`/api/admin/revenue?year=${year}`, {headers:ah()});
+    const d = await res.json();
+    const t = d.tax_info || {};
+    const mn = d.monthly_revenue || [], me = d.monthly_expenses || [];
+    // 月次テーブル
+    const allMonths = [...new Set([...mn.map(m=>m.month), ...me.map(m=>m.month)])].sort();
+    const revMap = Object.fromEntries(mn.map(m=>[m.month,m.total]));
+    const expMap = Object.fromEntries(me.map(m=>[m.month,m.total]));
+    const monthRows = allMonths.map(m => {
+      const r=revMap[m]||0, e=expMap[m]||0;
+      return `<tr><td>${m}</td><td>¥${r.toLocaleString()}</td><td>¥${e.toLocaleString()}</td><td>¥${(r-e).toLocaleString()}</td></tr>`;
+    }).join('');
+    document.getElementById('tax-content').innerHTML = `
+      <div class="alert-box ${t.needs_income_tax?'alert-ng':t.needs_resident_tax?'alert-warn':'alert-ok'}">
+        ${t.notes || ''}
+      </div>
+      <div class="tax-card">
+        <div class="tax-title">📋 ${year}年 確定申告サマリー</div>
+        <div class="tax-row"><span class="tax-key">年間売上</span><span class="tax-val">¥${(d.totals?.revenue||0).toLocaleString()}</span></div>
+        <div class="tax-row"><span class="tax-key">年間経費</span><span class="tax-val">¥${(d.totals?.expenses||0).toLocaleString()}</span></div>
+        <div class="tax-row"><span class="tax-key">所得（売上−経費）</span><span class="tax-val">¥${(d.totals?.income||0).toLocaleString()}</span></div>
+        <div class="tax-row"><span class="tax-key">基礎控除</span><span class="tax-val">¥480,000</span></div>
+        <div class="tax-row"><span class="tax-key">課税所得（概算）</span><span class="tax-val ${t.needs_income_tax?'ng':'ok'}">¥${Math.max(0,(d.totals?.income||0)-480000).toLocaleString()}</span></div>
+        <div class="tax-row"><span class="tax-key" style="color:var(--txt);font-weight:600">確定申告</span><span class="tax-val ${t.needs_income_tax?'ng':'ok'}">${t.needs_income_tax?'必要':'不要'}</span></div>
+        <div class="tax-row"><span class="tax-key">消費税（¥1,000万超で課税）</span><span class="tax-val">${t.consumption_tax_liable?'課税事業者':'免税事業者'}</span></div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>月</th><th>売上</th><th>経費</th><th>所得</th></tr></thead>
+        <tbody>${monthRows || '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--muted)">まだデータがありません</td></tr>'}</tbody>
+      </table></div>
+      <div style="margin-top:.8rem;padding:.8rem 1rem;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);border-radius:9px;font-size:.78rem;line-height:1.7;color:var(--muted)">
+        💡 <strong style="color:var(--txt)">確定申告の期限</strong>: 翌年2月16日〜3月15日（e-Taxまたは税務署窓口）<br>
+        💡 <strong style="color:var(--txt)">青色申告</strong>: 65万円控除を受けるには事前に「青色申告承認申請書」の提出が必要<br>
+        💡 <strong style="color:var(--txt)">未成年の所得</strong>: 本人または親権者名義で申告。詳しくは税務署に確認してください。
+      </div>`;
+  } catch(e) { document.getElementById('tax-content').innerHTML = '<div style="color:var(--ng);padding:1rem">読み込みエラー</div>'; }
+}
+
+function downloadCsv() {
+  const year = document.getElementById('tax-year-sel').value;
+  window.location.href = `/api/admin/revenue/csv?year=${year}&admin_token=${adminToken}`;
+}
+
+// ── 経費 ─────────────────────────────────────────────────
+async function loadExpenses() {
+  try {
+    const year = new Date().getFullYear();
+    const res = await fetch(`/api/admin/revenue?year=${year}`, {headers:ah()});
+    const d = await res.json();
+    // 経費データを別途取得（簡易実装：revenueレスポンスにexpensesが含まれていないため）
+    document.getElementById('exp-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--muted)">経費を登録すると税務サマリーに反映されます</td></tr>';
+  } catch {}
+}
+
+async function addExpense() {
+  const month = document.getElementById('exp-month').value;
+  const amount = document.getElementById('exp-amount').value;
+  const cat = document.getElementById('exp-cat').value;
+  const desc = document.getElementById('exp-desc').value;
+  if (!month || !amount || !desc) { toast('全ての項目を入力してください'); return; }
+  try {
+    const res = await fetch('/api/admin/expenses', {method:'POST',headers:ah(),body:JSON.stringify({month,amount_yen:Number(amount),category:cat,description:desc})});
+    const d = await res.json();
+    if (d.id) { toast('✅ 経費を登録しました'); document.getElementById('exp-amount').value=''; document.getElementById('exp-desc').value=''; loadTax(); }
+  } catch { toast('エラーが発生しました'); }
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('sh');
+  setTimeout(() => t.classList.remove('sh'), 3500);
+}
+</script></body></html>
